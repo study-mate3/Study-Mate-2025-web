@@ -1,13 +1,10 @@
-import React from 'react'
+import "./App.css"
+import Layout from "./layout/Layout"
 
 function App() {
 
   return (
-    <>
-    <div>
-      <p>Hello Kanishka</p>
-    </div>
-    </>
+    <Layout />
   )
 }
 
