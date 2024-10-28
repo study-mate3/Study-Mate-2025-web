@@ -1,20 +1,42 @@
 import React ,{useState} from 'react';
-import { auth} from '../components/firebase';
+import { auth,db} from '../components/firebase';
 import logo2 from '../assets/images/HomePageIcons/logo2.png'
 import googleIcon from '../assets/images/LoginPageIcons/google_img.png'
 import {Link} from 'react-router-dom'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import {Navigate, useNavigate} from 'react-router-dom'
+import { doc,getDoc} from 'firebase/firestore';
+
 
 const Login = () => {
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
-  const Navigate= useNavigate();
+  const navigate= useNavigate();
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth,email,password);
+      const userCredentials = await signInWithEmailAndPassword(auth,email,password);
+      const user = userCredentials.user;
+
+      //check in parents collection
+      const parentDocRef=doc(db,'Parents',user.uid);
+      const parentDoc=await getDoc(parentDocRef);
+
+      if(parentDoc.exists()){
+        navigate('/parent-dashboard')
+      }
+      else{
+        //check in students collection
+        const studentDocRef=doc(db,'Students',user.uid);
+        const studentDoc=await getDoc(studentDocRef);
+
+        if(studentDoc.exists()){
+          navigate('/home');
+        }else {
+          console.log("No such user document in both collections!");
+        }
+      }
       console.log("user logged in successfully")
       //Replace this with Navigate
       Navigate("/Home")

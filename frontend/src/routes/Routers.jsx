@@ -11,6 +11,7 @@ import {Router, Routes, Route} from 'react-router-dom'
 import OtpSubmissionPage from '../pages/OtpSubmissionPage'
 import ToDoBeforeLogin from '../pages/ToDoBeforeLogin.jsx'
 import ToDoAfterLogin from '../pages/ToDoAfterLogin.jsx'
+import ParentDashboard from '../pages/ParentDashboard.jsx'
 
 const Routers = () => {
   return (
@@ -25,6 +26,7 @@ const Routers = () => {
         <Route path='/otp-submission' element={<OtpSubmissionPage/>} />
         <Route path='/to-do-before' element={<ToDoBeforeLogin/>} />
         <Route path='/to-do-after' element={<ToDoAfterLogin/>} />
+        <Route path='/parent-dashboard' element={<ParentDashboard/>}/>
     </Routes>
   )
 }
