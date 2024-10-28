@@ -1,0 +1,33 @@
+/* Navbar.css */
+.dashboard-sidebar {
+    width: 63px;
+    background-color: #0081816c;
+    padding-top: 85px;
+    z-index: 1;
+    position: fixed;
+    height: 100%;
+  }
+  
+  .menu-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .menu-list li {
+    margin: 11px 0; /* Space between icons */
+  }
+  
+  .menu-list img {
+    width: 38px;
+    height: auto;
+    transition: transform 0.3s ease; /* Smooth transition */
+  }
+
+  .menu-list img:hover {
+    transform: scale(1.4); /* Zoom in by 20% */
+  }
+  
