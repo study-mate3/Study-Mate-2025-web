@@ -97,6 +97,8 @@ const StudentDashboard = () => {
               </div>
               <div className='chart-container'>
               <DailyStudyTimeDistribution/>
+              <StudyHoursOverviewChart/>
+
               </div>
           </div>
         </div>
