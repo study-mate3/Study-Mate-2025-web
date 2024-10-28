@@ -32,7 +32,7 @@ const Login = () => {
         const studentDoc=await getDoc(studentDocRef);
 
         if(studentDoc.exists()){
-          navigate('/home');
+          navigate('/student-dashboard');
         }else {
           console.log("No such user document in both collections!");
         }
