@@ -1,3 +1,5 @@
+//study overview chart
+
 import React from 'react';
 import { Scatter } from 'react-chartjs-2';
 import { Chart as ChartJS, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
