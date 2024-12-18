@@ -1,19 +1,18 @@
-import React from 'react'
-
+// src/layout/Layout.jsx
+import React from 'react';
 import Header from '../components/Header/Header'
-import Footer from '../components/Footer/Footer'
-import Routers from '../routes/Routers'
+import Footer from '../components/Footer/Footer';
 
-const Layout = () => {
+const Layout = ({ children }) => {
   return (
-    <>
-    <Header />
-    <main>
-        <Routers />
-    </main>
-    <Footer />
-    </>
-  )
-}
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow p-4 bg-gray-100">
+        {children}
+      </main>
+      <Footer />
+    </div>
+  );
+};
 
-export default Layout
+export default Layout;

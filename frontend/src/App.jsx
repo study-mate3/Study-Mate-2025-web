@@ -1,11 +1,9 @@
-import "./App.css"
-import Layout from "./layout/Layout"
+// src/App.jsx
+import React from 'react';
+import Routers from './routes/Routers';
 
 function App() {
-
-  return (
-    <Layout />
-  )
+  return <Routers />;
 }
 
-export default App
+export default App;
