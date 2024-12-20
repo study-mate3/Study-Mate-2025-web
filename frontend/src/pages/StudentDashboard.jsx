@@ -8,7 +8,7 @@ import { signOut } from 'firebase/auth';
 
 const mockData = {
   user: {
-    name: "Alex Johnson",
+    name: "Alex Johnnson",
     email: "alex.j@university.edu",
     studentId: "STU2024125"
   },
