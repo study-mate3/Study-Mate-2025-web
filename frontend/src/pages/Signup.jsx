@@ -5,13 +5,69 @@ import parentImg from '../assets/images/LoginPageIcons/parent.png'
 import studentImg2 from '../assets/images/LoginPageIcons/student2.png'
 import parentImg2 from '../assets/images/LoginPageIcons/parent2.png'
 
-import {Link} from 'react-router-dom'
+import {Link, Navigate, useNavigate} from 'react-router-dom'
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth ,db} from '../components/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { toast } from "react-toastify";
 
 
 const SignUp = () => {
   const [role, setRole] = useState(null);
+  const navigate = useNavigate();
 
-  console.log(role);
+ // console.log(role);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmowd, setConfirmpwd] = useState("");
+  const [name, setName] = useState("");
+  const [tpnumber, setTpnumber] = useState("");
+  const [grade, setGrade] = useState("");
+  
+
+  const handleRegister = async (e) =>{
+    e.preventDefault();
+    try {
+      const userCredentials=await createUserWithEmailAndPassword(auth,email,password);
+      const user = userCredentials.user;
+      //console.log(student)
+      if(role==='student'){
+        await setDoc(doc(db,"Students",user.uid),{
+          email:email,
+          fullname : name,
+          telephone : tpnumber,
+          grade: grade,
+          role: "student"
+        });
+      console.log("user registered successfully");
+      toast.success("User Registred Successfully!!", {
+        position: "top-center",
+      });
+      } else if(role==='parent'){
+        await setDoc(doc(db,"Parents",user.uid),{
+          email:email,
+          fullname : name,
+          telephone : tpnumber,
+          grade: grade,
+          role: "parent"
+        });
+      console.log("parent registered successfully");
+      toast.success("Parent Registred Successfully!!", {
+        position: "top-center",
+      });
+      }
+
+      //navigate to login page after successfull registration
+      navigate("/login")
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message, {
+        position: "bottom-center",
+      });
+    }
+  }
+
 
   return (
     <>
@@ -59,7 +115,7 @@ const SignUp = () => {
         </div>
 
         {/* Log In Button */}
-        <button className="w-full bg-blue-700 text-white mt-6 py-2 px-4 rounded-lg mb-4 
+        <button type="submit" className="w-full bg-blue-700 text-white mt-6 py-2 px-4 rounded-lg mb-4 
           hover:bg-blue-800">
             Continue
         </button>
@@ -72,7 +128,7 @@ const SignUp = () => {
       </div>
     </div>
     )}
-
+   
     {role === 'student' && (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-[800px] shadow-md p-8 ">
@@ -82,7 +138,7 @@ const SignUp = () => {
         </div>
         <h2 className="text-2xl font-bold text-center mb-6">Ready to Rock Your Studies? Let's Go!</h2>
 
-        <form action="">
+        <form onSubmit={handleRegister}>
           <div className="w-full pl-4 pr-4 flex items-center justify-between space-x-12">
             <div className='w-1/2'>
               <label className="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
@@ -90,6 +146,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="text" 
                 placeholder="Enter Your Full Name" 
+                onChange={(e)=>setName(e.target.value)}
               />
             </div>
             <div className='w-1/2'>
@@ -98,6 +155,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="password" 
                 placeholder="Enter Your Password" 
+                onChange={(e)=>setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -109,6 +167,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="email" 
                 placeholder="Enter Your Email Address" 
+                onChange={(e)=>setEmail(e.target.value)}
               />
             </div>
             <div className='w-1/2'>
@@ -117,6 +176,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="password" 
                 placeholder="Confirm Your Password" 
+                onChange={(e)=>setConfirmpwd(e.target.value)}
               />
             </div>
           </div>
@@ -128,6 +188,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 " 
                 type="text" 
                 placeholder="Enter Your Grade or Educational Level" 
+                onChange={(e)=>setGrade(e.target.value)}
               />
             </div>
             <div className='w-1/2'>
@@ -136,6 +197,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 " 
                 type="text" 
                 placeholder="Enter Your Phone Number" 
+                onChange={(e)=>setTpnumber(e.target.value)}
               />
             </div>
           </div>
@@ -143,8 +205,9 @@ const SignUp = () => {
           <div className="w-full flex pl-4 pr-4 justify-end items-center space-x-12">
             <div className="w-1/2"></div>
             <div className="w-1/2">
-              <button className="w-full justify-end bg-blue-700 text-white mt-6 py-2 px-4 rounded-lg mb-4 hover:bg-blue-800">
-                <Link to='/otp-submission'>Continue</Link>
+              <button type='submit' className="w-full justify-end bg-blue-700 text-white mt-6 py-2 px-4 rounded-lg mb-4 hover:bg-blue-800">
+                {/*<Link to='/otp-submission'>Continue</Link>*/}
+                Continue
               </button>
               <p className="text-center">
                 <Link to="/login" className="text-sm text-blue-500 hover:underline">Back to Login Page</Link>
@@ -167,7 +230,7 @@ const SignUp = () => {
         </div>
         <h2 className="text-2xl font-bold text-center mb-6">Welcome, Super Parent! Let's Get Started!</h2>
 
-        <form action="">
+        <form onSubmit={handleRegister}>
           <div className="w-full pl-4 pr-4 flex items-center justify-between space-x-12">
             <div className='w-1/2'>
               <label className="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
@@ -175,6 +238,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="text" 
                 placeholder="Enter Your Full Name" 
+                onChange={(e)=>setName(e.target.value)}
               />
             </div>
             <div className='w-1/2'>
@@ -183,6 +247,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="password" 
                 placeholder="Enter Your Password" 
+                onChange={(e)=>setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -194,6 +259,7 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="email" 
                 placeholder="Enter Your Email Address" 
+                onChange={(e)=>setEmail(e.target.value)}
               />
             </div>
             <div className='w-1/2'>
@@ -202,11 +268,13 @@ const SignUp = () => {
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="password" 
                 placeholder="Confirm Your Password" 
+                onChange={(e)=>setConfirmpwd(e.target.value)}
               />
             </div>
           </div>
-
+         
           <div className="w-full pl-4 pr-4 flex items-center justify-between space-x-12">
+            {/*
             <div className='w-1/2'>
               <label className="block text-gray-700 text-sm font-bold mb-2">Child's Full Name</label>
               <input 
@@ -215,17 +283,20 @@ const SignUp = () => {
                 placeholder="Enter Your Grade or Educational Level" 
               />
             </div>
+            */}
             <div className='w-1/2'>
               <label className="block text-gray-700 text-sm font-bold mb-2">Phone Number</label>
               <input 
                 className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
                 type="text" 
                 placeholder="Enter Your Phone Number" 
+                onChange={(e)=>setTpnumber(e.target.value)}
               />
             </div>
           </div>
-
+          
           <div className="w-full flex pl-4 pr-4 justify-end items-center space-x-12">
+           {/*}
             <div className='w-1/2'>
               <label className="block text-gray-700 text-sm font-bold mb-2">Child's Email Address</label>
               <input 
@@ -234,13 +305,15 @@ const SignUp = () => {
                 placeholder="Enter Your Child's Email Address" 
               />
             </div>
+          */}
             <div className="w-1/2">
               <button className="w-full justify-end bg-blue-700 text-white mt-6 py-2 px-4 rounded-lg hover:bg-blue-800">
-                <Link to='/otp-submission'>Continue</Link>
+                {/*<Link to='/otp-submission'>Continue</Link>*/}
+                Continue
               </button>
             </div>
           </div>
-
+          
           <div className="w-full flex pl-4 pr-4 justify-end items-center space-x-12">
             <div className="w-1/2"></div>
             <div className="w-1/2">

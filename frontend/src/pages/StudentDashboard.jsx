@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './StudentDashboard.css'
 import Navbar from './Navbar';
 import DailyStudyTimeDistribution from './DailyStudyTimeDistribution';
+import { auth ,db} from '../components/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const StudentDashboard = () => {
+    const [userDetails,setUserDetails]=useState(null);
+    const fetchUserData=async()=>{
+        auth.onAuthStateChanged(async(user)=>{
+            console.log(user);
+
+            const docRef = doc(db,"Students",user.uid);
+            const docSnap = await getDoc(docRef);
+            if(docSnap.exists()){
+                setUserDetails(docSnap.data());
+                console.log(docSnap.data());
+            }else{
+                console.log("user is not logged in")
+            }
+        })
+    };
+
+    useEffect(()=>{
+        fetchUserData();
+    },[])
+
+    async function handleLogout() {
+        try{
+            await auth.signOut();
+            //use navigate instead of this
+            window.location.href = "/login"
+            console.log("User logged out successfully")
+        }catch(error){
+            console.error("Error logging out:",error.message)
+        }
+    }
     return (
         
          <div className="dashboard-container">
@@ -11,7 +43,7 @@ const StudentDashboard = () => {
                       {/* Header section */}
           <header className="dashboard-header">
           <div className="greeting-text">
-            Hello Student01, Let's Check Out Your Progress!
+            Hello {userDetails?.fullname || "Student"}, Let's Check Out Your Progress!
         </div>
             <img className="header-image" src="https://i.imgur.com/oT4DJyC.jpeg" alt="Header Background" />
             <div className="profile-section">
