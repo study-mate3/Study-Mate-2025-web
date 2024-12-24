@@ -1,5 +1,6 @@
 // src/pages/SignUp.jsx
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -13,6 +14,8 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [gender, setGender] = useState("male");
+
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -30,11 +33,27 @@ const SignUp = () => {
       });
 
       console.log("User registered successfully!");
-      toast.success("User Registered Successfully!",{position:"top-center"}); 
+      toast.success("User registered successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
+      navigate("/login");
 
     } catch (error) {
       console.error("Error signing up:", error);
-      toast.error(error.message,{position:"top-center"}); 
+      toast.error(`Error: ${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }); 
     }
   };
 

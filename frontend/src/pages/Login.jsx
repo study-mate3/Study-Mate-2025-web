@@ -1,8 +1,10 @@
 // src/pages/Login.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { auth } from "../firebase/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,8 +15,10 @@ const Login = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in successfully:", userCredential.user);
+      toast.success("Logged in successfully!");
     } catch (error) {
       console.error("Error logging in:", error);
+      toast.error("Failed to log in. Please check your credentials.", `Error: ${error.message}`);
     }
   };
 

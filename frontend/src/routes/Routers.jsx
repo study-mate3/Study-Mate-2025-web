@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import Home from '../pages/Home';
@@ -15,10 +14,14 @@ import PomodoroTimer from '../pages/PomodoroTimer';
 import ToDoListPage from '../pages/ToDoAfterLogin';
 import Notification from '../pages/Notification';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Routers = () => {
   return (
     <Router>
       <Layout>
+        <ToastContainer />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
