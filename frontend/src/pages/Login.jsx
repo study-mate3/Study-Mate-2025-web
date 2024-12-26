@@ -1,20 +1,40 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import { auth } from "../firebase/firebaseConfig";
+import { auth, db } from "../firebase/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { Link } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in successfully:", userCredential.user);
+      const user = userCredential.user;
+      console.log("User logged in successfully:", user);
+
+      // Fetch user role from Firestore
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const userRole = userDoc.data().role;
+        console.log("User role:", userRole);
+
+        // Navigate based on user role
+        if (userRole === "student") {
+          navigate("/timer");
+        } else if (userRole === "parent") {
+          navigate("/parent-dashboard");
+        } else if (userRole === "admin") {
+          navigate("/admin-dashboard");
+        }
+      }
+
       toast.success("Logged in successfully!");
     } catch (error) {
       console.error("Error logging in:", error);

@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SidePanel from "../components/SidePanel";
 import { 
-  StarIcon, 
-  PencilSquareIcon, 
-  TrashIcon,
+  StarIcon,
   ArrowRightIcon, 
   CalendarIcon, 
   PlusCircleIcon,
@@ -12,7 +10,6 @@ import {
 
 } from "@heroicons/react/24/solid";
 
-import { Link } from "react-router-dom";
 
 // TaskCard component for each task
 const TaskCard = ({ task, index, handleDelete, handleComplete }) => {
