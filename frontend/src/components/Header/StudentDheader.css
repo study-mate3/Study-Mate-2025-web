@@ -1,0 +1,16 @@
+
+.headerbg {
+  background-image: url('./stdashboard.png');
+  background-size: cover;
+  background-position: center;
+  width: auto;
+  height: 170px;  /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+  padding: 0;  /* Ensure no extra padding around the edges */
+  margin: 0;
+}
+

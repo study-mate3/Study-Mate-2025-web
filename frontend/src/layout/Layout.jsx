@@ -1,15 +1,24 @@
-// src/layout/Layout.jsx
 import React from 'react';
-import Header from '../components/Header/Header'
+import { useLocation } from 'react-router-dom';
+import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 
 const Layout = ({ children }) => {
+  const location = useLocation();
+
+  // Check if the current route is either /timer or /dashboard
+  const isExcludedRoute = location.pathname === '/timer' || location.pathname === "/student-dashboard/:studentId";
+  
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-grow p-4 bg-gray-100">
+      {/* Render Header only if not on the /timer or /dashboard route */}
+      {!isExcludedRoute && <Header />}
+      
+      <main className="flex-grow bg-white">
         {children}
       </main>
+      
+      {/* Always render Footer */}
       <Footer />
     </div>
   );

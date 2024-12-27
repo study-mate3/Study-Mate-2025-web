@@ -36,11 +36,11 @@ const Home = () => {
            more engaging way to study and achieve your academic goals!
           </p>
           <div className="flex space-x-4 pb-8 pt-4">
-            <button className="bg-[#005FED] text-white py-2 px-4 rounded-full">
+            <button className=" text-white py-2 px-4 font-[700] " style={{width: 153, height: 38, background: '#0E3167', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}>
               <Link to='/login'>Log In</Link>
             </button>
-            <button className="bg-[#003687] text-white py-2 px-4 rounded-full">
-              <Link to='/register'>Get Started Free</Link>
+            <button className=" text-[#0E3167] font-[700] py-2 px-4 "  style={{width: 212, height: 38, background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100, border: '1px #0E3167 solid'}}>
+              <Link to='/role'>Get Started Free</Link>
             </button>
           </div>
         </div>

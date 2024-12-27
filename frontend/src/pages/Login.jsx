@@ -1,22 +1,46 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import { auth } from "../firebase/firebaseConfig";
+import { auth, db } from "../firebase/firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      // Sign in the user with email and password
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in successfully:", userCredential.user);
+  
+      // Get user data from Firestore based on the logged-in user
+      const userDocRef = doc(db, "users", userCredential.user.uid);
+      const userDoc = await getDoc(userDocRef);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        
+        // Check role and navigate accordingly
+        if (userData.role === "student") {
+          navigate('/timer'); // Navigate to the timer page for students
+        } else if (userData.role === "parent") {
+          navigate('/parent-dashboard'); // Navigate to parent's dashboard with the studentId
+        }
+      } else {
+        console.error("No user document found!");
+        toast.error("User data not found in Firestore.");
+      }
     } catch (error) {
       console.error("Error logging in:", error);
+      toast.error(`Error: ${error.message}`);
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -48,7 +72,7 @@ const Login = () => {
         </form>
         <p className="mt-4 text-center">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-500 hover:underline">
+          <Link to="/role" className="text-blue-500 hover:underline">
             Sign Up
           </Link>
         </p>
