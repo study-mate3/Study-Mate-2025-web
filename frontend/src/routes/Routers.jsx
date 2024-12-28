@@ -23,7 +23,6 @@ const Routers = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
           <Route path="/signup/:role" element={<SignUp/>} />
           <Route path="/role" element={<RoleSelection/>}/>
           <Route path="/login" element={<Login />} />

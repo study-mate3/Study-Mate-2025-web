@@ -5,6 +5,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
+import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -43,33 +45,47 @@ const Login = () => {
   
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+<div className="flex justify-center items-center min-h-screen bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center">
+              
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Log In</h2>
+      <div className="flex justify-center items-center">
+      <img src={logo2} alt="Logo" className="w-[140px] h-auto pb-4" />
+      </div>
+
+      <h2 className="text-2xl font-bold mb-8 flex justify-center items-center">Log in to your Account</h2>
         <form onSubmit={handleLogin} className="space-y-4">
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="email" className="font-semibold text-gray-700">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
+            placeholder="Enter Your Email"
             required
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 bg-[#bfd8fd] rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
           />
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="password" className="font-semibold text-gray-700">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="Enter Your Password"
             required
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 bg-[#bfd8fd] rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
           />
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-          >
-            Log In
-          </button>
-        </form>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full  text-white font-semibold text-[16px] h-[30px] bg-gradient-to-b from-[#0570b2] to-[#0745a2] rounded-[100px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
+        >
+          Log In
+        </button>
+      </form>
+
         <p className="mt-4 text-center">
           Don’t have an account?{" "}
           <Link to="/role" className="text-blue-500 hover:underline">

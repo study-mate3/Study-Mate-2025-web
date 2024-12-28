@@ -16,7 +16,7 @@ const SidePanel = ({setName}) => {
       localStorage.removeItem('username');
       
       // Redirect to home page or login page
-      navigate('/home');
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
       // Handle error (optional, show an error message to the user)
@@ -35,7 +35,7 @@ const SidePanel = ({setName}) => {
     onClick={handleClick} />
   
         {/* Wrap the HomeIcon with Link */}
-        <Link to="/home">
+        <Link to="/">
           <HomeIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
         </Link>
 

@@ -118,7 +118,7 @@ const StudentDashboard = () => {
     try {
       await auth.signOut();
       toast.success('Logged out successfully');
-      window.location.href = '/home';
+      window.location.href = '/';
     } catch (error) {
       toast.error(error.message);
     }
@@ -136,7 +136,7 @@ const StudentDashboard = () => {
         <SidePanel/>
       </div>
       <StDashHeader userDetails={userDetails}/>
-      <div className='p-20'>
+      <div className='p-40'>
       <div className="flex justify-between items-center mb-8">
         
         {/* <button
@@ -161,6 +161,10 @@ const StudentDashboard = () => {
       <div>
         <p className="text-black">Email</p>
         <p className="font-medium">{userDetails?.email}</p>
+      </div>
+      <div>
+      <p className="text-black">Student ID</p>
+      <p className="font-medium">{userDetails?.studentId}</p>
       </div>
       
     </div>
