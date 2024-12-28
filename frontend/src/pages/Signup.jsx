@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
 import studentIcon from '../assets/images/HomePageIcons/student.png';
 import parentIcon from '../assets/images/HomePageIcons/parent.png';
+import Alert from "../components/Alert";
 
 const SignUp = () => {
   const { role } = useParams();
@@ -15,7 +16,10 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("male");
-  const [grade, setGrade] = useState(""); // Fields specific to students
+  const [grade, setGrade] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const navigate = useNavigate();
 
@@ -42,11 +46,18 @@ const SignUp = () => {
         });
 
         console.log(`User created with studentId: ${studentId}`);
+        setAlertMessage(`User created with studentId: ${studentId}`);
+        setShowAlert(true);
+    
       } else {
         console.log('User already exists in Firestore');
+        setAlertMessage('User already exists in Firestore');
+        setShowAlert(true);
       }
     } catch (error) {
       console.error('Error creating user:', error);
+      setAlertMessage('Error creating user:', error);
+      setShowAlert(true);
     }
   };
 
@@ -93,6 +104,8 @@ const SignUp = () => {
         pauseOnHover: true,
         draggable: true,
       });
+      setAlertMessage("User registered successfully!");
+      setShowAlert(true);
 
       navigate("/login");
     } catch (error) {
@@ -104,12 +117,17 @@ const SignUp = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-      });
+      }
+    );
+    setAlertMessage(`Error: ${error.message}`);
+    setShowAlert(true);
     }
+    
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen  bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center">
+    {showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}
     <div className="bg-white p-8 rounded-lg shadow-lg w-full  max-w-4xl mx-auto">
     <div className="flex justify-center items-center mb-4">
 {/* Conditionally render image based on role */}

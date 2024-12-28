@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import Home from '../pages/Home';
@@ -16,10 +16,12 @@ import Notification from '../pages/Notification';
 import SignUp from '../pages/Signup';
 import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from '../components/StudentDetails';
+import Loading from '../components/Loading';
 
 const Routers = () => {
   return (
     <Router>
+      <Suspense fallback={<Loading />}></Suspense>
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

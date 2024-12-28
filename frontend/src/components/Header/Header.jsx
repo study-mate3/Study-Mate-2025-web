@@ -4,6 +4,7 @@ import logo from '../../assets/images/HomePageIcons/whitelogo.png';
 import AlarmIcon from '../../assets/images/HomePageIcons/timer.gif';
 import scrolledLogo from '../../assets/images/HomePageIcons/scrolledLogo.png';
 
+
 const NavLinks = [
   { key: 'welcome', display: 'Home' },
   { key: 'downloads', display: 'Downloads' },

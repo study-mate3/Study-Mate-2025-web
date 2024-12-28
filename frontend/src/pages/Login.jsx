@@ -6,12 +6,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
 import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
+import Alert from "../components/Alert";
 
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +24,8 @@ const Login = () => {
       // Sign in the user with email and password
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in successfully:", userCredential.user);
+      setAlertMessage("User logged in successfully!");
+      setShowAlert(true);
   
       // Get user data from Firestore based on the logged-in user
       const userDocRef = doc(db, "users", userCredential.user.uid);
@@ -36,17 +43,23 @@ const Login = () => {
       } else {
         console.error("No user document found!");
         toast.error("User data not found in Firestore.");
+        setAlertMessage("No user document found!");
+        setShowAlert(true);
+    
       }
     } catch (error) {
       console.error("Error logging in:", error);
       toast.error(`Error: ${error.message}`);
+      setAlertMessage(`Error: ${error.message}`);
+      setShowAlert(true);
+  
     }
   };
   
 
   return (
 <div className="flex justify-center items-center min-h-screen bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center">
-              
+{showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
       <div className="flex justify-center items-center">
       <img src={logo2} alt="Logo" className="w-[140px] h-auto pb-4" />
