@@ -16,8 +16,11 @@ const SidePanel = () => {
           <HomeIcon className="h-8 w-8 mt-4 text-white hover:text-blue-950 cursor-pointer" />
         </Link>
 
-        <ClockIcon className="h-8 w-8 text-white" />
-        <Link  to="/to-do-before">
+        <Link to="/timer">
+          <ClockIcon className="h-8 w-8 mt-4 text-white hover:text-blue-950 cursor-pointer" />
+        </Link>
+        
+        <Link  to="/todo-after-login">
           <PencilIcon className="h-8 w-8 mt-4 text-white hover:text-blue-950 cursor-pointer" />
         </Link>
         <BellIcon className="h-8 w-8 text-white" />
