@@ -8,8 +8,8 @@ import { signOut } from 'firebase/auth';
 import StDashHeader from '../components/Header/StudentDheader';
 import AbsentTimesCard from '../components/AbsentTimesCard';
 import EngagementChart from '../components/EngagementChart';
-import SidePanel from '../components/SidePanel';
 import StudentDetailsPage from '../components/StudentDetails';
+import ParentSidePanel from '../components/ParentSidePanel';
 
 
 const DashboardCard = ({ userId, title, children, className = '' }) => (
@@ -85,7 +85,7 @@ const ParentDashboard = () => {
   return (
     <div className="min-h-screen bg-white">
       <div style={sidePanelStyle}>
-        <SidePanel/>
+        <ParentSidePanel/>
       </div>
       <StDashHeader userDetails={userDetails}/>
       <div className='p-16'>

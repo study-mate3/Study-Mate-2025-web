@@ -25,13 +25,14 @@ const Routers = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/signup/:role" element={<SignUp/>} />
           <Route path="/role" element={<RoleSelection/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/timer" element={<PomodoroTimer />} />
+          <Route path="/timer" element={<PrivateRoute roleRequired="student"><PomodoroTimer /></PrivateRoute>} />
           <Route path="/todo-after-login" element={<PrivateRoute roleRequired="student"><ToDoListPage /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute roleRequired="student"><Notification /></PrivateRoute>} />
           <Route path="/admin-dashboard" element={<PrivateRoute roleRequired="admin"><AdminDashboard /></PrivateRoute>} />

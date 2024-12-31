@@ -9,6 +9,8 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc,updateDoc, arrayUnion, increment } from 'firebase/firestore';
 import { format } from "date-fns-tz";
 import SidePanel from './SidePanel';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 
 export default function StopWatch() {
@@ -31,7 +33,8 @@ export default function StopWatch() {
     const [showAcknowledgement, setShowAcknowledgement] = useState(false);
     const [name, setName] = useState('Learner');
     const auth = getAuth();
-     const db = getFirestore();
+    const db = getFirestore();
+     
 
      useEffect(() => {
         const storedName = localStorage.getItem('username');
@@ -152,11 +155,12 @@ export default function StopWatch() {
     };
 
     const [isManagingToDoList, setIsManagingToDoList] = useState(false);
+    const navigate = useNavigate();
 
     const handleManageToDoListClick = () => {
-        setIsManagingToDoList(true);
+       navigate('/todo-after-login')
     };
-
+    
     const handleCloseToDoListBox = () => {
         setIsManagingToDoList(false);
     };
@@ -246,7 +250,13 @@ export default function StopWatch() {
       
           if (user) {
             const userRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
-      
+            const pomodoroMinutes = pomodoroTime;
+            await updateDoc(userRef, {
+                pomodoroMinutes: arrayUnion(pomodoroMinutes), // Add the minutes to the array
+              });
+              
+        
+              console.log("Pomodoro minutes saved successfully:", pomodoroMinutes);
             // Get the current timestamp
             const presentTime = format(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX", {
                 timeZone: "Asia/Colombo",
@@ -265,6 +275,7 @@ export default function StopWatch() {
             setShowAlert(true); // Hide the alert
           } else {
             console.error("No user is logged in.");
+
           }
         } catch (error) {
           console.error("Error saving time to Firestore:", error);

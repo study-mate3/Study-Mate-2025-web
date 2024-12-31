@@ -138,16 +138,7 @@ const StudentDashboard = () => {
       <StDashHeader userDetails={userDetails}/>
       <div className='p-40'>
       <div className="flex justify-between items-center mb-8">
-        
-        {/* <button
-          onClick={handleLogout}
-        
-          className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-        >
-          <LogOut size={20} />
-        
-        </button> */}
-      </div>
+       </div>
 
       {/* Profile Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
