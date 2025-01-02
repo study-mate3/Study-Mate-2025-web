@@ -17,7 +17,7 @@ import { auth, db } from "../firebase/firebaseConfig";
 import PropTypes from 'prop-types';
 
 // TaskCard component for each task
-const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance }) => {
+const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance, handleEditTask, handleUpdateTask }) => {
   return (
     <div className="bg-gray-200 px-4 py-2 mb-2 rounded-[15px] shadow">
       <div className="flex items-center justify-between mb-2">
@@ -69,17 +69,20 @@ const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance 
               <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
           </svg>
         </button>
-        <button onClick={() => handleEdit(task.id)} className="cursor-pointer"></button>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          strokeWidth={1.5} 
-          stroke="currentColor" 
-          className="size-6"
-        >
-            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-        </svg>
+
+        <button onClick={() => handleEditTask(task.id)} className="cursor-pointer">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            strokeWidth={1.5} 
+            stroke="currentColor" 
+            className="size-6"
+          >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+          </svg>
+        </button>
+        
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
           fill="none" 
@@ -121,6 +124,8 @@ const ToDoListPage = () => {
     priority: "low",
     completed: false,
   });
+  const [editingTask, setEditingTask] = useState(null);
+
 
   // Function to fetch tasks from Firestore
   const fetchTasks = async () => {
@@ -258,6 +263,72 @@ const ToDoListPage = () => {
       console.error("Error updating task importance: ", error);
     }
   };
+
+  const handleEditTask = (taskId) => {
+    const taskToEdit = tasks.find((task) => task.id === taskId);
+    setEditingTask(taskToEdit);
+    setNewTask({
+      description: taskToEdit.description,
+      list: taskToEdit.list,
+      dueDate: taskToEdit.dueDate,
+      subTasks: taskToEdit.subTasks,
+      priority: taskToEdit.priority,
+      completed: taskToEdit.completed,
+    });
+  };
+  
+
+  const handleUpdateTask = async () => {
+    if (!editingTask || editingTask.description.trim() === "") {
+      console.error("Task description cannot be empty");
+      return;
+    }
+  
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("No user is logged in");
+        return;
+      }
+  
+      
+      console.log("Editing task details:", editingTask);
+
+      const taskRef = doc(db, `users/${user.uid}/tasks/${editingTask.id}`);
+      console.log("Updating Firestore document:", taskRef.path);
+
+      await updateDoc(taskRef, {
+        description: editingTask.description,
+        list: editingTask.list,
+        dueDate: editingTask.dueDate,
+        subTasks: editingTask.subTasks,
+        priority: editingTask.priority,
+        completed: editingTask.completed,
+      });
+      
+      setTasks(tasks.map((task) =>
+        task.id === editingTask.id ? editingTask : task
+      ));
+  
+      setEditingTask(null);
+      setNewTask({
+        description: "",
+        list: "Personal",
+        dueDate: "",
+        subTasks: "",
+        priority: "low",
+        completed: false,
+      });
+  
+      console.log("Task updated successfully!");
+    } catch (error) {
+      console.error("Error updating task: ", error);
+    }
+  };
+  
+  
+  
+  
   
   
 
@@ -340,6 +411,7 @@ const ToDoListPage = () => {
                 handleDelete={handleDelete}
                 handleComplete={handleComplete}
                 handleImportance={handleImportance}
+                handleEditTask={handleEditTask}
               />
             ))
           )}
@@ -368,7 +440,12 @@ const ToDoListPage = () => {
             focus:ring-2 focus:ring-gray-500"
             placeholder="+ Add a Description about the Task"
             value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+            onChange={(e) => {
+              setNewTask({ ...newTask, description: e.target.value });
+              if (editingTask) {
+                setEditingTask({ ...editingTask, description: e.target.value });
+              }
+            }}
           />
         </div>
 
@@ -382,7 +459,13 @@ const ToDoListPage = () => {
               className="w-auto px-3 py-1 border bg-gray-200 border-gray-300 rounded-md focus:outline-none 
               focus:ring-2 focus:ring-blue-500"
               value={newTask.list}
-              onChange={(e) => setNewTask({ ...newTask, list: e.target.value })}>
+              onChange={(e) => {
+                setNewTask({ ...newTask, list: e.target.value });
+                if (editingTask) {
+                  setEditingTask({ ...editingTask, list: e.target.value });
+                }
+              }}
+              >
                 {listOptions.map((option, index) => (
                   <option key={index} value={option}>
                     {option}
@@ -403,7 +486,12 @@ const ToDoListPage = () => {
                 className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
                 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
                 value={newTask.dueDate}
-                onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                onChange={(e) => {
+                  setNewTask({ ...newTask, dueDate: e.target.value });
+                  if (editingTask) {
+                    setEditingTask({ ...editingTask, dueDate: e.target.value });
+                  }
+                }}
               />
             </div> 
           </div>
@@ -418,8 +506,13 @@ const ToDoListPage = () => {
                 placeholder="+ Add a subtask" 
                 className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
                 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                value={newTask.subTask}
-                onChange={(e) => setNewTask({ ...newTask, subTasks: e.target.value})}
+                value={newTask.subTasks}
+                onChange={(e) => {
+                  setNewTask({ ...newTask, subTasks: e.target.value });
+                  if (editingTask) {
+                    setEditingTask({ ...editingTask, subTasks: e.target.value });
+                  }
+                }}
               />
             </div>
           </div>
@@ -433,7 +526,12 @@ const ToDoListPage = () => {
                 className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
                 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={newTask.priority}
-                onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+                onChange={(e) => {
+                  setNewTask({ ...newTask, priority: e.target.value });
+                  if (editingTask) {
+                    setEditingTask({ ...editingTask, priority: e.target.value });
+                  }
+                }}
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -446,10 +544,11 @@ const ToDoListPage = () => {
         {/* Add Task Button */}
         <button
           className="w-[40%] mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4 justify-end"
-          onClick={addTask}
+          onClick={editingTask ? handleUpdateTask : addTask}
         >
-          Add Task
+          {editingTask ? "Update Task" : "Add Task"}
         </button>
+
 
       </div>
 
