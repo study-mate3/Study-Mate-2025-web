@@ -1,144 +1,215 @@
-import React, { useEffect, useState } from 'react';
-import './StudentDashboard.css'
-import Navbar from './Navbar';
-import DailyStudyTimeDistribution from './DailyStudyTimeDistribution';
-import { auth ,db} from '../components/firebase';
+import React, { useState, useEffect } from 'react';
+import { auth, db } from '../firebase/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LogOut, CheckCircle, Clock, Target, TrendingUp } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import StDashHeader from '../components/Header/StudentDheader';
+import AbsentTimesCard from '../components/AbsentTimesCard';
+import EngagementChart from '../components/EngagementChart';
+import SidePanel from '../components/SidePanel';
+
+const mockData = {
+  user: {
+    name: "Alex Johnnson",
+    email: "alex.j@university.edu",
+    studentId: "STU2024125"
+  },
+  tasks: {
+    completed: 24,
+    inProgress: 8,
+    total: 35
+  },
+  
+};
+
+const DashboardCard = ({ userId, title, children, className = '' }) => (
+  <div
+    className={`p-6 ${className}`}
+    style={{
+      background: 'white',
+      boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+      borderRadius: 10,
+      border: '0.02px solid rgba(154, 157, 161, 0.38)',
+    }}
+  >
+    <h3 className="text-lg font-semibold mb-4 text-black">{title}</h3>
+    {children}
+  </div>
+);
 
 const StudentDashboard = () => {
-    const [userDetails,setUserDetails]=useState(null);
-    const fetchUserData=async()=>{
-        auth.onAuthStateChanged(async(user)=>{
-            console.log(user);
+  const [userDetails, setUserDetails] = useState(null);
+  const [completedPomodoros, setCompletedPomodoros] = useState(null);
+   const [userId, setUserId] = useState(null);
 
-            const docRef = doc(db,"Students",user.uid);
-            const docSnap = await getDoc(docRef);
-            if(docSnap.exists()){
-                setUserDetails(docSnap.data());
-                console.log(docSnap.data());
-            }else{
-                console.log("user is not logged in")
-            }
-        })
-    };
+   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid); // Set the user ID when authenticated
+      } else {
+        console.error("User is not logged in!");
+      }
+    });
 
-    useEffect(()=>{
-        fetchUserData();
-    },[])
+    return () => unsubscribe();
+  }, []);
 
-    async function handleLogout() {
-        try{
-            await auth.signOut();
-            //use navigate instead of this
-            window.location.href = "/login"
-            console.log("User logged out successfully")
-        }catch(error){
-            console.error("Error logging out:",error.message)
-        }
+  // Fetch user details
+  const fetchUserData = async (userId) => {
+    try {
+      const docRef = doc(db, 'users', userId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setUserDetails(docSnap.data());
+        console.log('User details:', docSnap.data());
+      } else {
+        console.error('No such document!');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      toast.error(error.message);
     }
-    return (
-        
-         <div className="dashboard-container">
-            <Navbar/>
-                      {/* Header section */}
-          <header className="dashboard-header">
-          <div className="greeting-text">
-            Hello {userDetails?.fullname || "Student"}, Let's Check Out Your Progress!
-        </div>
-            <img className="header-image" src="https://i.imgur.com/oT4DJyC.jpeg" alt="Header Background" />
-            <div className="profile-section">
-              <img className="profile-icon" src="https://i.imgur.com/JLrgvNT.jpeg" alt="Student Profile" />
-             
-              <button className="profile-btn" style={{width: 150, height: 31, background: 'linear-gradient(180deg, #0570B2 0%, #0745A3 100%)', fontFamily:'Inter', fontWeight:'600', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}>
-              <img src="https://i.imgur.com/8fmLxfo.png" alt="Icon" className="button-icon" />
-              Export Data</button>
-            </div>
-            <img className="webpage-icon" src="https://i.imgur.com/uYSZpVM.png" alt="Webpage Icon" />
-          </header>
-    
-          <div className="content-section">
-              {/* Cards Section */}
-              <div className="cards-container">
+  };
 
-                  {/* Long Card */}
-        <div className="long-card">
-            <h1 className='subhead'>Today</h1>
-            <div className="stats-container">
-                <div className="stat-row">
-                    <div className="stat-item">
-                        <p className="stat-text">Total Study Hours</p>
-                    </div>
-                    <p className="highlighted-number">08h</p>
-                </div>
+  // Fetch completed pomodoros
+  const fetchCompletedPomodoros = async (userId) => {
+    try {
+      const userDocRef = doc(db, 'users', userId);
+      const userDocSnap = await getDoc(userDocRef);
 
-                <div className="stat-row">
-                    <div className="stat-item">
-                        <p className="stat-text">Total Tasks</p>
-                    </div>
-                    <p className="highlighted-number">06</p>
-                </div>
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        console.log('Fetched user data:', userData);
+        setCompletedPomodoros(userData.completedPomodoros || 0);
+      } else {
+        console.error('No such document!');
+      }
+    } catch (error) {
+      console.error('Error fetching pomodoro data:', error);
+    }
+  };
 
-                <div className="stat-row">
-                    <div className="stat-item">
-                        <p className="stat-text">Total Breaks</p>
-                    </div>
-                    <p className="highlighted-number">02h</p>
-                </div>
+  const completedSessions = completedPomodoros !== null
+    ? Math.floor(completedPomodoros / 2)
+    : 0;
+  // Use `onAuthStateChanged` to get the logged-in user's ID
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        const userId = user.uid;
+        console.log('Logged in user ID:', userId);
 
-                <div className="stat-row">
-                    <div className="stat-item">
-                        <p className="stat-text">Completed Tasks</p>
-                    </div>
-                    <p className="highlighted-number">04</p>
-                </div>
-            </div>
-        </div>
-                  
+        // Fetch data based on the user ID
+        fetchUserData(userId);
+        fetchCompletedPomodoros(userId);
+      } else {
+        console.error('User is not logged in!');
+      }
+    });
 
-                <div className="small-cards-container">
-                <div className="small-cards">
-                      <div className="small-card">
-                          <img src="https://i.imgur.com/8fmLxfo.png" alt="Icon" className="card-icon" />
-                          <p className="card-text">Total To-do <br></br>List Items</p>
-                          <p className="number">26</p>
-                      </div>
+    // Cleanup subscription
+    return () => unsubscribe();
+  }, []);
 
-                      <div className="small-card">
-                          <img src="https://i.imgur.com/8fmLxfo.png" alt="Icon" className="card-icon" />
-                          <p className="card-text">Total Awards</p>
-                          <p className="number">02</p>
-                      </div>
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      toast.success('Logged out successfully');
+      window.location.href = '/';
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const sidePanelStyle = {
+    position: 'fixed', // Fixes the panel position
+    left: -10,
+    top: '300px',
+        }
 
-                      <div className="small-card">
-                          <img src="https://i.imgur.com/8fmLxfo.png" alt="Icon" className="card-icon" />
-                          <p className="card-text">Total Study <br></br>Hours</p>
-                          <p className="number">80h</p>
-                      </div>
 
-                      <div className="small-card">
-                          <img src="https://i.imgur.com/8fmLxfo.png" alt="Icon" className="card-icon" />
-                          <p className="card-text">Notifications</p>
-                          <p className="number">6</p>
-                      </div>
-                  </div>
-                </div>
-                  {/* Small Cards */}
-                  
-                 
+  return (
+    <div className="min-h-screen bg-white">
+      <div style={sidePanelStyle}>
+        <SidePanel/>
+      </div>
+      <StDashHeader userDetails={userDetails}/>
+      <div className='p-40'>
+      <div className="flex justify-between items-center mb-8">
+       </div>
 
-              </div>
-              <div className='chart-container'>
-              <DailyStudyTimeDistribution/>
-              <StudyHoursOverviewChart/>
+      {/* Profile Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  {/* Personal Details Section - Left Column */}
+  <DashboardCard title="Personal Details">
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <p className="text-black">Name</p>
+        <p className="font-medium">{userDetails?.name}</p>
+      </div>
+      <div>
+        <p className="text-black">Email</p>
+        <p className="font-medium">{userDetails?.email}</p>
+      </div>
+      <div>
+      <p className="text-black">Student ID</p>
+      <p className="font-medium">{userDetails?.studentId}</p>
+      </div>
+      
+    </div>
+  </DashboardCard>
 
-              </div>
-          </div>
-        </div>
-        
-    
-        
-          
-      );
-    };
+  {/* Stats Grid - Right Column */}
+<div className="flex gap-6">
+  {/* Task Progress Card */}
+  <DashboardCard title="Task Progress" className="flex-1">
+    <div className="flex items-center gap-4">
+      <div className="p-3 bg-green-100 rounded-full">
+        <CheckCircle className="text-green-600" size={24} />
+      </div>
+      <div>
+        <p className="text-2xl font-bold text-black">{mockData.tasks.completed}/{mockData.tasks.total}</p>
+        <p className="text-black">Tasks Completed</p>
+      </div>
+    </div>
+  </DashboardCard>
 
-export default StudentDashboard
+  {/* Pomodoro Sessions Card */}
+  <DashboardCard title="Pomodoro Sessions" className="flex-1">
+    <div className="flex items-center gap-4">
+      <div className="p-3 bg-blue-100 rounded-full">
+        <Clock className="text-blue-600" size={24} />
+      </div>
+      <div>
+        <p className="text-2xl font-bold text-black">
+          {completedPomodoros !== null ? completedSessions : 'Loading...'}
+        </p>
+        <p className="text-black">Total Completed Pomodoros</p>
+      </div>
+    </div>
+  </DashboardCard>
+</div>
+
+</div>
+
+{/* Weekly Progress Chart */}
+<DashboardCard className='mt-15'>
+
+  <EngagementChart userId={userId}/>
+</DashboardCard>
+
+<div className='mt-20'>
+<h3 className="text-lg font-semibold mb-4 text-gray-800">
+        We noticed you are not focused on studying in these times... 🧐
+      </h3>
+<AbsentTimesCard userId={userId} />
+</div>
+
+      </div>
+    </div>
+  );
+};
+
+export default StudentDashboard;

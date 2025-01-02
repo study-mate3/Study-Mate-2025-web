@@ -61,13 +61,13 @@ const Features = () => {
         {featuresData.map((feature, index) => (
           <div key={index} className="text-center">
             {/* Image Placeholder */}
-            <img src={feature.image} alt={feature.title} className="w-32 mx-auto mb-4" />
+            <img src={feature.image} alt={feature.title} className="w-20 mx-auto mb-4" />
 
             {/* Feature Title */}
-            <h3 className="font-bold text-[24px] mb-2">{feature.title}</h3>
+            <h3 className="font-bold text-[22px] mb-2">{feature.title}</h3>
 
             {/* Feature Description */}
-            <p className="text-gray-600 text-[16px]">{feature.description}</p>
+            <p className="text-gray-600 text-[14px]">{feature.description}</p>
           </div>
         ))}
       </div>

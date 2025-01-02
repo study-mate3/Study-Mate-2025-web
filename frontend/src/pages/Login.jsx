@@ -1,116 +1,113 @@
-import React ,{useState} from 'react';
-import { auth,db} from '../components/firebase';
-import logo2 from '../assets/images/HomePageIcons/logo2.png'
-import googleIcon from '../assets/images/LoginPageIcons/google_img.png'
-import {Link} from 'react-router-dom'
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import {Navigate, useNavigate} from 'react-router-dom'
-import { doc,getDoc} from 'firebase/firestore';
+// src/pages/Login.jsx
+import React, { useState } from "react";
+import { auth, db } from "../firebase/firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
+import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
+import Alert from "../components/Alert";
 
 
 const Login = () => {
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const navigate= useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
-  const handleSubmit = async (e)=>{
+
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const userCredentials = await signInWithEmailAndPassword(auth,email,password);
-      const user = userCredentials.user;
-
-      //check in parents collection
-      const parentDocRef=doc(db,'Parents',user.uid);
-      const parentDoc=await getDoc(parentDocRef);
-
-      if(parentDoc.exists()){
-        navigate('/parent-dashboard')
-      }
-      else{
-        //check in students collection
-        const studentDocRef=doc(db,'Students',user.uid);
-        const studentDoc=await getDoc(studentDocRef);
-
-        if(studentDoc.exists()){
-          navigate('/student-dashboard');
-        }else {
-          console.log("No such user document in both collections!");
+      // Sign in the user with email and password
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("User logged in successfully:", userCredential.user);
+      setAlertMessage("User logged in successfully!");
+      setShowAlert(true);
+  
+      // Get user data from Firestore based on the logged-in user
+      const userDocRef = doc(db, "users", userCredential.user.uid);
+      const userDoc = await getDoc(userDocRef);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        
+        // Check role and navigate accordingly
+        if (userData.role === "student") {
+          navigate('/timer'); // Navigate to the timer page for students
+        } else if (userData.role === "parent") {
+          navigate('/parent-dashboard'); // Navigate to parent's dashboard with the studentId
         }
+      } else {
+        console.error("No user document found!");
+        toast.error("User data not found in Firestore.");
+        setAlertMessage("No user document found!");
+        setShowAlert(true);
+    
       }
-      console.log("user logged in successfully")
-      //Replace this with Navigate
-      Navigate("/Home")
-
-      //Add login alert
-      
     } catch (error) {
-      console.log(error.message)
+      console.error("Error logging in:", error);
+      toast.error(`Error: ${error.message}`);
+      setAlertMessage(`Error: ${error.message}`);
+      setShowAlert(true);
+  
     }
-  }
+  };
+  
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="bg-white rounded-lg pl-8 pr-8 pb-8 w-full max-w-md">
-        
-        <div className="flex justify-center">
-            <img src={logo2} alt="" className="w-[160px]"/>
-        </div>
-        <h2 className="text-2xl font-bold text-center mb-8">
-          Log in to your Account
-        </h2>
-        
-        {/* Google Login Button */}
-        <button className="flex items-center justify-center w-full bg-gray-100 text-semibold
-        py-2 px-4 shadow-custom-dark rounded-lg mb-8">
-          <img src={googleIcon} alt="" className="w-8 mr-2" />
-          Continue with Google
-        </button>
-        
-        <form onSubmit={handleSubmit}>
-          {/* User Email Input */}
-          <label className="block text-gray-700 text-sm font-bold mb-2">User Email</label>
-          <input 
-            className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-4" 
-            type="email" 
-            placeholder="Enter Your Email" 
+<div className="flex justify-center items-center min-h-screen bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center">
+{showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div className="flex justify-center items-center">
+      <img src={logo2} alt="Logo" className="w-[140px] h-auto pb-4" />
+      </div>
+
+      <h2 className="text-2xl font-bold mb-8 flex justify-center items-center">Log in to your Account</h2>
+        <form onSubmit={handleLogin} className="space-y-4">
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="email" className="font-semibold text-gray-700">Email</label>
+          <input
+            type="email"
             value={email}
-            onChange={(e)=> setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter Your Email"
+            required
+            className="w-full p-2 bg-[#bfd8fd] rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
           />
-        
-          {/* Password Input */}
-          <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-          <input 
-            className="w-full bg-blue-100 text-gray-700 border border-gray-300 rounded-lg py-2 px-4 mb-1" 
-            type="password" 
-            placeholder="Enter Your Password" 
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <label htmlFor="password" className="font-semibold text-gray-700">Password</label>
+          <input
+            type="password"
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter Your Password"
+            required
+            className="w-full p-2 bg-[#bfd8fd] rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
           />
-        
-          {/* Error Message */}
-          <p className="text-red-500 text-sm italic text-right hidden">
-            *Incorrect Username or Password
-          </p>
-        
-          {/* Log In Button */}
-          <button type='submit' className="w-full bg-blue-700 text-white mt-6 py-2 px-4 rounded-lg mb-4 
-          hover:bg-blue-800">
-            Log in
-          </button>
-          </form>
+        </div>
 
-          {/*Add Another form for below buttons */}
+        <button
+          type="submit"
+          className="w-full  text-white font-semibold text-[16px] h-[30px] bg-gradient-to-b from-[#0570b2] to-[#0745a2] rounded-[100px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
+        >
+          Log In
+        </button>
+      </form>
 
-
-          {/* Links */}
-          <div className="flex justify-between text-sm text-blue-500">
-            <p> <Link to='/register' className="hover:underline">Create a new account</Link> </p>
-            <a href="#" className="hover:underline">Forgot Password</a>
-          </div>
-        
+        <p className="mt-4 text-center">
+          Don’t have an account?{" "}
+          <Link to="/role" className="text-blue-500 hover:underline">
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

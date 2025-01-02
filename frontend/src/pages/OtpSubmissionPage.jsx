@@ -1,4 +1,3 @@
-//Otp Submission page
 import React, { useState } from 'react';
 import otpImg from '../assets/images/LoginPageIcons/otp.png';
 import { Link } from 'react-router-dom';
@@ -19,12 +18,12 @@ const OtpSubmissionPage = () => {
     <div className="flex flex-col items-center justify-between ">
       {/* Header and OTP form */}
       <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row justify-center items-center min-h-screen">
-
+        
         {/* Left Phone Image with Tilt */}
         <div className="w-full md:w-1/2 flex justify-center ">
-          <img
-            src={otpImg}
-            alt="OTP Verification Illustration"
+          <img 
+            src={otpImg} 
+            alt="OTP Verification Illustration" 
             className="w-[450px] transform rotate-[-18deg]"
           />
         </div>
@@ -34,7 +33,7 @@ const OtpSubmissionPage = () => {
           <h2 className="text-2xl font-bold text-center text-blue-800 mb-5">
             Please enter the code sent to your email to continue
           </h2>
-
+          
           {/* OTP Input Fields */}
           <div className="flex justify-center space-x-6 my-5">
             {otp.map((data, index) => (
@@ -59,7 +58,7 @@ const OtpSubmissionPage = () => {
 
           {/* Navigation Links */}
           <div className="flex space-x-4 text-blue-600 underline">
-            <Link to='/register'>Back to Create Account Page</Link>
+            <Link to='/role'>Back to Create Account Page</Link>
             <Link to='/login'>Back to Login Page</Link>
           </div>
         </div>
