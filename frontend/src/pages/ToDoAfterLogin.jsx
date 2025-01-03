@@ -115,6 +115,7 @@ TaskCard.propTypes = {
 };
 
 const ToDoListPage = () => {
+  const today = new Date().toISOString().split("T")[0];
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
     description: "",
@@ -124,7 +125,10 @@ const ToDoListPage = () => {
     priority: "low",
     completed: false,
   });
+
   const [editingTask, setEditingTask] = useState(null);
+  const [filter, setFilter] = useState("all");
+
 
 
   // Function to fetch tasks from Firestore
@@ -325,11 +329,23 @@ const ToDoListPage = () => {
       console.error("Error updating task: ", error);
     }
   };
-  
-  
-  
-  
-  
+
+  const getFilteredTasks = () => {
+    
+    
+    switch (filter) {
+      case "upcoming":
+        return tasks.filter(task => task.dueDate > today && !task.completed);
+      case "today":
+        return tasks.filter(task => task.dueDate === today && !task.completed);
+      case "completed":
+        return tasks.filter(task => task.completed);
+      case "important":
+        return tasks.filter(task => task.importance);
+      default:
+        return tasks; // Show all tasks
+    }
+  };
   
 
   // Handle adding new list option
@@ -350,18 +366,28 @@ const ToDoListPage = () => {
       <div className="w-[250px] bg-blue-200 rounded-[15px] flex flex-col space-y-3">
         <div className="w-full">
           <h2 className="text-lg font-semibold mt-2 ml-4">Tasks</h2>
-          <div className="w-full py-2 flex hover:bg-blue-500/80 hover:text-blue-950">
-          <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+          <div 
+           className="w-full py-2 flex hover:bg-blue-500/80 hover:text-blue-950"
+           onClick={() => setFilter("upcoming")}
+          >
+            <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
             <p className="font-semibold text-gray-600 ">Upcoming</p>
-            <p className="ml-auto mr-4 font-semibold">10</p>
+            <p className="ml-auto mr-4 font-semibold">
+              {tasks.filter(task => task.dueDate > today && !task.completed).length}
+            </p>
           </div>
-          <div className="w-full py-2 flex hover:bg-blue-500/80">
-          <CalendarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+          <div 
+           className="w-full py-2 flex hover:bg-blue-500/80"
+           onClick={() => setFilter("today")}
+          >
+            <CalendarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
             <p className="font-semibold text-gray-600">Today</p>
-            <p className="ml-auto mr-4 font-semibold">2</p>
+            <p className="ml-auto mr-4 font-semibold">
+              {tasks.filter(task => task.dueDate === today && !task.completed).length}
+            </p>
           </div>
           <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-          <CalendarDaysIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <CalendarDaysIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
             <p className="font-semibold text-gray-600">Calender</p>
           </div>
         </div>
@@ -385,12 +411,18 @@ const ToDoListPage = () => {
         </div>
 
         <div className="w-full">
-          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950">
-          <StarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+          <div 
+           className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950"
+           onClick={() => setFilter("important")}
+          >
+            <StarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
             <p className="font-semibold text-gray-600 ">Important Tasks</p>
           </div>
-          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-          <CheckCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+          <div 
+           className="w-full py-2 flex space-x-2 hover:bg-blue-500/80"
+           onClick={() => setFilter("completed")}
+          >
+            <CheckCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
             <p className="font-semibold text-gray-600">Completed Tasks</p>
           </div>
         </div>
@@ -398,12 +430,15 @@ const ToDoListPage = () => {
 
       {/* 3rd Column: Task Cards (Scrollable) */}
       <div className="w-[500px] bg-gray-50 p-4 overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4">Your Tasks</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        {filter === "all" ? "All Tasks" : `Showing: ${filter.charAt(0).toUpperCase() + filter.slice(1)} Tasks`}
+      </h2>
+
         <div className="space-y-4">
-          {tasks.length === 0 ? (
-            <p>No tasks available. Add some tasks to see them here!</p>
+          {getFilteredTasks().length === 0 ? (
+            <p>No tasks available for this category.</p>
           ) : (
-            tasks.map((task, index) => (
+            getFilteredTasks().map((task, index) => (
               <TaskCard
                 key={task.id}
                 task={task}
@@ -416,6 +451,7 @@ const ToDoListPage = () => {
             ))
           )}
         </div>
+
       </div>
 
       {/* 4th Column: Form to Set Tasks */}
