@@ -1,102 +1,17 @@
+
 import { useState, useEffect } from "react";
 import { Play, Pause, RotateCcw, Settings } from "lucide-react";
+
 
 import SidePanel from "../components/SidePanel";
 
 
 const PomodoroTimer = () => {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // Default 25 minutes
-  const [isRunning, setIsRunning] = useState(false);
-  const [currentMode, setCurrentMode] = useState('work');
-  const [settings, setSettings] = useState({
-    workTime: 25,
-    shortBreak: 5,
-    longBreak: 15,
-  });
-  const [showSettings, setShowSettings] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-
   useEffect(() => {
-    let timer;
-    if (isRunning && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      setShowAlert(true);
-      handleModeComplete();
-      // Hide alert after 3 seconds
-      setTimeout(() => setShowAlert(false), 3000);
-    }
-    return () => clearInterval(timer);
-  }, [isRunning, timeLeft]);
-
-  const handleModeComplete = () => {
-    setCurrentMode('work');
-    setTimeLeft(settings.workTime * 60);
-    setIsRunning(false);
-  };
-
-  const toggleTimer = () => {
-    setIsRunning(!isRunning);
-  };
-
-  const resetTimer = () => {
-    setIsRunning(false);
-    setTimeLeft(settings.workTime * 60);
-    setCurrentMode('work');
-  };
-
-  const updateSettings = (key, value) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: parseInt(value) || 0
-    }));
-    if (currentMode === key.replace('Time', '')) {
-      setTimeLeft(value * 60);
-    }
-  };
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
-
-  const switchMode = (mode) => {
-    setCurrentMode(mode);
-    let newTime;
-    switch (mode) {
-      case 'work':
-        newTime = settings.workTime * 60;
-        break;
-      case 'shortBreak':
-        newTime = settings.shortBreak * 60;
-        break;
-      case 'longBreak':
-        newTime = settings.longBreak * 60;
-        break;
-      default:
-        newTime = settings.workTime * 60;
-    }
-    setTimeLeft(newTime);
-    setIsRunning(false);
-  };
-
-  const getTimerColor = () => {
-    switch (currentMode) {
-      case 'work':
-        return 'text-red-600';
-      case 'shortBreak':
-        return 'text-green-600';
-      case 'longBreak':
-        return 'text-blue-600';
-      default:
-        return 'text-gray-900';
-    }
-  };
-
+    window.scrollTo(0, 0);
+  }, []);
   return (
+
     <div className="flex items-center min-h-screen">
       <SidePanel />
       <div className="flex-grow bg-gray-100 flex items-center justify-center">
@@ -225,4 +140,5 @@ const PomodoroTimer = () => {
   );
 };
 
-export default PomodoroTimer;
+
+export default PomodoroTimer

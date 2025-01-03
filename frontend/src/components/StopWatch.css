@@ -1,0 +1,632 @@
+/* Background image for the entire page */
+.timerbody {
+    background-image: url("./background31.jpg");
+    background-size: cover;
+    background-position: center;
+    margin: 0; /* Remove default margin for better alignment */
+    padding: 0;
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    height: 100vh;
+
+}
+
+/* Styling for the header container */
+.header-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 90px;
+}
+
+/* Styling for the greeting box */
+/* .greeting-box {
+    display: flex;
+    width: 100%;
+    max-width: 300px; 
+    height: 43px;
+    background: rgba(10, 43, 61, 0.76);
+    border-radius: 20px;
+    margin: 20px 0;
+    padding: 0 10px;
+    box-sizing: border-box;
+    margin-left: 20px;
+} */
+
+.greeting-text {
+    color: white;
+    font-size: 32px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 550;
+    line-height: 40px;
+    flex: 1; /* Allow text to fill available space */
+    align-self: center; /* Center text vertically */
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: -100px;
+}
+
+/* Styling for the quote container */
+.quote-container {
+    text-align: right;
+    color: #082e68;
+    margin-top: -80px;
+    padding: 10px 10px;
+}
+
+.quote-start, .quote-end {
+    font-size: 20px;
+    font-family: 'Jacques Francois';
+    font-weight: 400;
+}
+
+.quote-text {
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 30px;
+}
+
+.quote-author {
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    margin-right: 50px;
+}
+
+/* Styling for the stopwatch container */
+.stopwatch-container {
+display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  height: 60vh;
+  margin: auto auto; /* Center horizontally */
+    gap: 20px; /* Space between the columns */
+    padding: 10px ; 
+    background: rgba(250, 247, 247, 0.226);
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(2, 24, 58, 0.42);
+    
+}
+
+.middle-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    
+}
+.StopWatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
+    width: 100%;
+    text-align: center; /* Ensure text is centered within its container */
+  
+}
+
+h3 {
+    font-size: 15px;
+    font-weight: bolder;
+    margin: 10px 0;
+    color: #0E3167;
+    font-family: 'Inter', sans-serif;
+}
+
+.btns {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: -60px;
+    width: 800px;
+    height: 40px;
+    background: rgba(253, 253, 253, 0.70);
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(13.74, 49.47, 103.06, 0.42);
+}
+
+.btns button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bolder;
+    color: #0E3167;
+    font-family: 'Inter', sans-serif;
+}
+
+.btns button img {
+    width: 25px;
+    height: 25px;
+}
+
+h5 {
+    font-size: 180px !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    margin-top: auto;
+    margin-bottom: auto;
+   /*  -webkit-text-stroke: 2px #ffffff; */
+    font-family: 'Kanit', sans-serif;
+    text-align: center;
+    width: 100%; /* Ensure the element spans the full width */
+    max-width: 100%; /* Prevent overflow */
+    letter-spacing: 8px;
+
+}
+
+.text-container {
+    display: flex;
+    align-items: center;
+    margin: auto auto;
+    margin-top: 30px;
+    justify-content: center;
+    text-align: center;
+    width: 600px;
+    height: 30px;
+    background: linear-gradient(180deg, #0570B2 0%, #0745A3 100%);
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.text-container img {
+    width: 65px;
+    height: 65px;
+    margin-top: -10px;
+}
+
+.reminder-text, .highlight-text {
+    color: white;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 35px;
+    text-align: center;
+}
+
+.highlight-text {
+    color: #BED8FF;
+    font-weight: 700;
+}
+
+.topics {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+ /*    align-items: center; /* Center the items horizontally */
+   /* justify-content: center;  */
+    gap: 12px;
+    cursor: pointer;
+    padding: 0px;
+    padding-right: 30px;
+    text-align: center;
+}
+
+.controls-container{
+    display: flex;
+    align-items: center;
+    
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Adds a 20px gap between buttons */
+    justify-content: center; /* Optional: centers buttons in the container */
+}
+
+
+.pomodoro, .breaks, .lbreaks {
+    font-size: 18px;
+    text-align: center;
+    font-weight: 550;
+    color: #D9D9D9;
+    font-family: 'Inter', sans-serif;
+    width: 150px;
+    height: 32px;
+    background: #012862;
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px rgba(13.74, 49.47, 103.06, 0.42);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s; /* Smooth transition */
+    border: #ffffff5d solid 0.2px;
+
+}
+
+.pomodoro:hover, .pomodoro:active,
+.breaks:hover, .breaks:active,
+.lbreaks:hover, .lbreaks:active {
+    background: #D9D9D9;
+    color: #012862;
+}
+
+/* Media Queries for responsiveness */
+
+/* Small screens (mobile phones, 600px and below) */
+@media (max-width: 600px) {
+    .header-container {
+        text-align: center;
+        margin-top: 70px;
+    }
+
+    .greeting-box {
+        width: calc(100% - 20px);
+        margin: 0 auto; /* Center align */
+    }
+
+    .greeting-text {
+        font-size: 20px;
+        margin-left: 10px;
+    }
+
+    .quote-container {
+        margin-top: 20px;
+    }
+
+    .quote-start, .quote-end {
+        font-size: 48px;
+    }
+
+    .quote-text {
+        font-size: 16px;
+    }
+
+    .quote-author {
+        font-size: 14px;
+        margin-right: 20px;
+    }
+
+    .StopWatch {
+        padding: 0 10px;
+    }
+
+    
+    .btns {
+        flex-direction: row;
+        gap: 10px;
+    height: auto;
+    
+ }
+
+        
+
+    .btns button img {
+        width: 30px;
+        height: 30px;
+    }
+
+    h5 {
+        font-size: 80px;
+    }
+
+    .text-container {
+        width: auto;
+        height: auto;
+        flex-direction: column;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .text-container img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .reminder-text, .highlight-text {
+        font-size: 12px;
+    }
+
+    .topics {
+        flex-direction:row;
+        gap: 10px;
+    }
+
+    .pomodoro, .breaks, .lbreaks, .timer-option {
+        width: 100%;
+        font-size: 16px;
+        padding: 5px;
+        border: #ffffff solid 1px;
+    }
+}
+
+
+
+/* Medium screens (tablets, 601px to 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .header-container {
+        margin-left: 15px;
+    }
+
+    .greeting-box {
+        width: 80%;
+        margin-left: 80px;
+        height: auto;
+        margin-top: 50px;
+    }
+
+    .greeting-text {
+        font-size: 22px;
+        margin-left: 35px;
+    }
+
+    .quote-container {
+        position: absolute;
+     top: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
+    color: #012862;
+    font-size: 1.2em;
+    font-style: italic;
+    z-index: 10; /* Ensure it stays on top*/
+    }
+
+    .quote-start, .quote-end {
+        font-size: 56px;
+    }
+
+    .quote-text {
+        font-size: 17px;
+    }
+
+    .quote-author {
+        font-size: 15px;
+        margin-right: 30px;
+    }
+
+    .StopWatch {
+        padding: 0 20px;
+    }
+
+    .btns {
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .btns button img {
+        width: 30px;
+        height: 30px;
+    }
+
+    h5 {
+        font-size: 150px !important;
+        font-weight: 900 !important;
+        color: #ffffff !important;
+    }
+
+    .text-container {
+        width: auto;
+        height: 35px;
+        flex-direction: row;
+        padding: 15px;
+    }
+
+    .text-container img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .reminder-text, .highlight-text {
+        font-size: 13px;
+    }
+
+    .topics {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .pomodoro, .breaks, .lbreaks, .timer-option {
+        width: 130px;
+        font-size: 17px;
+    }
+}
+
+.alert-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center;
+
+}
+
+.alert-box p {
+    background: #fff;
+    padding: 10px;
+    padding-left: 60px;
+    padding-right: 60px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    display: flex; /* Add this to enable flexbox */
+    flex-direction: column; /* Arrange children in a column */
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    font-size: larger;
+}
+
+.alert-box button {
+    
+    background: linear-gradient(180deg, #0570B2 0%, #135ece 100%);
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    color: white;
+    display: flex; /* Ensure flexbox is enabled */
+    align-items: center; /* Center text vertically */
+    justify-content: center; /* Center text horizontally */
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: medium;
+    
+}
+
+
+.alert-box button:hover {
+    background: #bbd8f7;
+    color: black;
+}
+
+.inline-image {
+    width: 100px; /* Adjust size as needed */
+    height: 100px; /* Adjust size as needed */
+
+}
+.alert-box.active {
+    display: block;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    backdrop-filter: blur(5px); /* Apply blur effect */
+    z-index: 999; /* Ensure it’s on top of other content */
+    display: none; /* Hide by default */
+}
+
+/* Show the overlay when the alert is active */
+.overlay.active {
+    display: block;
+}
+
+/* .alert-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    width: 90%; 
+    max-width: 600px; 
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+} */
+
+.alert-box p {
+    background: #fff;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem; /* Use rem units for better responsiveness */
+}
+
+.alert-box button {
+    background: linear-gradient(180deg, #0570B2 0%, #135ece 100%);
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 10px; /* Adjust margins for smaller screens */
+    font-size: 1rem; /* Use rem units for better responsiveness */
+}
+
+.alert-box button:hover {
+    background: #bbd8f7;
+    color: black;
+}
+
+.inline-image {
+    width: 80px; /* Adjust size for smaller screens */
+    height: 80px; /* Adjust size for smaller screens */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    display: none;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .alert-box {
+        width: 95%; /* Wider width on small screens */
+        padding: 15px; /* Adjust padding */
+    }
+
+    .alert-box button {
+        padding: 6px 15px; /* Smaller button padding */
+        font-size: 0.9rem; /* Smaller font size */
+    }
+
+    .inline-image {
+        width: 60px; /* Adjust image size */
+        height: 60px; /* Adjust image size */
+    }
+}
+
+@media (max-width: 480px) {
+    .alert-box {
+        width: 70%; /* Full width on very small screens */
+        max-width: none; /* Remove max-width restriction */
+        padding: 10px; /* Adjust padding */
+    }
+
+    .alert-box button {
+        padding: 5px 10px; /* Even smaller button padding */
+        font-size: 0.8rem; /* Smaller font size */
+    }
+
+    .inline-image {
+        width: 50px; /* Adjust image size */
+        height: 50px; /* Adjust image size */
+    }
+}

@@ -5,6 +5,10 @@ import { toast } from 'react-toastify';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LogOut, CheckCircle, Clock, Target, TrendingUp } from 'lucide-react';
 import { signOut } from 'firebase/auth';
+import StDashHeader from '../components/Header/StudentDheader';
+import AbsentTimesCard from '../components/AbsentTimesCard';
+import EngagementChart from '../components/EngagementChart';
+import SidePanel from '../components/SidePanel';
 
 const mockData = {
   user: {
@@ -17,161 +21,193 @@ const mockData = {
     inProgress: 8,
     total: 35
   },
-  pomodoros: {
-    totalSessions: 45,
-    totalHours: 90,
-    weeklyData: [
-      { day: 'Mon', sessions: 4 },
-      { day: 'Tue', sessions: 6 },
-      { day: 'Wed', sessions: 3 },
-      { day: 'Thu', sessions: 7 },
-      { day: 'Fri', sessions: 5 },
-      { day: 'Sat', sessions: 2 },
-      { day: 'Sun', sessions: 4 }
-    ]
-  }
+  
 };
 
-const DashboardCard = ({ title, children, className = '' }) => (
-  <div className={`bg-white rounded-lg p-6 shadow-lg ${className}`}>
-    <h3 className="text-lg font-semibold mb-4 text-gray-800">{title}</h3>
+const DashboardCard = ({ userId, title, children, className = '' }) => (
+  <div
+    className={`p-6 ${className}`}
+    style={{
+      background: 'white',
+      boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+      borderRadius: 10,
+      border: '0.02px solid rgba(154, 157, 161, 0.38)',
+    }}
+  >
+    <h3 className="text-lg font-semibold mb-4 text-black">{title}</h3>
     {children}
   </div>
 );
 
 const StudentDashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
+  const [completedPomodoros, setCompletedPomodoros] = useState(null);
+   const [userId, setUserId] = useState(null);
 
-  const fetchUserData = async () => {
+   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserId(user.uid); // Set the user ID when authenticated
+      } else {
+        console.error("User is not logged in!");
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch user details
+  const fetchUserData = async (userId) => {
     try {
-      auth.onAuthStateChanged(async(user) => {
-        console.log(user);
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserDetails(docSnap.data());
-          console.log(docSnap.data())
-        }else{
-          console.log("User is not logged in");
-        }
-      })
+      const docRef = doc(db, 'users', userId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setUserDetails(docSnap.data());
+        console.log('User details:', docSnap.data());
+      } else {
+        console.error('No such document!');
+      }
     } catch (error) {
-      toast.error(error.message);
-    }
-  }
-
-  useEffect(() => {
-    fetchUserData();
-  },[]);
-
-  const [isLogoutHovered, setIsLogoutHovered] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      window.location.href = '/login';
-      toast.success('Logged out successfully');
-    } catch (error) {
+      console.error('Error fetching user data:', error);
       toast.error(error.message);
     }
   };
 
+  // Fetch completed pomodoros
+  const fetchCompletedPomodoros = async (userId) => {
+    try {
+      const userDocRef = doc(db, 'users', userId);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        console.log('Fetched user data:', userData);
+        setCompletedPomodoros(userData.completedPomodoros || 0);
+      } else {
+        console.error('No such document!');
+      }
+    } catch (error) {
+      console.error('Error fetching pomodoro data:', error);
+    }
+  };
+
+  const completedSessions = completedPomodoros !== null
+    ? Math.floor(completedPomodoros / 2)
+    : 0;
+  // Use `onAuthStateChanged` to get the logged-in user's ID
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        const userId = user.uid;
+        console.log('Logged in user ID:', userId);
+
+        // Fetch data based on the user ID
+        fetchUserData(userId);
+        fetchCompletedPomodoros(userId);
+      } else {
+        console.error('User is not logged in!');
+      }
+    });
+
+    // Cleanup subscription
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      toast.success('Logged out successfully');
+      window.location.href = '/';
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const sidePanelStyle = {
+    position: 'fixed', // Fixes the panel position
+    left: -10,
+    top: '300px',
+        }
+
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Student Dashboard</h1>
-          <p className="text-gray-600 mt-2">Welcome back, {userDetails?.name}</p>
-        </div>
-        <button
-          onClick={handleLogout}
-          onMouseEnter={() => setIsLogoutHovered(true)}
-          onMouseLeave={() => setIsLogoutHovered(false)}
-          className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-        >
-          <LogOut size={20} />
-          {isLogoutHovered && "Logout"}
-        </button>
+    <div className="min-h-screen bg-white">
+      <div style={sidePanelStyle}>
+        <SidePanel/>
       </div>
+      <StDashHeader userDetails={userDetails}/>
+      <div className='p-40'>
+      <div className="flex justify-between items-center mb-8">
+       </div>
 
       {/* Profile Card */}
-      <DashboardCard title="Personal Details" className="mb-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-600">Name</p>
-            <p className="font-medium">{userDetails?.name}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">Email</p>
-            <p className="font-medium">{userDetails?.email}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">Student ID</p>
-            <p className="font-medium">{mockData.user.studentId}</p>
-          </div>
-        </div>
-      </DashboardCard>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <DashboardCard title="Task Progress">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-green-100 rounded-full">
-              <CheckCircle className="text-green-600" size={24} />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-800">{mockData.tasks.completed}/{mockData.tasks.total}</p>
-              <p className="text-gray-600">Tasks Completed</p>
-            </div>
-          </div>
-        </DashboardCard>
-
-        <DashboardCard title="Pomodoro Sessions">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Clock className="text-blue-600" size={24} />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-800">{mockData.pomodoros.totalSessions}</p>
-              <p className="text-gray-600">Total Sessions</p>
-            </div>
-          </div>
-        </DashboardCard>
-
-        <DashboardCard title="Study Hours">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-100 rounded-full">
-              <Target className="text-purple-600" size={24} />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-800">{mockData.pomodoros.totalHours}</p>
-              <p className="text-gray-600">Total Hours</p>
-            </div>
-          </div>
-        </DashboardCard>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  {/* Personal Details Section - Left Column */}
+  <DashboardCard title="Personal Details">
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <p className="text-black">Name</p>
+        <p className="font-medium">{userDetails?.name}</p>
       </div>
+      <div>
+        <p className="text-black">Email</p>
+        <p className="font-medium">{userDetails?.email}</p>
+      </div>
+      <div>
+      <p className="text-black">Student ID</p>
+      <p className="font-medium">{userDetails?.studentId}</p>
+      </div>
+      
+    </div>
+  </DashboardCard>
 
-      {/* Weekly Progress Chart */}
-      <DashboardCard title="Weekly Pomodoro Sessions">
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={mockData.pomodoros.weeklyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="sessions" 
-                stroke="#8884d8" 
-                strokeWidth={2}
-                dot={{ fill: '#8884d8' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </DashboardCard>
+  {/* Stats Grid - Right Column */}
+<div className="flex gap-6">
+  {/* Task Progress Card */}
+  <DashboardCard title="Task Progress" className="flex-1">
+    <div className="flex items-center gap-4">
+      <div className="p-3 bg-green-100 rounded-full">
+        <CheckCircle className="text-green-600" size={24} />
+      </div>
+      <div>
+        <p className="text-2xl font-bold text-black">{mockData.tasks.completed}/{mockData.tasks.total}</p>
+        <p className="text-black">Tasks Completed</p>
+      </div>
+    </div>
+  </DashboardCard>
+
+  {/* Pomodoro Sessions Card */}
+  <DashboardCard title="Pomodoro Sessions" className="flex-1">
+    <div className="flex items-center gap-4">
+      <div className="p-3 bg-blue-100 rounded-full">
+        <Clock className="text-blue-600" size={24} />
+      </div>
+      <div>
+        <p className="text-2xl font-bold text-black">
+          {completedPomodoros !== null ? completedSessions : 'Loading...'}
+        </p>
+        <p className="text-black">Total Completed Pomodoros</p>
+      </div>
+    </div>
+  </DashboardCard>
+</div>
+
+</div>
+
+{/* Weekly Progress Chart */}
+<DashboardCard className='mt-15'>
+
+  <EngagementChart userId={userId}/>
+</DashboardCard>
+
+<div className='mt-20'>
+<h3 className="text-lg font-semibold mb-4 text-gray-800">
+        We noticed you are not focused on studying in these times... 🧐
+      </h3>
+<AbsentTimesCard userId={userId} />
+</div>
+
+      </div>
     </div>
   );
 };
