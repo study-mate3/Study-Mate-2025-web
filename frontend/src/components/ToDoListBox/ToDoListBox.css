@@ -1,0 +1,281 @@
+/* ToDoListBox.css */
+
+.todo-list-box {
+    position: fixed;
+    margin-top: 80px;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    width: 80%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 15px;
+    z-index: 1000;
+    padding: 20px;
+    box-shadow: '0px 6px 4px rgba(0, 0, 0, 0.25)';
+    border: '4px #012862 solid';
+    
+}
+
+.header {
+    display: flex;
+    margin-top: 10px;
+    font-size: 18px;
+    color: black;
+    font-family: 'Inter';
+    font-weight: bold;
+}
+
+.header-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+    margin-top: -4.5px;
+    
+}
+
+.heading {
+    font-size: 20px;
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding-left: 450px;
+    font-family: 'Inter';
+
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    
+}
+
+.input-container input {
+    flex: 1;
+    margin-top: 10px;
+    padding: 8px;
+    border: 2px #649EF3 solid;
+    border-radius: 7.5px;
+    background-color: rgba(100.37, 157.54, 243.31, 0.44);
+    height: 25px;
+    font-family: "Inter"; 
+    font-weight: 500;
+}
+
+.bttns{
+    margin-top: 10px;
+    align-items: left;
+    text-align: right;
+}
+
+.add-btn {
+    background: linear-gradient(180deg, #0570B2 0%, #0745A3 100%);
+    color: white;
+    border: none;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    padding: 10px 15px;
+    margin-left: 10px;
+    border-radius: 7.5px;
+    cursor: pointer;
+    font-family: "Inter"; 
+    font-weight: 800;
+}
+
+.cancel-btn {
+    background-color: linear-gradient(180deg, #D0D8DD 0%, #BED8FF 100%);
+    color: #012862;
+    border: none;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+    padding: 10px 15px;
+    margin-left: 10px;
+    border-radius: 7.5px;
+    cursor: pointer;
+    font-family: "Inter"; 
+    font-weight: 800;
+}
+
+
+.tasks-container {
+    margin-top: 10px;
+
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-family: "Inter"; 
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.task-item input {
+    margin-right: 10px;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+.text-container2 {
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
+    justify-content: center; /* Align items to the right */
+    text-align: center;
+    width:auto;
+    height: 35px;
+    background:#012862;
+    border-radius: 10px;
+    margin-top: 120px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    margin-bottom: 20px;
+}
+.text-container2 img {
+    width: 65px;
+    height: 65px;
+    margin-top: -10px;
+}
+
+/* Small screens (600px and below) */
+@media (max-width: 600px) {
+    .todo-list-box {
+        width: 90%;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -10%);
+        padding: 15px;
+        box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    .header {
+        font-size: 16px;
+        padding-left: 10px;
+    }
+
+    .header-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .heading {
+        font-size: 18px;
+    }
+
+    .close-btn {
+        font-size: 12px;
+        padding-left: 10px;
+    }
+
+    .input-container {
+        flex-direction: column;
+    }
+
+    .input-container input {
+        margin-top: 5px;
+        padding: 6px;
+        height: 20px;
+    }
+
+    .bttns {
+        text-align: center;
+    }
+
+    .add-btn, .cancel-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .tasks-container {
+        margin-top: 5px;
+    }
+
+    .task-item {
+        font-size: 18px;
+    }
+
+    .text-container2 {
+        margin-top: 60px;
+        height: 30px;
+    }
+
+    .text-container2 img {
+        width: 50px;
+        height: 50px;
+        margin-top: -5px;
+    }
+}
+
+/* Medium screens (601px to 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .todo-list-box {
+        width: 85%;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, -15%);
+        padding: 18px;
+        box-shadow: 0px 5px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    .header {
+        font-size: 17px;
+        padding-left: 20px;
+    }
+
+    .header-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .heading {
+        font-size: 19px;
+    }
+
+    .close-btn {
+        font-size: 13px;
+        padding-left: 20px;
+    }
+
+    .input-container {
+        flex-direction: row;
+    }
+
+    .input-container input {
+        margin-top: 8px;
+        padding: 7px;
+        height: 22px;
+    }
+
+    .bttns {
+        text-align: right;
+    }
+
+    .add-btn, .cancel-btn {
+        padding: 9px 13px;
+        font-size: 15px;
+    }
+
+    .tasks-container {
+        margin-top: 8px;
+    }
+
+    .task-item {
+        font-size: 19px;
+    }
+
+    .text-container2 {
+        margin-top: 100px;
+        height: 32px;
+    }
+
+    .text-container2 img {
+        width: 60px;
+        height: 60px;
+        margin-top: -7px;
+    }
+}

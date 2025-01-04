@@ -58,7 +58,7 @@ const OtpSubmissionPage = () => {
 
           {/* Navigation Links */}
           <div className="flex space-x-4 text-blue-600 underline">
-            <Link to='/register'>Back to Create Account Page</Link>
+            <Link to='/role'>Back to Create Account Page</Link>
             <Link to='/login'>Back to Login Page</Link>
           </div>
         </div>
