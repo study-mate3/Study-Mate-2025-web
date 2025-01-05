@@ -77,7 +77,6 @@ const Header = ({ onScrollToSection }) => {
               Set Your Study Plan
             </span>
           </button>
-         
         </div>
 
         {/* Navigation Links */}

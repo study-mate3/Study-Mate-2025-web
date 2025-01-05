@@ -1,8 +1,5 @@
-
-// src/pages/SignUp.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { auth, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { collection, getDocs, query, where, doc, setDoc,getDoc } from "firebase/firestore";
@@ -70,8 +67,6 @@ const SignUp = () => {
     }
   });
 
-  const navigate = useNavigate();
-
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
@@ -97,9 +92,10 @@ const SignUp = () => {
         createdAt: new Date(),
       };
 
+      // Save user data in Firestore
+      await setDoc(doc(db, "users", user.uid), userData);
 
-      console.log("User registered successfully!");
-
+      // Show success message and navigate to login page
       toast.success("User registered successfully!", {
         position: "top-right",
         autoClose: 3000,
@@ -108,10 +104,8 @@ const SignUp = () => {
         pauseOnHover: true,
         draggable: true,
       });
-
-
-      navigate("/login");
-
+      setAlertMessage("User registered successfully!");
+      setShowAlert(true);
 
       navigate("/login");
     } catch (error) {
@@ -123,9 +117,10 @@ const SignUp = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-
-      }); 
-
+      }
+    );
+    setAlertMessage(`Error: ${error.message}`);
+    setShowAlert(true);
     }
     
   };
