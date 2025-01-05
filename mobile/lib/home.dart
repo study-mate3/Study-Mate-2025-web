@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'aboutsc1.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -62,7 +63,10 @@ class Home extends StatelessWidget {
             Container(
               child: ElevatedButton(
                 onPressed: () {
-                  //login function
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Aboutsc1()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0570B2),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/createparent.dart';
+import 'package:mobile/createstudent.dart';
 
 class Roleselection extends StatefulWidget {
   const Roleselection({super.key});
@@ -8,6 +10,7 @@ class Roleselection extends StatefulWidget {
 }
 
 class _RoleselectionState extends State<Roleselection> {
+  String? _selectedRole;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,9 +42,15 @@ class _RoleselectionState extends State<Roleselection> {
                     children: [
                       Container(
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _selectedRole = 'Parent';
+                              });
+                            },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue[100],
+                              backgroundColor: _selectedRole == 'Parent'
+                                  ? Colors.blue
+                                  : Colors.blue[100],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -76,9 +85,15 @@ class _RoleselectionState extends State<Roleselection> {
                     children: [
                       Container(
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                _selectedRole = 'Student';
+                              });
+                            },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue[100],
+                              backgroundColor: _selectedRole == 'Student'
+                                  ? Colors.blue
+                                  : Colors.blue[100],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -116,7 +131,19 @@ class _RoleselectionState extends State<Roleselection> {
             Container(
               child: ElevatedButton(
                 onPressed: () {
-                  //login function
+                  if (_selectedRole == 'Parent') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Createparent()),
+                    );
+                  } else if (_selectedRole == 'Student') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Createstudent()),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0570B2),
