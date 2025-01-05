@@ -30,85 +30,63 @@ const SignUp = () => {
     return `${shortUid.toUpperCase()}${randomSuffix.toUpperCase()}`;
   };
 
-  const createUserInFirestore = async (user) => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+  
     try {
-      const studentId = generateUniqueStudentId(user.uid);
-
+      // Step 1: Create the user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      // Step 2: Update the user's display name
+      await updateProfile(user, { displayName: name });
+  
+      // Step 3: Check if user already exists in Firestore
       const userDocRef = doc(db, 'users', user.uid);
       const userDocSnap = await getDoc(userDocRef);
-
+  
       if (!userDocSnap.exists()) {
-        await setDoc(userDocRef, {
-          studentId: studentId,
-          name: user.displayName,
+        // Generate a studentId if the user is a student
+        const studentId = role === "student" ? generateUniqueStudentId(user.uid) : null;
+  
+        // Prepare user data to save in Firestore
+        const userData = {
+          uid: user.uid,
+          name, // Captured from form input
           email: user.email,
+          role,
+          gender,
+          studentId, // Only set for students
+          ...(role === "student" && { grade }), // Add grade only if role is student
           createdAt: new Date(),
-        });
+        };
+  
+        // Step 4: Save user data in Firestore
+        await setDoc(userDocRef, userData);
 
-        console.log(`User created with studentId: ${studentId}`);
-        setAlertMessage(`User created with studentId: ${studentId}`);
+        
+  
+        // Show success message
+        toast.success("User registered successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+       
+        setAlertMessage(`User registered successfully!`);
         setShowAlert(true);
-    
+        setTimeout(() => navigate("/login"), 3000);
       } else {
-        console.log('User already exists in Firestore');
-        setAlertMessage('User already exists in Firestore');
+        // Handle case where user already exists
+        console.log("User already exists in Firestore");
+        setAlertMessage("User already exists in Firestore");
         setShowAlert(true);
       }
     } catch (error) {
-      console.error('Error creating user:', error);
-      setAlertMessage('Error creating user:', error);
-      setShowAlert(true);
-    }
-  };
-
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      createUserInFirestore(user);
-    }
-  });
-
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    try {
-      // Create the user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Update the user's display name in Firebase Authentication
-      await updateProfile(user, { displayName: name });
-
-      // Generate a studentId if the user is a student
-      const studentId = role === "student" ? generateUniqueStudentId(user.uid) : null;
-
-      // Prepare user data to save in Firestore
-      const userData = {
-        uid: user.uid,
-        name, // Captured from form input
-        email: user.email,
-        role,
-        gender,
-        studentId, // Only set for students
-        ...(role === "student" && { grade }), // Add grade only if role is student
-        createdAt: new Date(),
-      };
-
-      // Save user data in Firestore
-      await setDoc(doc(db, "users", user.uid), userData);
-
-      // Show success message and navigate to login page
-      toast.success("User registered successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      setAlertMessage("User registered successfully!");
-      setShowAlert(true);
-
-      navigate("/login");
-    } catch (error) {
+      // Handle errors
       console.error("Error signing up:", error);
       toast.error(`Error: ${error.message}`, {
         position: "top-right",
@@ -117,14 +95,12 @@ const SignUp = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-      }
-    );
-    setAlertMessage(`Error: ${error.message}`);
-    setShowAlert(true);
+      });
+      setAlertMessage(`Error: ${error.message}`);
+      setShowAlert(true);
     }
-    
   };
-
+  
   return (
     <div className="flex justify-center items-center min-h-screen  bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center">
     {showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}

@@ -39,6 +39,8 @@ const Login = () => {
           navigate('/timer'); // Navigate to the timer page for students
         } else if (userData.role === "parent") {
           navigate('/parent-dashboard'); // Navigate to parent's dashboard with the studentId
+        }else if (userData.role === "admin") {
+          navigate('/admin-dashboard'); // Navigate to parent's dashboard with the studentId
         }
       } else {
         console.error("No user document found!");
