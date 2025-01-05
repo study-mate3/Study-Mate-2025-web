@@ -17,6 +17,7 @@ import SignUp from '../pages/SignUp';
 import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from '../components/StudentDetails';
 import Loading from '../components/Loading';
+import Test from '../pages/Test';
 import Test2 from '../pages/Test2';
 import { ToastContainer } from 'react-toastify';
 const Routers = () => {
@@ -33,7 +34,6 @@ const Routers = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/downloads" element={<Downloads />} />
-          <Route path="/features" element={<Features />} />
           <Route path="/test" element={<PrivateRoute roleRequired="student"><Test /></PrivateRoute>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/timer" element={<PomodoroTimer/>} />
