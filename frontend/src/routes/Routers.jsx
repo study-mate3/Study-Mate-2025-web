@@ -13,6 +13,7 @@ import Contact from '../pages/Contact';
 import PomodoroTimer from '../pages/PomodoroTimer';
 import ToDoListPage from '../pages/ToDoAfterLogin';
 import Notification from '../pages/Notification';
+<<<<<<< HEAD
 import SignUp from '../pages/SignUp';
 import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from "../components/StudentDetails";
@@ -25,6 +26,13 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+=======
+import SignUp from '../pages/Signup';
+import RoleSelection from '../pages/RoleSelection';
+import StudentDetailsPage from '../components/StudentDetails';
+import Loading from '../components/Loading';
+import Test2 from '../pages/Test2';
+>>>>>>> 48e452f22de95f606be7fe07f7984f4aa7be3c00
 
 
 
@@ -45,7 +53,8 @@ const Routers = () => {
           <Route path="/features" element={<Features />} />
           <Route path="/test" element={<PrivateRoute roleRequired="student"><Test /></PrivateRoute>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/timer" element={<PrivateRoute roleRequired="student"><PomodoroTimer /></PrivateRoute>} />
+          <Route path="/timer" element={<PomodoroTimer/>} />
+          <Route path="/test2" element={<Test2 />} />
           <Route path="/todo-after-login" element={<PrivateRoute roleRequired="student"><ToDoListPage /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute roleRequired="student"><Notification /></PrivateRoute>} />
           <Route path="/admin-dashboard" element={<PrivateRoute roleRequired="admin"><AdminDashboard /></PrivateRoute>} />

@@ -250,13 +250,7 @@ export default function StopWatch() {
       
           if (user) {
             const userRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
-            const pomodoroMinutes = pomodoroTime;
-            await updateDoc(userRef, {
-                pomodoroMinutes: arrayUnion(pomodoroMinutes), // Add the minutes to the array
-              });
-              
-        
-              console.log("Pomodoro minutes saved successfully:", pomodoroMinutes);
+           
             // Get the current timestamp
             const presentTime = format(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX", {
                 timeZone: "Asia/Colombo",

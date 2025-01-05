@@ -57,6 +57,7 @@ const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance,
       </div>
 
       <div className="flex gap-3 justify-end">
+
         <button onClick={() => handleImportance(task.id)} className={task.importance ? "text-amber-500" : "text-black"}>
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
