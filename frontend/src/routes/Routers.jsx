@@ -32,7 +32,7 @@ const Routers = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/timer" element={<PrivateRoute roleRequired="student"><PomodoroTimer /></PrivateRoute>} />
+          <Route path="/timer" element={<PomodoroTimer/>} />
           <Route path="/todo-after-login" element={<PrivateRoute roleRequired="student"><ToDoListPage /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute roleRequired="student"><Notification /></PrivateRoute>} />
           <Route path="/admin-dashboard" element={<PrivateRoute roleRequired="admin"><AdminDashboard /></PrivateRoute>} />
