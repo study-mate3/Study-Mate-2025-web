@@ -22,6 +22,9 @@ const DownloadSection = () => {
             <p className="text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
             Your perfect study partner is
             </p>
+            <p className="text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
+            Your perfect study partner is
+            </p>
             <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
             Just a Tap Away!            </p>
           
