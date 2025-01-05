@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import Home from '../pages/Home';
@@ -24,6 +24,7 @@ const Routers = () => {
     <Router>
       <Suspense fallback={<Loading />}></Suspense>
       <Layout>
+        <ToastContainer />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
@@ -32,6 +33,8 @@ const Routers = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/downloads" element={<Downloads />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/test" element={<PrivateRoute roleRequired="student"><Test /></PrivateRoute>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/timer" element={<PomodoroTimer/>} />
           <Route path="/test2" element={<Test2 />} />
