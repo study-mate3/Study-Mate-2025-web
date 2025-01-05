@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'aboutsc1.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -9,10 +10,10 @@ class Home extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 106),
+          //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 106),
           children: [
             Container(
-              height: 450,
+              height: 550,
               width: 400,
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -24,16 +25,16 @@ class Home extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 children: [
                   Positioned(
-                    top: 30,
+                    top: 100,
                     child: Image.asset(
                       'assets/img/logo2.png',
-                      height: 42,
-                      width: 148,
-                      color: Colors.black,
+                      height: 60,
+                      width: 185,
+                      color: Colors.white,
                     ),
                   ),
                   Positioned(
-                      top: 50, child: Image.asset('assets/img/childplay.gif')),
+                      top: 150, child: Image.asset('assets/img/childplay.gif')),
                 ],
               ),
             ),
@@ -59,26 +60,32 @@ class Home extends StatelessWidget {
               ]),
             ),
             const SizedBox(height: 20),
-            Container(
-              child: ElevatedButton(
-                onPressed: () {
-                  //login function
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0570B2),
-                  minimumSize: const Size(100, 50),
-                  padding: const EdgeInsets.all(5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+            Center(
+              child: SizedBox(
+                width: 250,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Aboutsc1()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                    minimumSize: const Size(100, 50),
+                    padding: const EdgeInsets.all(5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
                   ),
+                  child: const Text('Get Started',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold)),
                 ),
-                child: const Text('Get Started',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold)),
               ),
-            )
+            ),
           ],
         ),
       ),
