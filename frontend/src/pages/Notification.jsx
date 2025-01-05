@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Bell, Trash2, Check, Circle, ArrowLeft, MoreVertical } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -205,7 +205,7 @@ const Notification = () => {
             <div className="text-center py-12">
               <Bell className="h-12 w-12 text-gray-400 mx-auto" />
               <h3 className="mt-4 text-lg font-medium text-gray-900">No notifications</h3>
-              <p className="mt-2 text-gray-500">We will notify you when something arrives.</p>
+              <p className="mt-2 text-gray-500">We'll notify you when something arrives.</p>
             </div>
           )}
         </div>

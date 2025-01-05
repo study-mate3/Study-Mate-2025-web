@@ -17,6 +17,7 @@ import SignUp from '../pages/SignUp';
 import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from '../components/StudentDetails';
 import Loading from '../components/Loading';
+
 import Test from '../pages/Test';
 import Test2 from '../pages/Test2';
 import { ToastContainer } from 'react-toastify';
@@ -25,7 +26,6 @@ const Routers = () => {
     <Router>
       <Suspense fallback={<Loading />}></Suspense>
       <Layout>
-        <ToastContainer />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
@@ -34,10 +34,11 @@ const Routers = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/downloads" element={<Downloads />} />
+
           <Route path="/test" element={<PrivateRoute roleRequired="student"><Test /></PrivateRoute>} />
+
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/timer" element={<PomodoroTimer/>} />
-          <Route path="/test2" element={<Test2 />} />
           <Route path="/todo-after-login" element={<PrivateRoute roleRequired="student"><ToDoListPage /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute roleRequired="student"><Notification /></PrivateRoute>} />
           <Route path="/admin-dashboard" element={<PrivateRoute roleRequired="admin"><AdminDashboard /></PrivateRoute>} />

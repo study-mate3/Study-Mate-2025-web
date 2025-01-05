@@ -1,3 +1,4 @@
+
 import React, { useState } from "react"; 
 import { useNavigate, useParams } from "react-router-dom"; 
 import { auth, db } from "../firebase/firebaseConfig"; 
@@ -245,6 +246,7 @@ const SignUp = () => {
         <option value="6-9">Grade 6-9</option> 
         <option value="10-11">Grade 10-11</option> 
         <option value="12-13">Grade 12-13</option> 
+
         <option value="university">University</option>
         </select> 
     </div> 
