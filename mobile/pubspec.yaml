@@ -66,6 +66,8 @@ flutter:
     - assets/img/test.png
     - assets/img/stu.png
     - assets/img/otpsubmit.png
+    - assets/img/homebkground.png
+    - assets/img/childplay.gif
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
