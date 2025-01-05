@@ -21,7 +21,7 @@ export default function Welcome() {
                 </h1>
               </div>
                 
-                <div className="w-[576px] text-justify"><span class="text-white text-3xl font-bold font-['Roboto',sans-serif] leading-[27px]">Welcome to StudyMate!<br/></span><span class="text-[#002761] text-[32px] font-normal font-['Roboto',sans-serif] leading-[27px]"><br/></span><span class="text-white text-base font-normal font-['Roboto',sans-serif] leading-snug">Take control of your study time with our innovative app. Join us for a smarter, more engaging way to study and achieve your academic goals!</span></div>
+                <div className="w-[576px] text-justify"><span className="text-white text-3xl font-bold font-['Roboto',sans-serif] leading-[27px]">Welcome to StudyMate!<br/></span><span className="text-[#002761] text-[32px] font-normal font-['Roboto',sans-serif] leading-[27px]"><br/></span><span className="text-white text-base font-normal font-['Roboto',sans-serif] leading-snug">Take control of your study time with our innovative app. Join us for a smarter, more engaging way to study and achieve your academic goals!</span></div>
       
                 <div className="flex space-x-4 pb-8 pt-4">
                   <button className=" text-white py-2 px-4 font-[700] " style={{width: 153, height: 38, background: '#0E3167', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}>

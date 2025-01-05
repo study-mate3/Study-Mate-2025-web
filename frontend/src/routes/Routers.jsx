@@ -1,4 +1,4 @@
-
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import Home from '../pages/Home';
@@ -13,12 +13,18 @@ import Contact from '../pages/Contact';
 import PomodoroTimer from '../pages/PomodoroTimer';
 import ToDoListPage from '../pages/ToDoAfterLogin';
 import Notification from '../pages/Notification';
+import SignUp from '../pages/SignUp';
+import RoleSelection from '../pages/RoleSelection';
+import StudentDetailsPage from "../components/StudentDetails";
+import Loading from '../components/Loading';
 
 import Test from '../pages/Test';
 import Features from '../pages/Features';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+
 
 
 
