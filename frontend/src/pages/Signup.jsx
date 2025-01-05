@@ -1,8 +1,5 @@
-
-// src/pages/SignUp.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { auth, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { collection, getDocs, query, where, doc, setDoc,getDoc } from "firebase/firestore";
