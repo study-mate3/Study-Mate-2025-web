@@ -32,8 +32,8 @@ const DownloadSection = () => {
             Get started today by downloading from the Play Store or App Store.
           </p>
           <div className="flex space-x-4 mt-4">
-          <img src={googlePlayIcon} alt="" className='h-11 rounded-xl h-10'/>
-          <img src={appleStoreIcon} alt="" className='h-11 rounded-xl h-10'/>          </div>
+          <img src={googlePlayIcon} alt="" className='h-11 rounded-xl'/>
+          <img src={appleStoreIcon} alt="" className='h-11 rounded-xl'/>          </div>
           </div>
         </div>
 
@@ -71,6 +71,10 @@ const DownloadSection = () => {
               Parents, Stay involved in
             </p>
             <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
+            Your Child's Progress 
+            </p>
+{/*             for the test purpose
+ */}            <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
             Your Child's Progress 
             </p>
           

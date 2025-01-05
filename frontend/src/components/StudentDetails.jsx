@@ -115,7 +115,7 @@ const StudentDetailsPage = () => {
       value={studentIdInput}
       onChange={(e) => setStudentIdInput(e.target.value)}
       placeholder="Enter Student ID"
-      className=" rounded-xl shadow-sm border border-blue-600 p-2 rounded mr-2"
+      className=" rounded-xl shadow-sm border border-blue-600 p-2 mr-2"
     />
     <button
       onClick={() => fetchStudentDetails(studentIdInput)}
