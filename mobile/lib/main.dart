@@ -11,6 +11,6 @@ import 'otpinput.dart';
 
 void main() {
   runApp(const MaterialApp(
-    home: Login(),
+    home: Home(),
   ));
 }
