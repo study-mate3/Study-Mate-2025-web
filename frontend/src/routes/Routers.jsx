@@ -1,4 +1,4 @@
-
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import Home from '../pages/Home';
@@ -13,12 +13,12 @@ import Contact from '../pages/Contact';
 import PomodoroTimer from '../pages/PomodoroTimer';
 import ToDoListPage from '../pages/ToDoAfterLogin';
 import Notification from '../pages/Notification';
-import SignUp from '../pages/Signup';
+import SignUp from '../pages/SignUp';
 import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from '../components/StudentDetails';
 import Loading from '../components/Loading';
 import Test2 from '../pages/Test2';
-
+import { ToastContainer } from 'react-toastify';
 const Routers = () => {
   return (
     <Router>

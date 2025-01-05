@@ -48,7 +48,7 @@ const SidePanel = ({setName}) => {
           <PencilIcon className="h-8 w-8 mt-4 text-white hover:text-blue-950 cursor-pointer" />
 
         </Link>
-        <BellIcon className="h-5 w-5 text-white" /> */}
+        <BellIcon className="h-5 w-5 text-white" />
         <ArrowLeftOnRectangleIcon
       className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"
       onClick={handleLogout} // Add click handler
