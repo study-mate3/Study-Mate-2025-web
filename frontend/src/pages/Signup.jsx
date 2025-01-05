@@ -241,7 +241,7 @@ const SignUp = () => {
         required
         className="w-full p-2 bg-[#bfd8fd] rounded-[8px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
       >
-        <option value="">Select Grade</option>
+        <option value="">Select Grade Here</option>
         <option value="6-9">Grade 6-9</option>
         <option value="10-11">Grade 10-11</option>
         <option value="12-13">Grade 12-13</option>
