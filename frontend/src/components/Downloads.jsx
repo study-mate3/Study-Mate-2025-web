@@ -73,6 +73,10 @@ const DownloadSection = () => {
             <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
             Your Child's Progress 
             </p>
+{/*             for the test purpose
+ */}            <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
+            Your Child's Progress 
+            </p>
           
             <p className="text-[20px] text-gray-600 mt-4 text-center md:text-left">
             With StudyMate, parents can easily monitor their child's study habits and progress. 
