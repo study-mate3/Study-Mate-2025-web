@@ -37,10 +37,6 @@ const Login = () => {
         // Check role and navigate accordingly
         if (userData.role === "student") {
           navigate('/timer'); // Navigate to the timer page for students
-
-        }else if (userData.role === "admin") {
-          navigate('/admin-dashboard'); // Navigate to the timer page for students
-
         } else if (userData.role === "parent") {
           navigate('/parent-dashboard'); // Navigate to parent's dashboard with the studentId
         }

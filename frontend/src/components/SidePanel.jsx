@@ -39,11 +39,19 @@ const SidePanel = ({setName}) => {
           <HomeIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
         </Link>
 
-        {/* <ClockIcon className="h-5 w-5 text-white" />
-        <Link  to="/to-do-before">
-          <PencilIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" />
+        <Link to="/timer">
+          <ClockIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
         </Link>
-        <BellIcon className="h-5 w-5 text-white" />
+
+        <Link to="/todo-after-login">
+          <PencilIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+        </Link>
+
+        <Link to="/notifications">
+          <BellIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+        </Link>
+
+      
         <ArrowLeftOnRectangleIcon
       className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"
       onClick={handleLogout} // Add click handler
