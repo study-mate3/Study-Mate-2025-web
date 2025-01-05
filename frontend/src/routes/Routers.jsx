@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../layout/Layout';
 import Home from '../pages/Home';
@@ -13,16 +13,21 @@ import Contact from '../pages/Contact';
 import PomodoroTimer from '../pages/PomodoroTimer';
 import ToDoListPage from '../pages/ToDoAfterLogin';
 import Notification from '../pages/Notification';
-import SignUp from '../pages/Signup';
-import RoleSelection from '../pages/RoleSelection';
-import StudentDetailsPage from '../components/StudentDetails';
-import Loading from '../components/Loading';
+
+import Test from '../pages/Test';
+import Features from '../pages/Features';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const Routers = () => {
   return (
     <Router>
       <Suspense fallback={<Loading />}></Suspense>
       <Layout>
+        <ToastContainer />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
@@ -31,6 +36,8 @@ const Routers = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/downloads" element={<Downloads />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/test" element={<PrivateRoute roleRequired="student"><Test /></PrivateRoute>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/timer" element={<PomodoroTimer/>} />
           <Route path="/todo-after-login" element={<PrivateRoute roleRequired="student"><ToDoListPage /></PrivateRoute>} />
