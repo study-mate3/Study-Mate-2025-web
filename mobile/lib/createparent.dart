@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/createparent2.dart';
+import 'package:mobile/login.dart';
 
 class Createparent extends StatefulWidget {
   const Createparent({super.key});
@@ -59,7 +61,7 @@ class _CreateparentState extends State<Createparent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Child's Email Address",
+                      "Email",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -71,17 +73,45 @@ class _CreateparentState extends State<Createparent> {
                           borderRadius: BorderRadius.circular(15),
                         ), // Add a border around the input
                         hintText:
-                            "Enter Your Child's Email Address", // Placeholder text
+                            "Enter Your Email Address", // Placeholder text
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 40),
               Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Password",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                        height: 8), // Spacing between label and input
+                    TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ), // Add a border around the input
+                        hintText: "Enter Your Password", // Placeholder text
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 50),
+              Center(
+                  child: SizedBox(
+                width: 250,
                 child: ElevatedButton(
                   onPressed: () {
-                    //login function
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Createparent2()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0570B2),
@@ -90,13 +120,13 @@ class _CreateparentState extends State<Createparent> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  child: const Text('Create Account',
+                  child: const Text('Next',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 17,
                           fontWeight: FontWeight.bold)),
                 ),
-              )
+              ))
             ]),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:mobile/aboutsc1.dart';
 import 'package:mobile/create.dart';
 import 'package:mobile/createparent.dart';
+import 'package:mobile/createparent2.dart';
 import 'package:mobile/createstudent.dart';
 import 'package:mobile/home.dart';
 import 'package:mobile/login.dart';
