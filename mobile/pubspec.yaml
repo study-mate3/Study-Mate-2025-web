@@ -69,6 +69,7 @@ flutter:
     - assets/img/homebkground.png
     - assets/img/childplay.gif
     - assets/img/home_img3.png
+    - assets/img/home_img4.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

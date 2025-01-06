@@ -67,7 +67,8 @@ class Home extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Aboutsc1()),
+                      MaterialPageRoute(
+                          builder: (context) => const OnboardingScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
