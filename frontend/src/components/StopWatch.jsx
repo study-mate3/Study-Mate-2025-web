@@ -266,7 +266,11 @@ export default function StopWatch() {
             // Update UI states
             setResponseMessage("Ah, okay! Good job, keep up the great work!");
             setShowAcknowledgement(true); // Show the acknowledgment message
-            setShowAlert(true); // Hide the alert
+            setShowAlert(true); 
+            setTimeout(() => {
+        setShowAcknowledgement(false);
+        setShowAlert(false);
+    }, 5000);
           } else {
             console.error("No user is logged in.");
 

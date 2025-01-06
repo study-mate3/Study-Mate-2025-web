@@ -17,6 +17,7 @@ import SignUp from '../pages/Signup';
 import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from '../components/StudentDetails';
 import Loading from '../components/Loading';
+import FAQPage from '../pages/Contact';
 
 const Routers = () => {
   return (
@@ -29,7 +30,7 @@ const Routers = () => {
           <Route path="/signup/:role" element={<SignUp/>} />
           <Route path="/role" element={<RoleSelection/>}/>
           <Route path="/login" element={<Login />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQPage/>} />
           <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/timer" element={<PomodoroTimer/>} />
