@@ -48,7 +48,7 @@ const ParentSidePanel = ({setName}) => {
       className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"
       onClick={handleLogout} // Add click handler
     />
-        <Link to="/contact">
+        <Link to="/faq">
           <QuestionMarkCircleIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" />
         </Link>
       </div>
