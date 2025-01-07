@@ -358,7 +358,7 @@ const ToDoListPage = () => {
   };
 
   return (
-    <div className="flex h-[83.333vh] justify-between">
+    <div className="flex h-[83.333vh] justify-between ">
 
       {/* 1st Column: Navigation Panel */}
       <SidePanel/>
