@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'roleselection.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -94,36 +95,56 @@ class Login extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: SizedBox(
-                width: 298,
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () {
-                      //login function
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.all(5),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side:
-                              const BorderSide(color: Colors.black, width: 1)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('assets/img/google_logo.png',
-                            height: 20, width: 20),
-                        const SizedBox(width: 10),
-                        const Text('Log in with Google',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    )),
-              )),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: SizedBox(
+              width: 298,
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {
+                    //login function
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(5),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        side: const BorderSide(color: Colors.black, width: 1)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/img/google_logo.png',
+                          height: 20, width: 20),
+                      const SizedBox(width: 10),
+                      const Text('Log in with Google',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  )),
+            ),
+          ),
+          const SizedBox(height: 20),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Roleselection()),
+              );
+            },
+            child: Container(
+              child: const Text(
+                "Don't have an account? Sign up",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+          ),
         ],
       )),
     );
