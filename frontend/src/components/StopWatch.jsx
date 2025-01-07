@@ -34,6 +34,7 @@ export default function StopWatch() {
     const [name, setName] = useState('Learner');
     const auth = getAuth();
     const db = getFirestore();
+    
      
 
      useEffect(() => {
@@ -269,10 +270,13 @@ export default function StopWatch() {
             setShowAlert(true); 
             setTimeout(() => {
         setShowAcknowledgement(false);
+        setResponseMessage(false);
         setShowAlert(false);
     }, 5000);
           } else {
             console.error("No user is logged in.");
+            setAlertMessage("Need timer reminders and Study tips? Join us for free!");
+            setShowAlert(true);
 
           }
         } catch (error) {
@@ -284,9 +288,11 @@ export default function StopWatch() {
         setResponseMessage('');
         setShowAlert(false); // Hide the alert
         setShowAcknowledgement(false); // Hide the acknowledgment message
-        if (autoHideTimeout) {
-            clearTimeout(autoHideTimeout); // Clear timeout if needed
-        }
+        setTimeout(() => {
+            setShowAcknowledgement(false);
+            setResponseMessage(false);
+            setShowAlert(false);
+        }, 5000);
     };
     
     const handleCloseFinishMessage = () => {
