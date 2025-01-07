@@ -28,7 +28,7 @@ class TimerScreen extends StatefulWidget {
 class _TimerScreenState extends State<TimerScreen> {
   int workTime = 25 * 60; // default work time in seconds
   int shortBreak = 5 * 60; // default short break in seconds
-  int longBreak = 15 * 60; // default long break in seconds
+  int longBreak = 20 * 60; // default long break in seconds
   int currentTime = 25 * 60;
   bool isRunning = false;
   bool isBreak = false;
@@ -92,7 +92,9 @@ class _TimerScreenState extends State<TimerScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Select Pomodoro Mode'),
+          title: const Text(
+            'Select Pomodoro Mode',
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -178,19 +180,16 @@ class _TimerScreenState extends State<TimerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 150,
-            ),
+            const SizedBox(height: 140),
             Container(
               child: Image.asset(
                 'assets/img/logo2.png',
-                height: 42,
-                width: 148,
+                height: 50,
+                width: 160,
+                color: Colors.black,
               ),
             ),
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 20),
             SizedBox(
               height: 300,
               width: 300,
@@ -199,7 +198,7 @@ class _TimerScreenState extends State<TimerScreen> {
                 children: [
                   CircularProgressIndicator(
                     value: currentTime / totalDuration.toDouble(),
-                    strokeWidth: 13,
+                    strokeWidth: 12,
                     backgroundColor: Colors.grey[300],
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -208,7 +207,9 @@ class _TimerScreenState extends State<TimerScreen> {
                     child: Text(
                       formatTime(currentTime),
                       style: const TextStyle(
-                          fontSize: 56, fontWeight: FontWeight.bold),
+                        fontSize: 60,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -220,25 +221,43 @@ class _TimerScreenState extends State<TimerScreen> {
               children: [
                 ElevatedButton(
                   onPressed: startTimer,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                  ),
                   child: const Text(
                     'Start',
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: pauseTimer,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                  ),
                   child: const Text(
                     'Pause',
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () => resetTimer(workTime),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                  ),
                   child: const Text(
                     'Reset',
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ],
@@ -246,10 +265,49 @@ class _TimerScreenState extends State<TimerScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: showWorkOptions,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0570B2),
+              ),
               child: const Text(
                 'Work Options',
-                style: TextStyle(fontSize: 18, color: Colors.black),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => resetTimer(shortBreak),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                  ),
+                  child: const Text(
+                    'Short Break',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => resetTimer(longBreak),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                  ),
+                  child: const Text(
+                    'Long Break',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

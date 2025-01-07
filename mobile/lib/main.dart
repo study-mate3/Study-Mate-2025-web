@@ -11,5 +11,10 @@ import 'package:mobile/roleselection.dart';
 import 'package:mobile/timer.dart';
 
 void main() {
-  runApp(const PomodoroApp());
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false, // Removes the debug banner
+      home: Home(), // Sets Home as the initial screen
+    ),
+  );
 }
