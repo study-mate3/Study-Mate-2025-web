@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LogOut, CheckCircle, Clock, Target, TrendingUp } from 'lucide-react';
@@ -42,9 +42,11 @@ const DashboardCard = ({ userId, title, children, className = '' }) => (
 const StudentDashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [completedPomodoros, setCompletedPomodoros] = useState(null);
-   const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState(0);
 
-   useEffect(() => {
+  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid); // Set the user ID when authenticated
@@ -114,6 +116,30 @@ const StudentDashboard = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const userTasksRef = collection(db, `users/${user.uid}/tasks`);
+          const q = query(userTasksRef);
+          const querySnapshot = await getDocs(q);
+          const tasks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setTasks(tasks);
+  
+          // Calculate completed tasks
+          const completed = tasks.filter(task => task.completed).length;
+          setCompletedTasks(completed);
+        }
+      } catch (error) {
+        console.error("Error fetching tasks from Firestore:", error);
+      }
+    };
+  
+    fetchTasks();
+  }, []);
+  
+
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -170,7 +196,7 @@ const StudentDashboard = () => {
         <CheckCircle className="text-green-600" size={24} />
       </div>
       <div>
-        <p className="text-2xl font-bold text-black">{mockData.tasks.completed}/{mockData.tasks.total}</p>
+        <p className="text-2xl font-bold text-black">{completedTasks}/{tasks.length}</p>
         <p className="text-black">Tasks Completed</p>
       </div>
     </div>
