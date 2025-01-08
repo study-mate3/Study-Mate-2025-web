@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/styled_components/styled_logo.dart';
 import 'package:mobile/timer.dart';
 import 'aboutsc1.dart';
 
@@ -11,7 +12,7 @@ class Home extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 106),
-          
+
           children: [
             Container(
               height: 500,
@@ -25,15 +26,7 @@ class Home extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
-                  Positioned(
-                    top: 100,
-                    child: Image.asset(
-                      'assets/img/logo2.png',
-                      height: 60,
-                      width: 185,
-                      color: Colors.white,
-                    ),
-                  ),
+                  const StyledLogo(),
                   Positioned(
                       top: 150, child: Image.asset('assets/img/childplay.gif')),
                 ],
