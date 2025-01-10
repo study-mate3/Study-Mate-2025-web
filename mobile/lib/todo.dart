@@ -23,9 +23,7 @@ class _TodoState extends State<Todo> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const SizedBox(height: 150, width: 20),
-                Container(
-                  child: const Text('Menu'),
-                ),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
                 const SizedBox(width: 200),
                 Container(
                   child: Image.asset('assets/img/logo2.png',
@@ -45,9 +43,13 @@ class _TodoState extends State<Todo> {
             ),
             Container(
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2)),
                 onPressed: () {},
-                child: const Text('+ Add New Task',
-                    style: TextStyle(fontSize: 18)),
+                child: const Text(
+                  '+ Add New Task',
+                  style: TextStyle(fontSize: 18, color: Color(0xFFF0F6FF)),
+                ),
               ),
             ),
 
