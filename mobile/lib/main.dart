@@ -9,12 +9,13 @@ import 'package:mobile/home.dart';
 import 'package:mobile/login.dart';
 import 'package:mobile/roleselection.dart';
 import 'package:mobile/timer.dart';
+import 'package:mobile/todo.dart';
 
 void main() {
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false, // Removes the debug banner
-      home: Home(), // Sets Home as the initial screen
+      home: Todo(), // Sets Home as the initial screen
     ),
   );
 }
