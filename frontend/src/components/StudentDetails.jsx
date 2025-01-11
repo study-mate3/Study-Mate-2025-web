@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig'; // Adjust the path based on your project
 import { useAuth } from '../contexts/AuthContext';
+import emailjs from 'emailjs-com';
+import Alert from './Alert';
 
 const StudentDetailsPage = () => {
   const [studentIdInput, setStudentIdInput] = useState('');
@@ -11,6 +13,10 @@ const StudentDetailsPage = () => {
   const [addedStudents, setAddedStudents] = useState([]);
   const { currentUser } = useAuth(); // Current user's ID from auth context
   const [absentTimes, setAbsentTimes] = useState([]);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [currentUserName, setCurrentUserName] = useState('');
+
 
 
   
@@ -28,6 +34,13 @@ const StudentDetailsPage = () => {
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
             setAddedStudents(userData.addedStudents || []);
+
+            const userName = userData.name;
+            console.log("Current User Name:", userName); // Log the user's name
+            setAddedStudents(userData.addedStudents || []);
+            setCurrentUserName(userName);
+            
+
           } else {
             console.error('No user document found!');
           }
@@ -92,6 +105,33 @@ const StudentDetailsPage = () => {
     
             // Save student ID to addedStudents
             await saveStudentToFirebase(studentId);
+
+            const templateParams = {
+              student_name: studentData.name,
+              student_email: studentData.email,
+              parent_name: currentUserName,
+          
+            };
+      
+            emailjs
+              .send(
+                'service_869z5ji', // Replace with your EmailJS service ID
+                'template_gjiz4fq', // Replace with your EmailJS template ID
+                templateParams,
+                '9Ai-grfLxkPVUUyqz' // Replace with your EmailJS public key
+              )
+              .then(
+                (response) => {
+                  console.log('Email sent successfully!', response.status, response.text);
+                  setAlertMessage("Student notified successfully via email about being added.");
+                  setShowAlert(true);
+                },
+                (error) => {
+                  console.error("Student notified failed via email about being added.", error);
+                }
+              );
+
+
           } else {
             setError('No student found with the provided ID.');
           }
@@ -108,14 +148,16 @@ const StudentDetailsPage = () => {
   return (
     <div className="container mx-auto pt-40">
       <div className="flex justify-between items-center mb-6">
-  <h1 className="text-2xl font-bold mb-4">View Your Student Details</h1>
+      {showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}
+
+  <h1 className="text-2xl font-bold mb-4">View Your Student's Details</h1>
   <div className="flex items-center">
     <input
       type="text"
       value={studentIdInput}
       onChange={(e) => setStudentIdInput(e.target.value)}
       placeholder="Enter Student ID"
-      className=" rounded-xl shadow-sm border border-blue-600 p-2 rounded mr-2"
+      className=" rounded-xl shadow-sm border border-blue-600 p-2  mr-2"
     />
     <button
       onClick={() => fetchStudentDetails(studentIdInput)}
@@ -124,7 +166,7 @@ const StudentDetailsPage = () => {
       style={{ width:100, background: 'linear-gradient(180deg, #0570B2 0%, #176BE8 100%)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
 
     >
-      {loading ? 'Loading...' : 'Search'}
+      {loading ? 'Loading...' : 'ADD'}
     </button>
     
   </div>
@@ -183,12 +225,17 @@ const StudentDetailsPage = () => {
     {/* Second Row: Absent Times */}
     <h3 className="text-lg font-semibold text-gray-800 mb-4 mt-10">We noticed that your child was not focused on studying during these times... 🙁</h3>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {studentDetails.absentTime && studentDetails.absentTime.slice(0, 3).map((time, index) => (
-        <div key={index} className="p-4  rounded-2xl shadow-sm border border-red-600">
-          <p><strong>Date:</strong> {new Date(time).toLocaleDateString()}</p>
-          <p><strong>Time:</strong> {new Date(time).toLocaleTimeString()}</p>
-        </div>
-      ))}
+    {studentDetails.absentTime && studentDetails.absentTime.length > 0 ? (
+  studentDetails.absentTime.slice(0, 3).map((time, index) => (
+    <div key={index} className="p-4 rounded-2xl shadow-sm border border-red-600">
+      <p><strong>Date:</strong> {new Date(time).toLocaleDateString()}</p>
+      <p><strong>Time:</strong> {new Date(time).toLocaleTimeString()}</p>
+    </div>
+  ))
+) : (
+  <p>Great to see! Your student is fully focused. 🥳</p>
+)}
+
     
     </div>
   </div>

@@ -17,7 +17,7 @@ import { auth, db } from "../firebase/firebaseConfig";
 import PropTypes from 'prop-types';
 
 // TaskCard component for each task
-const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance }) => {
+const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance, handleEditTask, handleUpdateTask }) => {
   return (
     <div className="bg-gray-200 px-4 py-2 mb-2 rounded-[15px] shadow">
       <div className="flex items-center justify-between mb-2">
@@ -57,6 +57,7 @@ const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance 
       </div>
 
       <div className="flex gap-3 justify-end">
+
         <button onClick={() => handleImportance(task.id)} className={task.importance ? "text-amber-500" : "text-black"}>
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -69,17 +70,20 @@ const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance 
               <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
           </svg>
         </button>
-        <button onClick={() => handleEdit(task.id)} className="cursor-pointer"></button>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          strokeWidth={1.5} 
-          stroke="currentColor" 
-          className="size-6"
-        >
-            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-        </svg>
+
+        <button onClick={() => handleEditTask(task.id)} className="cursor-pointer">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            strokeWidth={1.5} 
+            stroke="currentColor" 
+            className="size-6"
+          >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+          </svg>
+        </button>
+        
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
           fill="none" 
@@ -112,6 +116,7 @@ TaskCard.propTypes = {
 };
 
 const ToDoListPage = () => {
+  const today = new Date().toISOString().split("T")[0];
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
     description: "",
@@ -121,6 +126,11 @@ const ToDoListPage = () => {
     priority: "low",
     completed: false,
   });
+
+  const [editingTask, setEditingTask] = useState(null);
+  const [filter, setFilter] = useState("all");
+
+
 
   // Function to fetch tasks from Firestore
   const fetchTasks = async () => {
@@ -258,7 +268,85 @@ const ToDoListPage = () => {
       console.error("Error updating task importance: ", error);
     }
   };
+
+  const handleEditTask = (taskId) => {
+    const taskToEdit = tasks.find((task) => task.id === taskId);
+    setEditingTask(taskToEdit);
+    setNewTask({
+      description: taskToEdit.description,
+      list: taskToEdit.list,
+      dueDate: taskToEdit.dueDate,
+      subTasks: taskToEdit.subTasks,
+      priority: taskToEdit.priority,
+      completed: taskToEdit.completed,
+    });
+  };
   
+
+  const handleUpdateTask = async () => {
+    if (!editingTask || editingTask.description.trim() === "") {
+      console.error("Task description cannot be empty");
+      return;
+    }
+  
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error("No user is logged in");
+        return;
+      }
+  
+      
+      console.log("Editing task details:", editingTask);
+
+      const taskRef = doc(db, `users/${user.uid}/tasks/${editingTask.id}`);
+      console.log("Updating Firestore document:", taskRef.path);
+
+      await updateDoc(taskRef, {
+        description: editingTask.description,
+        list: editingTask.list,
+        dueDate: editingTask.dueDate,
+        subTasks: editingTask.subTasks,
+        priority: editingTask.priority,
+        completed: editingTask.completed,
+      });
+      
+      setTasks(tasks.map((task) =>
+        task.id === editingTask.id ? editingTask : task
+      ));
+  
+      setEditingTask(null);
+      setNewTask({
+        description: "",
+        list: "Personal",
+        dueDate: "",
+        subTasks: "",
+        priority: "low",
+        completed: false,
+      });
+  
+      console.log("Task updated successfully!");
+    } catch (error) {
+      console.error("Error updating task: ", error);
+    }
+  };
+
+  const getFilteredTasks = () => {
+    
+    
+    switch (filter) {
+      case "upcoming":
+        return tasks.filter(task => task.dueDate > today && !task.completed);
+      case "today":
+        return tasks.filter(task => task.dueDate === today && !task.completed);
+      case "completed":
+        return tasks.filter(task => task.completed);
+      case "important":
+        return tasks.filter(task => task.importance);
+      default:
+        return tasks; // Show all tasks
+    }
+  };
   
 
   // Handle adding new list option
@@ -269,191 +357,258 @@ const ToDoListPage = () => {
     }
   };
 
+  const sidePanelStyle = {
+    position: 'fixed', // Fixes the panel position
+    left: -10,
+    top: '200px',
+        }
+
   return (
-    <div className="flex h-[83.333vh] justify-between">
+    <div>
 
-      {/* 1st Column: Navigation Panel */}
-      <SidePanel/>
-
-      {/* 2nd Column: Task Tracker */}
-      <div className="w-[250px] bg-blue-200 rounded-[15px] flex flex-col space-y-3">
-        <div className="w-full">
-          <h2 className="text-lg font-semibold mt-2 ml-4">Tasks</h2>
-          <div className="w-full py-2 flex hover:bg-blue-500/80 hover:text-blue-950">
-          <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-            <p className="font-semibold text-gray-600 ">Upcoming</p>
-            <p className="ml-auto mr-4 font-semibold">10</p>
-          </div>
-          <div className="w-full py-2 flex hover:bg-blue-500/80">
-          <CalendarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-            <p className="font-semibold text-gray-600">Today</p>
-            <p className="ml-auto mr-4 font-semibold">2</p>
-          </div>
-          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-          <CalendarDaysIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-            <p className="font-semibold text-gray-600">Calender</p>
-          </div>
+<div className="text-[30px] font-bold text-center mb-8 mt-8  text-headingColor">
+        <h2 >
+        Manage Your To-Do List
+      </h2>
         </div>
 
-        <div className="w-full">
-          <h2 className="text-lg font-semibold mt-2 ml-4">Lists</h2>
-          <div className="w-full py-2 flex items-center hover:bg-blue-500/80 ">
-            <div className="w-5 h-5 mr-2 bg-pink-600 ml-4 rounded"></div>
-            <p className="font-semibold text-gray-600 hover:text-blue-950">Personal</p>
-            <p className="ml-auto mr-4 font-semibold">8</p>
-          </div>
-          <div className="w-full py-2 flex items-center hover:bg-blue-500/80">
-            <div className="w-5 h-5 mr-2 bg-yellow-500 ml-4 rounded"></div>
-            <p className="font-semibold text-gray-600">Work</p>
-            <p className="ml-auto mr-4 font-semibold">4</p>
-          </div>
-          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-          <PlusCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-            <p className="font-semibold text-gray-600">Add New List</p>
-          </div>
-        </div>
+<div className="flex h-[83.333vh] justify-between pl-20">
 
-        <div className="w-full">
-          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950">
-          <StarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-            <p className="font-semibold text-gray-600 ">Important Tasks</p>
-          </div>
-          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-          <CheckCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-            <p className="font-semibold text-gray-600">Completed Tasks</p>
-          </div>
-        </div>
+{/* 1st Column: Navigation Panel */}
+<div style={sidePanelStyle}>
+        <SidePanel/>
       </div>
 
-      {/* 3rd Column: Task Cards (Scrollable) */}
-      <div className="w-[500px] bg-gray-50 p-4 overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-4">Your Tasks</h2>
-        <div className="space-y-4">
-          {tasks.length === 0 ? (
-            <p>No tasks available. Add some tasks to see them here!</p>
-          ) : (
-            tasks.map((task, index) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                index={index}
-                handleDelete={handleDelete}
-                handleComplete={handleComplete}
-                handleImportance={handleImportance}
-              />
-            ))
-          )}
-        </div>
+{/* 2nd Column: Task Tracker */}
+<div className="w-[250px] bg-blue-200 rounded-[15px] flex flex-col space-y-3 ">
+  <div className="w-full">
+    <h2 className="text-lg font-semibold mt-2 ml-4">Tasks</h2>
+    <div 
+     className="w-full py-2 flex hover:bg-blue-500/80 hover:text-blue-950"
+     onClick={() => setFilter("upcoming")}
+    >
+      <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600 ">Upcoming</p>
+      <p className="ml-auto mr-4 font-semibold">
+        {tasks.filter(task => task.dueDate > today && !task.completed).length}
+      </p>
+    </div>
+    <div 
+     className="w-full py-2 flex hover:bg-blue-500/80"
+     onClick={() => setFilter("today")}
+    >
+      <CalendarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600">Today</p>
+      <p className="ml-auto mr-4 font-semibold">
+        {tasks.filter(task => task.dueDate === today && !task.completed).length}
+      </p>
+    </div>
+    <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
+      <CalendarDaysIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600">Calender</p>
+    </div>
+  </div>
+
+  <div className="w-full">
+    <h2 className="text-lg font-semibold mt-2 ml-4">Lists</h2>
+    <div className="w-full py-2 flex items-center hover:bg-blue-500/80 ">
+      <div className="w-5 h-5 mr-2 bg-pink-600 ml-4 rounded"></div>
+      <p className="font-semibold text-gray-600 hover:text-blue-950">Personal</p>
+      <p className="ml-auto mr-4 font-semibold">8</p>
+    </div>
+    <div className="w-full py-2 flex items-center hover:bg-blue-500/80">
+      <div className="w-5 h-5 mr-2 bg-yellow-500 ml-4 rounded"></div>
+      <p className="font-semibold text-gray-600">Work</p>
+      <p className="ml-auto mr-4 font-semibold">4</p>
+    </div>
+    <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
+    <PlusCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600">Add New List</p>
+    </div>
+  </div>
+
+  <div className="w-full">
+    <div 
+     className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950"
+     onClick={() => setFilter("important")}
+    >
+      <StarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600 ">Important Tasks</p>
+    </div>
+    <div 
+     className="w-full py-2 flex space-x-2 hover:bg-blue-500/80"
+     onClick={() => setFilter("completed")}
+    >
+      <CheckCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600">Completed Tasks</p>
+    </div>
+  </div>
+</div>
+
+{/* 3rd Column: Task Cards (Scrollable) */}
+<div className="w-[500px] bg-gray-50 p-4 overflow-y-auto">
+<h2 className="text-lg font-semibold mb-4">
+  {filter === "all" ? "All Tasks" : `Showing: ${filter.charAt(0).toUpperCase() + filter.slice(1)} Tasks`}
+</h2>
+
+  <div className="space-y-4">
+    {getFilteredTasks().length === 0 ? (
+      <p>No tasks available for this category.</p>
+    ) : (
+      getFilteredTasks().map((task, index) => (
+        <TaskCard
+          key={task.id}
+          task={task}
+          index={index}
+          handleDelete={handleDelete}
+          handleComplete={handleComplete}
+          handleImportance={handleImportance}
+          handleEditTask={handleEditTask}
+        />
+      ))
+    )}
+  </div>
+
+</div>
+
+{/* 4th Column: Form to Set Tasks */}
+<div className="w-[350px] bg-white p-4 flex flex-col border-2 border-blue-950/80
+mr-[20px] rounded-[15px]">
+
+  <div className="flex items-center px-3 w-full p-2 border-[1.5px] border-black/50 bg-gray-200 rounded-md 
+    text-lg font-semibold ">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
+    className="size-5 mr-3 text-gray-500">
+      <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+    </svg>
+    <h2 className="text-gray-500">
+      Set Your Tasks
+    </h2>
+  </div>
+    
+  <div>
+    <h2 className="mt-3 mb-2 font-bold">Description</h2>
+    <textarea
+      className="w-full h-24 p-2 border bg-gray-200 border-gray-300 rounded focus:outline-none 
+      focus:ring-2 focus:ring-gray-500"
+      placeholder="+ Add a Description about the Task"
+      value={newTask.description}
+      onChange={(e) => {
+        setNewTask({ ...newTask, description: e.target.value });
+        if (editingTask) {
+          setEditingTask({ ...editingTask, description: e.target.value });
+        }
+      }}
+    />
+  </div>
+
+  <div className="w-full mt-4 ">
+    <div className="flex items-center mb-3">
+      <div className="w-1/2 items-center">
+        <p className="block font-bold mb-2">List</p>
       </div>
-
-      {/* 4th Column: Form to Set Tasks */}
-      <div className="w-[350px] bg-white p-4 flex flex-col border-2 border-blue-950/80
-      mr-[20px] rounded-[15px]">
-      
-        <div className="flex items-center px-3 w-full p-2 border-[1.5px] border-black/50 bg-gray-200 rounded-md 
-          text-lg font-semibold ">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
-          className="size-5 mr-3 text-gray-500">
-            <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-          </svg>
-          <h2 className="text-gray-500">
-            Set Your Tasks
-          </h2>
-        </div>
-          
-        <div>
-          <h2 className="mt-3 mb-2 font-bold">Description</h2>
-          <textarea
-            className="w-full h-24 p-2 border bg-gray-200 border-gray-300 rounded focus:outline-none 
-            focus:ring-2 focus:ring-gray-500"
-            placeholder="+ Add a Description about the Task"
-            value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-          />
-        </div>
-
-        <div className="w-full mt-4 ">
-          <div className="flex items-center mb-3">
-            <div className="w-1/2 items-center">
-              <p className="block font-bold mb-2">List</p>
-            </div>
-            <div className="w-1/2 flex items-center">
-              <select 
-              className="w-auto px-3 py-1 border bg-gray-200 border-gray-300 rounded-md focus:outline-none 
-              focus:ring-2 focus:ring-blue-500"
-              value={newTask.list}
-              onChange={(e) => setNewTask({ ...newTask, list: e.target.value })}>
-                {listOptions.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-
-          <div className="flex items-center mb-3">
-            <div className="w-1/2 flex items-center">
-              <p className="block font-bold mb-2">Due Date</p>
-            </div>
-            <div className="w-1/2 flex items-center">
-              <input 
-                type="date" 
-                className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
-                focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
-                value={newTask.dueDate}
-                onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
-              />
-            </div> 
-          </div>
-
-          <div className="flex items-center mb-3">
-            <div className="w-1/2 flex items-center">
-              <p className="block font-bold mb-2">Sub Tasks</p>
-            </div>
-            <div className="w-1/2 flex items-center">
-              <input 
-                type="text" 
-                placeholder="+ Add a subtask" 
-                className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
-                focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                value={newTask.subTask}
-                onChange={(e) => setNewTask({ ...newTask, subTasks: e.target.value})}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center mb-3">
-            <div className="w-1/2">
-              <p className="block font-bold mb-2">Prioritized Level</p>
-            </div>
-            <div className="w-1/2 flex items-center">
-              <select 
-                className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
-                focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                value={newTask.priority}
-                onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-              >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Add Task Button */}
-        <button
-          className="w-[40%] mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4 justify-end"
-          onClick={addTask}
+      <div className="w-1/2 flex items-center">
+        <select 
+        className="w-auto px-3 py-1 border bg-gray-200 border-gray-300 rounded-md focus:outline-none 
+        focus:ring-2 focus:ring-blue-500"
+        value={newTask.list}
+        onChange={(e) => {
+          setNewTask({ ...newTask, list: e.target.value });
+          if (editingTask) {
+            setEditingTask({ ...editingTask, list: e.target.value });
+          }
+        }}
         >
-          Add Task
-        </button>
-
+          {listOptions.map((option, index) => (
+            <option key={index} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </div>
+    </div>
+
+
+    <div className="flex items-center mb-3">
+      <div className="w-1/2 flex items-center">
+        <p className="block font-bold mb-2">Due Date</p>
+      </div>
+      <div className="w-1/2 flex items-center">
+        <input 
+          type="date" 
+          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
+          focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
+          value={newTask.dueDate}
+          onChange={(e) => {
+            setNewTask({ ...newTask, dueDate: e.target.value });
+            if (editingTask) {
+              setEditingTask({ ...editingTask, dueDate: e.target.value });
+            }
+          }}
+        />
+      </div> 
+    </div>
+
+    <div className="flex items-center mb-3">
+      <div className="w-1/2 flex items-center">
+        <p className="block font-bold mb-2">Sub Tasks</p>
+      </div>
+      <div className="w-1/2 flex items-center">
+        <input 
+          type="text" 
+          placeholder="+ Add a subtask" 
+          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
+          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          value={newTask.subTasks}
+          onChange={(e) => {
+            setNewTask({ ...newTask, subTasks: e.target.value });
+            if (editingTask) {
+              setEditingTask({ ...editingTask, subTasks: e.target.value });
+            }
+          }}
+        />
+      </div>
+    </div>
+
+    <div className="flex items-center mb-3">
+      <div className="w-1/2">
+        <p className="block font-bold mb-2">Prioritized Level</p>
+      </div>
+      <div className="w-1/2 flex items-center">
+        <select 
+          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
+          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          value={newTask.priority}
+          onChange={(e) => {
+            setNewTask({ ...newTask, priority: e.target.value });
+            if (editingTask) {
+              setEditingTask({ ...editingTask, priority: e.target.value });
+            }
+          }}
+        >
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  {/* Add Task Button */}
+  <button
+    className="w-[40%] mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4 justify-end"
+    onClick={editingTask ? handleUpdateTask : addTask}
+  >
+    {editingTask ? "Update Task" : "Add Task"}
+  </button>
+
+
+</div>
+
+</div>
 
     </div>
+   
   );
 };
 

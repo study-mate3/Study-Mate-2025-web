@@ -1,11 +1,8 @@
 import React from 'react'
-import SidePanel from '../components/SidePanel'
 
 const Features = () => {
   return (
-    <div>
-      <SidePanel />
-    </div>
+    <div>Features</div>
   )
 }
 

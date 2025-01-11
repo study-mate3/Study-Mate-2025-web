@@ -34,6 +34,7 @@ export default function StopWatch() {
     const [name, setName] = useState('Learner');
     const auth = getAuth();
     const db = getFirestore();
+    
      
 
      useEffect(() => {
@@ -250,13 +251,7 @@ export default function StopWatch() {
       
           if (user) {
             const userRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
-            const pomodoroMinutes = pomodoroTime;
-            await updateDoc(userRef, {
-                pomodoroMinutes: arrayUnion(pomodoroMinutes), // Add the minutes to the array
-              });
-              
-        
-              console.log("Pomodoro minutes saved successfully:", pomodoroMinutes);
+           
             // Get the current timestamp
             const presentTime = format(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX", {
                 timeZone: "Asia/Colombo",
@@ -272,9 +267,16 @@ export default function StopWatch() {
             // Update UI states
             setResponseMessage("Ah, okay! Good job, keep up the great work!");
             setShowAcknowledgement(true); // Show the acknowledgment message
-            setShowAlert(true); // Hide the alert
+            setShowAlert(true); 
+            setTimeout(() => {
+        setShowAcknowledgement(false);
+        setResponseMessage(false);
+        setShowAlert(false);
+    }, 5000);
           } else {
             console.error("No user is logged in.");
+            setAlertMessage("Need timer reminders and Study tips? Join us for free!");
+            setShowAlert(true);
 
           }
         } catch (error) {
@@ -286,9 +288,11 @@ export default function StopWatch() {
         setResponseMessage('');
         setShowAlert(false); // Hide the alert
         setShowAcknowledgement(false); // Hide the acknowledgment message
-        if (autoHideTimeout) {
-            clearTimeout(autoHideTimeout); // Clear timeout if needed
-        }
+        setTimeout(() => {
+            setShowAcknowledgement(false);
+            setResponseMessage(false);
+            setShowAlert(false);
+        }, 5000);
     };
     
     const handleCloseFinishMessage = () => {

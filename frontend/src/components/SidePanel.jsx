@@ -39,21 +39,24 @@ const SidePanel = ({setName}) => {
           <HomeIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
         </Link>
 
-
         <Link to="/timer">
-          <ClockIcon className="h-8 w-8 mt-4 text-white hover:text-blue-950 cursor-pointer" />
+          <ClockIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
         </Link>
-        
-        <Link  to="/todo-after-login">
-          <PencilIcon className="h-8 w-8 mt-4 text-white hover:text-blue-950 cursor-pointer" />
 
+        <Link to="/todo-after-login">
+          <PencilIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
         </Link>
-        <BellIcon className="h-5 w-5 text-white" /> */}
+
+        <Link to="/notifications">
+          <BellIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+        </Link>
+
+      
         <ArrowLeftOnRectangleIcon
       className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"
       onClick={handleLogout} // Add click handler
     />
-        <Link to="/contact">
+        <Link to="/faq">
           <QuestionMarkCircleIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" />
         </Link>
       </div>

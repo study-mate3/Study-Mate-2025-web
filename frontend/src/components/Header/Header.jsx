@@ -40,11 +40,11 @@ const Header = ({ onScrollToSection }) => {
       <div className="container flex items-center justify-between h-[100px]">
         {/* Logo */}
         <div className="w-[192px]">
-        <img
-        src={isScrolled ? scrolledLogo : logo} // Change logo based on scroll state
-        alt="Logo"
-        className="w-full h-full"
-      />
+          <img
+          src={isScrolled ? scrolledLogo : logo} // Change logo based on scroll state
+          alt="Logo"
+          className="w-full h-full"
+          />
         </div>
 
         {/* Center Button */}
