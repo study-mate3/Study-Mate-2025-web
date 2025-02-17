@@ -9,6 +9,7 @@ import StDashHeader from '../components/Header/StudentDheader';
 import AbsentTimesCard from '../components/AbsentTimesCard';
 import EngagementChart from '../components/EngagementChart';
 import SidePanel from '../components/SidePanel';
+import RewardComponent from '../components/Rewards/RewardComponent';
 
 const mockData = {
   user: {
@@ -42,14 +43,17 @@ const DashboardCard = ({ userId, title, children, className = '' }) => (
 const StudentDashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [completedPomodoros, setCompletedPomodoros] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState(0);
+
+   const [userId, setUserId] = useState(null);
+   const [initialTime, setInitialTime] = useState(null);
+
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid); // Set the user ID when authenticated
+        fetchPomodoroTime(user.uid);
       } else {
         console.error("User is not logged in!");
       }
@@ -57,6 +61,7 @@ const StudentDashboard = () => {
 
     return () => unsubscribe();
   }, []);
+
 
   // Fetch user details
   const fetchUserData = async (userId) => {
@@ -95,7 +100,7 @@ const StudentDashboard = () => {
   };
 
   const completedSessions = completedPomodoros !== null
-    ? Math.floor(completedPomodoros / 2)
+    ? Math.floor(completedPomodoros)
     : 0;
   // Use `onAuthStateChanged` to get the logged-in user's ID
   useEffect(() => {
@@ -115,6 +120,27 @@ const StudentDashboard = () => {
     // Cleanup subscription
     return () => unsubscribe();
   }, []);
+  const fetchPomodoroTime = async (userId) => {
+    try {
+      const pomodoroRef = doc(db, `users/${userId}/rewards/pomodoro`);
+      const pomodoroSnap = await getDoc(pomodoroRef);
+      if (pomodoroSnap.exists()) {
+        setInitialTime(pomodoroSnap.data().initialTime || 0);
+      } else {
+        console.warn("Pomodoro document not found.");
+      }
+    } catch (error) {
+      console.error("Error fetching initial time:", error);
+    }
+  };
+
+  // Convert seconds to H:M:S format
+  const formatTime = (seconds) => {
+    const h = Math.floor(seconds / 3600000);
+    const m = Math.floor((seconds % 3600000) / 60000);
+    const s = seconds % 60;
+    return `${h}h ${m}m ${s}s`;
+  }; 
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -196,8 +222,10 @@ const StudentDashboard = () => {
         <CheckCircle className="text-green-600" size={24} />
       </div>
       <div>
-        <p className="text-2xl font-bold text-black">{completedTasks}/{tasks.length}</p>
-        <p className="text-black">Tasks Completed</p>
+
+        <p className="text-2xl font-bold text-black">{mockData.tasks.completed}/{mockData.tasks.total}</p>
+        <p className="text-black text-sm mt-2">Tasks Completed</p>
+
       </div>
     </div>
   </DashboardCard>
@@ -212,26 +240,37 @@ const StudentDashboard = () => {
         <p className="text-2xl font-bold text-black">
           {completedPomodoros !== null ? completedSessions : 'Loading...'}
         </p>
-        <p className="text-black">Total Completed Pomodoros</p>
+        <p className="text-black text-sm">Total Completed Pomodoros</p>
       </div>
+
+                <p className="text-2xl font-bold text-black">
+                  {initialTime !== null ? formatTime(initialTime) : "Loading..."}
+                </p>
+                <p className="text-black text-sm">Total Pomodoro Time</p>
+       
+
     </div>
   </DashboardCard>
 </div>
 
 </div>
-
+<div className='mt-15 mb-10'>
+      <RewardComponent userId={userId} />
+    </div>
 {/* Weekly Progress Chart */}
 <DashboardCard className='mt-15'>
 
   <EngagementChart userId={userId}/>
 </DashboardCard>
 
-<div className='mt-20'>
+
+
+{/* <div className='mt-20'>
 <h3 className="text-lg font-semibold mb-4 text-gray-800">
         We noticed you are not focused on studying in these times... 🧐
       </h3>
-<AbsentTimesCard userId={userId} />
-</div>
+ <AbsentTimesCard userId={userId} /> 
+</div> */}
 
       </div>
     </div>

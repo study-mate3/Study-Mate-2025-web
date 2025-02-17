@@ -43,9 +43,9 @@ function MotivationalQ() {
       className="motivational-quotes"
       style={{
         fontFamily: 'Caveat, cursive',
-        fontSize: '22px',
-        marginTop: '20px',
-        marginBottom: '20px',
+        fontSize: '20px',
+        marginTop: '16px',
+        marginBottom: '18px',
         textAlign: 'center',
       }}
     >
