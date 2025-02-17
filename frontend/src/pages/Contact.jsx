@@ -1,10 +1,11 @@
 import React from 'react';
 import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
+import { Link } from 'react-router-dom';
 
 
 const FAQPage = () => {
   return (
-    <div >
+    <div className=" bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center" >
       <div  className="flex justify-center items-center flex-col"><img
          src={logo2}
          alt="Logo"
@@ -12,9 +13,14 @@ const FAQPage = () => {
        /></div>
       
       <div className="text-[30px] font-bold text-center mt-2 text-headingColor"><h1>Frequently Asked Questions</h1></div>
+     <div className="flex justify-center items-center flex-col">
+     <button className=" mt-6 text-white py-2 px-4 font-[600] " style={{width: 253, height: 38, background: '#0E3167', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}>
+                    <Link to='/'>Facing any issues? Report it!</Link>
+                  </button>
+     </div>
       
 
-      <section className='ml-20 font-sans'>
+      <section className='ml-20 font-sans bg-white'>
         <div style={{ marginBottom: '22px' }}>
           <p className='text-[22px] text-blue-700 ' ><strong>1. What is this app, and how can it help me?</strong></p>
           <p>This app helps you manage your study sessions efficiently using features like Pomodoro timers, task management, progress tracking, and motivational quotes. It keeps you focused and organized throughout your study routine.</p>

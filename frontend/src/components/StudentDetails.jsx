@@ -123,8 +123,8 @@ const StudentDetailsPage = () => {
               .then(
                 (response) => {
                   console.log('Email sent successfully!', response.status, response.text);
-                  setAlertMessage("Student notified successfully via email about being added.");
-                  setShowAlert(true);
+                  /* setAlertMessage("Student notified successfully via email about being added."); */
+                  setShowAlert(false);
                 },
                 (error) => {
                   console.error("Student notified failed via email about being added.", error);

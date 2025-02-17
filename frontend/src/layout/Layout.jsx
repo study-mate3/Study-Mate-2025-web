@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
 
   // Check if the current route is either /timer or /dashboard
   const isExcludedRoute = location.pathname === '/timer' || location.pathname === "/student-dashboard/:studentId"|| location.pathname === "/login"|| location.pathname === "/signup/:role"|| location.pathname === "/role"|| location.pathname === "/"|| location.pathname === "/signup/student"|| location.pathname === "/signup/parent"|| location.pathname === "/unauthorized"|| location.pathname === "/todo-after-login"||location.pathname === "/notifications"
-  |location.pathname === "/faq";
+  |location.pathname === "/faq" ||location.pathname === "/PomodoroReview";
   
   return (
     <div className="min-h-screen flex flex-col">
