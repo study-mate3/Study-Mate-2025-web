@@ -9,8 +9,14 @@ import {
   Search,
   Trash2
 } from 'lucide-react';
+import ComparisonGraphs from '../components/ComparisonGraph';
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+import { getAuth, signOut } from 'firebase/auth';
+import { Navigate, useNavigate } from 'react-router-dom';
+
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [notification, setNotification] = useState({
     message: '',
     recipientType: 'all',
@@ -46,7 +52,22 @@ const AdminDashboard = () => {
       studentEngagementRate: '85%'
     }
   };
+ const handleLogout = async () => {
+    try {
+      const auth = getAuth();
+      await signOut(auth);  // Sign out the user from Firebase
 
+      // Clear local session (localStorage or cookies)
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('username');
+      
+      // Redirect to home page or login page
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Handle error (optional, show an error message to the user)
+    }
+  };
   const handleDeleteUser = (userId) => {
     alert(`Deleting user with ID: ${userId}`);
   };
@@ -66,7 +87,11 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <div className="flex items-center gap-4">
+        <ArrowLeftOnRectangleIcon
+      className="h-8 w-8 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
+      onClick={handleLogout} // Add click handler
+    />
+       {/*  <div className="flex items-center gap-4">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
             <input
@@ -84,11 +109,13 @@ const AdminDashboard = () => {
             </div>
             <span className="font-medium">Admin</span>
           </div>
-        </div>
+        </div> */}
       </div>
-
+        <div>
+          <ComparisonGraphs/>
+        </div>
       {/* Basic Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
           return (
@@ -106,9 +133,9 @@ const AdminDashboard = () => {
         })}
       </div>
 
-      {/* Enhanced Analytics Section */}
+  
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* Gender Distribution */}
+       
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-bold mb-4">Gender Distribution</h3>
           <div className="flex items-center justify-between">
@@ -121,7 +148,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Engagement Metrics */}
+        
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-bold mb-4">User Engagement</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -149,7 +176,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

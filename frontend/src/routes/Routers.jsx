@@ -39,7 +39,7 @@ const Routers = () => {
           <Route path="/notifications" element={<PrivateRoute roleRequired="student"><Notification /></PrivateRoute>} />
           <Route path="/admin-dashboard" element={<PrivateRoute roleRequired="admin"><AdminDashboard /></PrivateRoute>} />
           <Route path="/parent-dashboard" element={<PrivateRoute roleRequired="parent"><ParentDashboard /></PrivateRoute>} />
-          <Route path="/student-dashboard/:studentId" element={<PrivateRoute roleRequired="student"><StudentDashboard /></PrivateRoute>} />
+          <Route path="/student-dashboard/:studentId" element={<PrivateRoute roleRequired="student"><StudentDashboard/></PrivateRoute>} />
           <Route path="/student-details" element={<PrivateRoute roleRequired="parent"><StudentDetailsPage/></PrivateRoute>} />
           <Route path="/PomodoroReview" element={<PrivateRoute roleRequired="student"><PomodoroReview/></PrivateRoute>} />
 

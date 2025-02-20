@@ -17,7 +17,7 @@ ChartJS.register(
 );
 
 const EngagementChart = ({ userId }) => {
-    console.log("Received userId in EngagementChart:", userId); 
+  console.log("Received userId in EngagementChart:", userId); 
   const [engagementData, setEngagementData] = useState([]);
   const [loading, setLoading] = useState(true);
   const chartRef = useRef(null); // Ref to store chart instance
