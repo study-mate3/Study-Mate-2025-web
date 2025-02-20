@@ -6,17 +6,19 @@ import ToDoListBox from './ToDoListBox/ToDoListBox'; // Import the ToDoListBox c
 import FinishMessage from './FinishMessage/FinishMessage';
 import MotivationalQ from './MotivationalQuotes/MotivationalQ';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc,updateDoc, arrayUnion, increment } from 'firebase/firestore';
+import { getFirestore, doc, getDoc,updateDoc, arrayUnion, increment, setDoc } from 'firebase/firestore';
 import { format } from "date-fns-tz";
 import SidePanel from './SidePanel';
 import { Link, useNavigate } from 'react-router-dom';
+import FocusMonitor from './Rewards/FocusMonitor';
+import ScreenRecorder from './ScreenRecoder/ScreenRecorder';
 
 
 
 export default function StopWatch() {
     // State variables
-    const [time, setTime] = useState(20 * 60 * 1000); // Default
-    const [initialTime, setInitialTime] = useState(1 * 60 * 1000); // Default to 20 minutes for Pomodoro
+    const [time, setTime] = useState(20 *60* 1000); // Default
+    const [initialTime, setInitialTime] = useState(10 * 1000); // Default to 20 minutes for Pomodoro
     const [isRunning, setIsRunning] = useState(false);
     const [isAlarmActive, setIsAlarmActive] = useState(false);
     const [isCustomizing, setIsCustomizing] = useState(false);
@@ -50,7 +52,7 @@ export default function StopWatch() {
     useEffect(() => {
         const updateGreeting = () => {
             const currentHour = new Date().getHours();
-            console.log(`Current hour: ${currentHour}`); // Log the current hour for debugging
+            console.log(`Current hour: ${currentHour}`); 
             if (currentHour < 12) {
                 setGreeting('Good Morning');
             } else if (currentHour < 18) {
@@ -69,7 +71,42 @@ export default function StopWatch() {
         };
     }, []);
 
-
+    const updateWorkingTime = async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not authenticated");
+          return;
+        }
+      
+        const currentHour = new Date().getHours(); // Get current hour
+        let collectionName = "";
+      
+        if ([22, 23, 0, 1, 2, 3].includes(currentHour)) {
+          collectionName = "nightowl";
+        } else if ([4, 5, 6, 7, 8].includes(currentHour)) {
+          collectionName = "earlybird";
+        } else {
+          console.log("Current hour does not match any category.");
+          return;
+        }
+      
+        const userRef = doc(db, "users", user.uid,  "rewards", collectionName);
+      
+        try {
+          const docSnap = await getDoc(userRef);
+      
+          if (docSnap.exists()) {
+            const currentValue = docSnap.data().count || 0; // Get existing count
+            await updateDoc(userRef, { count: currentValue + 1 });
+          } else {
+            await setDoc(userRef, { count: 1 }); // If no record, create one
+          }
+      
+          console.log(`Updated ${collectionName} count successfully!`);
+        } catch (error) {
+          console.error(`Error updating ${collectionName} count:`, error);
+        }
+      };
 
     const formatTime = (milliseconds) => {
         const totalMinutes = Math.floor(milliseconds / (1000 * 60)); // Total minutes
@@ -83,11 +120,25 @@ export default function StopWatch() {
         } else {
             return `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
         }
-    };
+    }; 
 
-    const handleStart = () => {
-        setIsRunning(true);
-    };
+   const handleStart = () => {
+    setIsRunning(true);
+
+    // Send a message to the Chrome extension to activate tracking
+    if (window.chrome && chrome.runtime) {
+        chrome.runtime.sendMessage({ action: "start_tracking" }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error sending message:", chrome.runtime.lastError.message);
+            } else {
+                console.log("Tracking started:", response);
+            }
+        });
+    } else {
+        console.error("Chrome extension not detected.");
+    }
+};
+
 
     const handleStop = () => {
         setIsRunning(false);
@@ -165,7 +216,35 @@ export default function StopWatch() {
     const handleCloseToDoListBox = () => {
         setIsManagingToDoList(false);
     };
+
+    const saveInitialTime = async (newTime) => {
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("User not authenticated");
+          return;
+        }
+      
+        const userRef = doc(db, "users", user.uid, "rewards", "pomodoro");
+        try {
+            const docSnap = await getDoc(userRef);
+        
+            if (docSnap.exists()) {
+              const currentTime = docSnap.data().initialTime || 0; // Get existing time
+              const updatedTime = currentTime + newTime; // Add new time
+        
+              await updateDoc(userRef, { initialTime: updatedTime });
+            } else {
+              await setDoc(userRef, { initialTime: newTime }); // If no record, create one
+            }
+        
+            console.log("Initial time updated successfully!");
+          } catch (error) {
+            console.error("Error updating initial time:", error);
+          }
+        };
     const updatePomodoroCount = async () => {
+        console.log("Function updatePomodoroCount is running...");
+
         const user = auth.currentUser;
         console.log("Current user:", user);
         if (user) {
@@ -183,41 +262,45 @@ export default function StopWatch() {
             console.log("No user is authenticated.");
         }
     };
+
+    
+
+    
+
     useEffect(() => {
         let intervalId;
-        
-       
+    
         if (isRunning && time > 0) {
             intervalId = setInterval(() => {
-                setTime(prev => prev - 1000); // Decrement by 1000 milliseconds (1 second)
-            }, 1000); // Interval of 1000 milliseconds (1 second)
+                setTime(prev => prev - 1000);
+            }, 1000);
+        }
     
-            // Show alert when halfway through Pomodoro time
-            if (currentMode === 'pomodoro' && time === initialTime / 2 && !showAlert) {
-                setShowAlert(true);
-                setShowAcknowledgement(false); // Ensure acknowledgment is hidden
-            }
-        } else if (time <= 0) {
+        return () => clearInterval(intervalId);
+    }, [isRunning, time]);
+    
+    useEffect(() => {
+        if (time <= 0) {
             setIsRunning(false);
             setIsAlarmActive(true);
-            setTimeout(() => setIsAlarmActive(false), 5000); // Alarm rings for 5 seconds
+            setTimeout(() => setIsAlarmActive(false), 5000);
     
-            // Set finish message and image based on current mode
             if (currentMode === 'pomodoro') {
                 setFinishMessage('High five! 👋 Work’s done!\n Chill out for a bit, then let’s get back to it!');
                 setFinishImage('GoodJob.gif');
                 updatePomodoroCount();
+                saveInitialTime(initialTime);
+                updateWorkingTime();
+                
             } else {
                 setFinishMessage('Break time’s up!\n Time to jump back into work. Set your timer and rock on!');
                 setFinishImage('clockRun.gif');
             }
-            setShowFinishMessage(true); // Show the finish message
+            setShowFinishMessage(true);
         }
-    
-        return () => clearInterval(intervalId);
-    }, [isRunning, time]); // Dependencies
+    }, [time]);// Dependencies
 
-    useEffect(() => {
+   /*  useEffect(() => {
         if (showAlert) {
             // Show alert after halfway through Pomodoro time
             const timeout = setTimeout(async () => {
@@ -242,47 +325,9 @@ export default function StopWatch() {
     
             return () => clearTimeout(timeout);
         }
-    }, [showAlert, responseMessage]);
+    }, [showAlert, responseMessage]);*/
 
 
-    const handleYesClick = async () => {
-        try {
-          const user = auth.currentUser; // Get the currently logged-in user
-      
-          if (user) {
-            const userRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
-           
-            // Get the current timestamp
-            const presentTime = format(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX", {
-                timeZone: "Asia/Colombo",
-              });
-      
-            // Update the "presentTime" array with the new timestamp
-            await updateDoc(userRef, {
-                presentTime: arrayUnion(presentTime),
-              });
-      
-            console.log("Time saved successfully:", presentTime);
-      
-            // Update UI states
-            setResponseMessage("Ah, okay! Good job, keep up the great work!");
-            setShowAcknowledgement(true); // Show the acknowledgment message
-            setShowAlert(true); 
-            setTimeout(() => {
-        setShowAcknowledgement(false);
-        setResponseMessage(false);
-        setShowAlert(false);
-    }, 5000);
-          } else {
-            console.error("No user is logged in.");
-            setAlertMessage("Need timer reminders and Study tips? Join us for free!");
-            setShowAlert(true);
-
-          }
-        } catch (error) {
-          console.error("Error saving time to Firestore:", error);
-        }
-      };
     
     const handleCloseAlert = () => {
         setResponseMessage('');
@@ -295,10 +340,70 @@ export default function StopWatch() {
         }, 5000);
     };
     
-    const handleCloseFinishMessage = () => {
+    const handleCloseFinishMessage = async () => {
         setShowFinishMessage(false);
         setTime(initialTime);
+      
+        try {
+            const user = auth.currentUser; // Get the currently logged-in user
+        
+            if (!user) {
+              console.error("No user is logged in.");
+              return; // Stop execution if no user is logged in
+            }
+        
+            const userRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+        
+            // Get the current timestamp in Colombo time
+            const presentTime = format(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX", {
+              timeZone: "Asia/Colombo",
+            });
+        
+            // Update the "presentTime" array with the new timestamp
+            await updateDoc(userRef, {
+              presentTime: arrayUnion(presentTime),
+            });
+        
+            console.log("Time saved successfully:", presentTime);
+          } catch (error) {
+            console.error("Error saving time to Firestore:", error);
+          }
+        
+          // Navigate to /PomodoroReview if the current mode is 'pomodoro'
+          if (currentMode === "pomodoro") {
+            navigate("/PomodoroReview");
+          }
     };
+
+    /* const engagedTime = async () => {
+        try {
+          const user = auth.currentUser; // Get the currently logged-in user
+      
+          if (!user) {
+            console.error("No user is logged in.");
+            return; // Stop execution if no user is logged in
+          }
+      
+          const userRef = doc(db, "users", user.uid); // Reference to the user's document in Firestore
+      
+          // Get the current timestamp in Colombo time
+          const presentTime = format(new Date(), "yyyy-MM-dd'T'HH:mm:ssXXX", {
+            timeZone: "Asia/Colombo",
+          });
+      
+          // Update the "presentTime" array with the new timestamp
+          await updateDoc(userRef, {
+            presentTime: arrayUnion(presentTime),
+          });
+      
+          console.log("Time saved successfully:", presentTime);
+        } catch (error) {
+          console.error("Error saving time to Firestore:", error);
+        }
+      };
+     */
+
+
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -324,11 +429,16 @@ export default function StopWatch() {
     return (
         
         <div className='timerbody'>
+            
             <div style={sidePanelStyle}>
+          {/*   <ScreenRecorder currentMode={currentMode} /> */}
         <SidePanel setName={setName}/>
       </div>
             <div className="header-container">
-                
+                <FocusMonitor currentMode={currentMode}/>
+            <div className=" flex justify-center items-center mb-14">
+                        <div className="w-[120px]"><img src="whitelogo.png" alt="" /></div>
+                      </div>
                 <div className="greeting-box">
                     <div className="greeting-text">{greeting}, {name}!</div>
                 </div>
@@ -342,6 +452,7 @@ export default function StopWatch() {
                 </div>
 
                 <div className="stopwatch-container">
+                    
                     <div className='middle-container'>
                     <div className='topics'>
                         <div className={`pomodoro ${currentMode === 'pomodoro' ? 'active' : ''}`} 
@@ -418,7 +529,7 @@ export default function StopWatch() {
                 <source src="bell-notification.wav" type="audio/wav" />
                 Your browser does not support the audio element.
             </audio>
-            {!responseMessage ? (
+           {/*  {!responseMessage ? (
                 <div className='alert-box'>
                     <img src="are_you_awake.png" alt="Question Image" className="inline-image" />
                     <p>Hi, are you studying or busy with something else?</p>
@@ -429,13 +540,13 @@ export default function StopWatch() {
                     <p>{responseMessage}</p>
                     <button onClick={handleCloseAlert}>Close</button>
                 </>
-            )}
+            )} */}
         </div>
     </>
 )}
 
 
-
+{/* 
         {showAcknowledgement && responseMessage === 'Ah, you seem to not be studying. We will note this!' && (
             <div className="alert-box">
                 <img src="not_studing.png" alt="notStudy Image" className="inline-image" />
@@ -450,13 +561,16 @@ export default function StopWatch() {
                 <p>Ah, okay! Good job, keep up the great work!</p>
                 <button onClick={handleCloseAlert}>Close</button>
             </div>
-        )}  
+        )}   */}
 
                 </div>
                 <div className="text-container">
+               
                             <img src="https://i.imgur.com/1udOWc6.png" alt="Icon" className="icon" />
                             <span className="reminder-text">Need timer reminders and study tips?&nbsp;&nbsp;</span>
-                            <span className="highlight-text"> Join us for free!</span>
+                            <span className="highlight-text">
+                             <Link to='/login'>Join Us for Free!</Link>
+                             </span>
                         </div>
             </div>
             </div>

@@ -146,10 +146,10 @@ const SignUp = () => {
   ? "Welcome, Super Parent! Let’s Get Started!"
   : ""}
 </h2>
-      <form onSubmit={handleSignUp} className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSignUp} className="grid grid-cols-1 md:grid-cols-2 gap-4">
 {/* Name Field */}
 <div className="flex flex-col">
-  <label htmlFor="name" className="font-semibold text-gray-700">Full Name</label>
+  <label htmlFor="name" className="font-semibold text-gray-700 mt-2">Full Name</label>
   <input
     type="text"
     id="name"
@@ -163,7 +163,7 @@ const SignUp = () => {
 
 {/* Email Field */}
 <div className="flex flex-col">
-  <label htmlFor="email" className="font-semibold text-gray-700">Email</label>
+  <label htmlFor="email" className="font-semibold text-gray-700 mt-2">Email</label>
   <input
     type="email"
     id="email"
@@ -177,7 +177,7 @@ const SignUp = () => {
 
 {/* Password Field */}
 <div className="flex flex-col">
-  <label htmlFor="password" className="font-semibold text-gray-700">Password</label>
+  <label htmlFor="password" className="font-semibold text-gray-700 mt-2">Password</label>
   <input
     type="password"
     id="password"
@@ -191,7 +191,7 @@ const SignUp = () => {
 
 {/* Gender Field */}
 <div className="flex flex-col">
-  <label htmlFor="gender" className="font-semibold text-gray-700">Gender</label>
+  <label htmlFor="gender" className="font-semibold text-gray-700 mt-2">Gender</label>
   <select
     id="gender"
     value={gender}
@@ -209,7 +209,7 @@ const SignUp = () => {
   <>
     {/* Grade Field */}
     <div className="flex flex-col">
-      <label htmlFor="grade" className="font-semibold text-gray-700">Grade</label>
+      <label htmlFor="grade" className="font-semibold text-gray-700 mt-2">Grade</label>
       <select
         id="grade"
         value={grade}
@@ -233,7 +233,7 @@ const SignUp = () => {
 <div className="col-span-2">
   <button
     type="submit"
-    className="w-full  text-white font-semibold text-[16px] h-[34px] bg-gradient-to-b from-[#0570b2] to-[#0745a2] rounded-[100px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
+    className="w-full  text-white font-semibold text-[16px] h-[34px] bg-gradient-to-b from-[#0570b2] to-[#0745a2] rounded-[100px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] mt-2"
     >
     Sign Up
   </button>

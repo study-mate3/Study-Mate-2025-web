@@ -18,6 +18,7 @@ import RoleSelection from '../pages/RoleSelection';
 import StudentDetailsPage from '../components/StudentDetails';
 import Loading from '../components/Loading';
 import FAQPage from '../pages/Contact';
+import PomodoroReview from '../components/Rewards/PomodoroReview';
 
 const Routers = () => {
   return (
@@ -40,6 +41,8 @@ const Routers = () => {
           <Route path="/parent-dashboard" element={<PrivateRoute roleRequired="parent"><ParentDashboard /></PrivateRoute>} />
           <Route path="/student-dashboard/:studentId" element={<PrivateRoute roleRequired="student"><StudentDashboard /></PrivateRoute>} />
           <Route path="/student-details" element={<PrivateRoute roleRequired="parent"><StudentDetailsPage/></PrivateRoute>} />
+          <Route path="/PomodoroReview" element={<PrivateRoute roleRequired="student"><PomodoroReview/></PrivateRoute>} />
+
 
           {/*<Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} /> */}
         </Routes>
