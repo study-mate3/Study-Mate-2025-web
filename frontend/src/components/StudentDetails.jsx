@@ -17,8 +17,13 @@ const StudentDetailsPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [currentUserName, setCurrentUserName] = useState('');
 
-
-
+  
+  const formatTime = (seconds) => {
+    const h = Math.floor(seconds / 3600000);
+    const m = Math.floor((seconds % 3600000) / 60);
+    const s = seconds % 60;
+    return `${h}h ${m}m ${s}s`;
+  }; 
   
     // Fetch added students on component mount
     const fetchAddedStudents = async () => {
@@ -75,7 +80,7 @@ const StudentDetailsPage = () => {
         }
       }, [currentUser]);
     
-
+    
       
 
       const fetchStudentDetails = async (studentId) => {
@@ -83,25 +88,51 @@ const StudentDetailsPage = () => {
         setError('');
         setStudentDetails(null);
     
+       
         try {
           const studentQuery = query(
-            collection(db, 'users'),
-            where('studentId', '==', studentId),
-            where('role', '==', 'student') // Ensure only students are fetched
+              collection(db, 'users'),
+              where('studentId', '==', studentId),
+              where('role', '==', 'student') // Ensure only students are fetched
           );
-    
+  
           const querySnapshot = await getDocs(studentQuery);
-    
+  
           if (!querySnapshot.empty) {
-            const studentDoc = querySnapshot.docs[0];
-            const studentData = studentDoc.data();
-    
-            setStudentDetails({
-              name: studentData.name,
-              email: studentData.email,
-              completedPomodoros: studentData.completedPomodoros || 0,
-              absentTime: studentData.absentTime || [],
-            });
+              const studentDoc = querySnapshot.docs[0];
+              const studentData = studentDoc.data();
+  
+              // Fetch rewards and session summary
+              const rewardsRef = doc(db, 'users', studentDoc.id, 'rewards', 'pomodoro');
+              const rewardsSnap = await getDoc(rewardsRef);
+  
+              const sessionSummaryRef = doc(db, 'users', studentDoc.id, 'rewards', 'points');
+              const sessionSummarySnap = await getDoc(sessionSummaryRef);
+  
+              const pointsRef = doc(db, 'users', studentDoc.id, 'rewards', 'points');
+              const pointsSnap = await getDoc(pointsRef);
+
+              const earlybirdRef = doc(db, 'users', studentDoc.id, 'rewards', 'earlybird');
+              const earlybirdSnap = await getDoc(earlybirdRef);
+
+              const nightowlRef = doc(db, 'users', studentDoc.id, 'rewards', 'nightowl');
+              const nightowlSnap = await getDoc(nightowlRef);
+            
+              // Log sessionSummary to check if it's being fetched correctly
+              console.log('Session Summary:', sessionSummarySnap.exists() ? sessionSummarySnap.data().sessionSummary : 'No session summary data');
+  
+              setStudentDetails({
+                  name: studentData.name,
+                  email: studentData.email,
+                  completedPomodoros: studentData.completedPomodoros || 0,
+                  absentTime: studentData.absentTime || [],
+                  initialTime: formatTime(rewardsSnap.exists() ? Math.floor(rewardsSnap.data().initialTime / 1000) : 0),
+                  sessionSummary: pointsSnap.exists() ? pointsSnap.data().sessionSummary : [], // Ensure you are passing the whole array
+                  points: pointsSnap.exists() ? pointsSnap.data().points : 0,
+                  earlybird: earlybirdSnap.exists() ? earlybirdSnap.data().count : 0,
+                  nightowl: nightowlSnap.exists()? nightowlSnap.data().count : 0,
+                 });
+  
     
             // Save student ID to addedStudents
             await saveStudentToFirebase(studentId);
@@ -143,7 +174,71 @@ const StudentDetailsPage = () => {
         }
       };
     
-  
+      const showStudentDetails = async (studentId) => {
+        setLoading(true);
+        setError('');
+        setStudentDetails(null);
+    
+        try {
+            const studentQuery = query(
+                collection(db, 'users'),
+                where('studentId', '==', studentId),
+                where('role', '==', 'student') // Ensure only students are fetched
+            );
+    
+            const querySnapshot = await getDocs(studentQuery);
+    
+            if (!querySnapshot.empty) {
+                const studentDoc = querySnapshot.docs[0];
+                const studentData = studentDoc.data();
+    
+                // Fetch rewards and session summary
+                const rewardsRef = doc(db, 'users', studentDoc.id, 'rewards', 'pomodoro');
+                const rewardsSnap = await getDoc(rewardsRef);
+    
+                const sessionSummaryRef = doc(db, 'users', studentDoc.id, 'rewards', 'points');
+                const sessionSummarySnap = await getDoc(sessionSummaryRef);
+    
+                const pointsRef = doc(db, 'users', studentDoc.id, 'rewards', 'points');
+                const pointsSnap = await getDoc(pointsRef);
+
+                const earlybirdRef = doc(db, 'users', studentDoc.id, 'rewards', 'earlybird');
+                const earlybirdSnap = await getDoc(earlybirdRef);
+
+                const nightowlRef = doc(db, 'users', studentDoc.id, 'rewards', 'nightowl');
+                const nightowlSnap = await getDoc(nightowlRef);
+              
+                // Log sessionSummary to check if it's being fetched correctly
+                console.log('Session Summary:', sessionSummarySnap.exists() ? sessionSummarySnap.data().sessionSummary : 'No session summary data');
+    
+                setStudentDetails({
+                    name: studentData.name,
+                    email: studentData.email,
+                    completedPomodoros: studentData.completedPomodoros || 0,
+                    absentTime: studentData.absentTime || [],
+                    initialTime: formatTime(rewardsSnap.exists() ? Math.floor(rewardsSnap.data().initialTime / 1000) : 0),
+                    sessionSummary: pointsSnap.exists() ? pointsSnap.data().sessionSummary : [], // Ensure you are passing the whole array
+                    points: pointsSnap.exists() ? pointsSnap.data().points : 0,
+                    earlybird: earlybirdSnap.exists() ? earlybirdSnap.data().count : 0,
+                    nightowl: nightowlSnap.exists()? nightowlSnap.data().count : 0,
+                   });
+    
+                   
+                // Save student ID to addedStudents
+                await saveStudentToFirebase(studentId);
+            } else {
+                setError('No student found with the provided ID.');
+            }
+        } catch (err) {
+            console.error('Error fetching student details:', err);
+            setError('Failed to fetch student details. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    
 
   return (
     <div className="container mx-auto pt-40">
@@ -187,7 +282,7 @@ const StudentDetailsPage = () => {
             {addedStudents.map((id) => (
               <button
                 key={id}
-                onClick={() => fetchStudentDetails(id)}
+                onClick={() => showStudentDetails(id)}
                 className="bg-blue-500 text-white px-3 py-1 rounded"
                 style={{ width:120,background: 'linear-gradient(180deg, #0570B2 0%, #176BE8 100%)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
               >
@@ -218,26 +313,52 @@ const StudentDetailsPage = () => {
       </div>
       <div className="bg-white p-4 rounded shadow">
         <h3 className="text-lg font-medium">Completed Pomodoros</h3>
-        <p>{studentDetails.completedPomodoros ? studentDetails.completedPomodoros / 2 : 0}</p>
+        <p>{studentDetails.completedPomodoros ? studentDetails.completedPomodoros: 0}</p>
       </div>
+      <div className="bg-white p-4 rounded shadow">
+        <h3 className="text-lg font-medium">Total Completed Pomodoro Time</h3>
+      <p className='text-2xl font-medium'> {studentDetails.initialTime || "Not Available"}</p>
+    </div>
+      {/* <div>
+        {studentDetails?.sessionSummary?.length > 0 ? (
+            studentDetails.sessionSummary.map((session, index) => (
+                <div key={index} className="mb-4">
+                    <p className="font-medium">Focus: {session.focus || 'Not Available'}</p>
+                    <p className="font-medium">Productivity: {session.productivity || 'Not Available'}</p>
+                    <p className="font-medium">Session Activity: {session.sessionActivity || 'Not Available'}</p>
+                    <p className="font-medium">Timestamp: {session.timestamp || 'Not Available'}</p>
+                    <p className="font-medium">Total Pomodoros: {session.totalPomodoro || 'Not Available'}</p>
+                </div>
+            ))
+        ) : (
+            <p>No session summary data available.</p>
+        )}
+    </div> */}
+         
+           
+               {/*  <div>
+                   {/*  <p className="font-medium">Points: {studentDetails?.points || 'Not Available'}</p>  
+                     <p className="font-medium">Total Completed Pomodoro Time: {initialTime|| 'Not Available'}</p>
+                    {/*  <p className="font-medium">no: {studentDetails?.nightowl || 'Not Available'}</p>
+                     <p className="font-medium">eb: {studentDetails?.earlybird || 'Not Available'}</p> 
+                </div> */}
     </div>
 
     {/* Second Row: Absent Times */}
-    <h3 className="text-lg font-semibold text-gray-800 mb-4 mt-10">We noticed that your child was not focused on studying during these times... 🙁</h3>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-    {studentDetails.absentTime && studentDetails.absentTime.length > 0 ? (
-  studentDetails.absentTime.slice(0, 3).map((time, index) => (
-    <div key={index} className="p-4 rounded-2xl shadow-sm border border-red-600">
-      <p><strong>Date:</strong> {new Date(time).toLocaleDateString()}</p>
-      <p><strong>Time:</strong> {new Date(time).toLocaleTimeString()}</p>
+    <div className="achievements-container text-center">
+  <h2 className="text-2xl font-semibold mb-4">Your Child's Achievements This Week</h2>
+  {studentDetails?.earlybird > 5 || studentDetails?.nightowl > 5 || studentDetails?.points > 40 ? (
+    <div className="achievements-row flex justify-center gap-10">
+      {studentDetails?.earlybird > 5 && <img src="earlybird.png" width="160" alt="Early Bird" />}
+      {studentDetails?.nightowl > 5 && <img src="nightowl.png" width="160" alt="Night Owl" />}
+      {studentDetails?.points > 40 && <img src="focuspearl.png" width="160" alt="Points Achieved" />}
     </div>
-  ))
-) : (
-  <p>Great to see! Your student is fully focused. 🥳</p>
-)}
+  ) : (
+    <p className="text-lg text-gray-600 font-semibold mt-4">No badges achieved 😕. Encourage your child to study more! </p>
+  )}
 
-    
-    </div>
+
+</div>
   </div>
 )}
 

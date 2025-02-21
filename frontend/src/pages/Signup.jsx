@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { auth, db } from "../firebase/firebaseConfig";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { collection, getDocs, query, where, doc, setDoc,getDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, setDoc,getDoc, updateDoc, increment } from "firebase/firestore";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
@@ -64,7 +64,12 @@ const SignUp = () => {
         // Step 4: Save user data in Firestore
         await setDoc(userDocRef, userData);
 
-        
+        const statsRef = doc(db, 'stats', 'userCounts');
+      await updateDoc(statsRef, {
+        [`gender.${gender}`]: increment(1), // Increment gender count
+        ...(role === "student" && { [`grades.${grade}`]: increment(1) }), // Increment grade count
+        ...(role === "parent" && { parentCount: increment(1) }), // Increment parent count
+      });
   
         // Show success message
         toast.success("User registered successfully!", {

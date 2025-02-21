@@ -10,6 +10,8 @@ import AbsentTimesCard from '../components/AbsentTimesCard';
 import EngagementChart from '../components/EngagementChart';
 import SidePanel from '../components/SidePanel';
 import RewardComponent from '../components/Rewards/RewardComponent';
+import LastSessionSummary from '../components/LastSessionSummary';
+import CountUp from 'react-countup';
 
 
 const DashboardCard = ({ userId, title, children, className = '' }) => (
@@ -220,13 +222,22 @@ const StudentDashboard = () => {
       </div>
       <div>
         <p className="text-2xl font-bold text-black">
-          {completedPomodoros !== null ? completedSessions : 'Loading...'}
+        {completedPomodoros !== null ? (
+              <CountUp start={0} end={completedPomodoros} duration={2} separator="," />
+            ) : (
+              "Loading..."
+            )}
         </p>
         <p className="text-black text-sm">Total Completed Pomodoros</p>
       </div>
 
                 <p className="text-2xl font-bold text-black">
-                  {initialTime !== null ? formatTime(initialTime) : "Loading..."}
+                  {initialTime !== null ?  <CountUp
+                start={0}
+                end={initialTime}
+                duration={2}
+                formattingFn={(value) => formatTime(value)} // Formats time correctly
+              /> : "Loading..."}
                 </p>
                 <p className="text-black text-sm">Total Pomodoro Time</p>
        
@@ -239,6 +250,10 @@ const StudentDashboard = () => {
 <div className='mt-15 mb-10'>
       <RewardComponent userId={userId} />
     </div>
+
+    <div className='mt-15 mb-10'>
+    <LastSessionSummary userId={userId}/>
+    </div> 
 {/* Weekly Progress Chart */}
 <DashboardCard className='mt-15'>
 
