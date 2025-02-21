@@ -6,7 +6,8 @@ import {
   CalendarIcon, 
   PlusCircleIcon,
   CheckCircleIcon,
-  CalendarDaysIcon
+  CalendarDaysIcon,
+  RectangleStackIcon
 
 } from "@heroicons/react/24/solid";
 
@@ -335,6 +336,8 @@ const ToDoListPage = () => {
     
     
     switch (filter) {
+      case "all":
+        return tasks;
       case "upcoming":
         return tasks.filter(task => task.dueDate > today && !task.completed);
       case "today":
@@ -343,6 +346,12 @@ const ToDoListPage = () => {
         return tasks.filter(task => task.completed);
       case "important":
         return tasks.filter(task => task.importance);
+      case "Personal":
+        return tasks.filter(task => task.list === "Personal");
+      case "Work":
+        return tasks.filter(task => task.list === "Work");
+      case "Study":
+        return tasks.filter(task => task.list === "Study");
       default:
         return tasks; // Show all tasks
     }
@@ -384,7 +393,17 @@ const ToDoListPage = () => {
   <div className="w-full">
     <h2 className="text-lg font-semibold mt-2 ml-4">Tasks</h2>
     <div 
-     className="w-full py-2 flex hover:bg-blue-500/80 hover:text-blue-950"
+     className="w-full py-2 flex hover:bg-blue-500/80"
+     onClick={() => setFilter("all")}
+    >
+      <RectangleStackIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+      <p className="font-semibold text-gray-600 ">All Tasks</p>
+      <p className="ml-auto mr-4 font-semibold">
+        {tasks.length}
+      </p>
+    </div>
+    <div 
+     className="w-full py-2 flex hover:bg-blue-500/80"
      onClick={() => setFilter("upcoming")}
     >
       <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
@@ -411,19 +430,26 @@ const ToDoListPage = () => {
 
   <div className="w-full">
     <h2 className="text-lg font-semibold mt-2 ml-4">Lists</h2>
-    <div className="w-full py-2 flex items-center hover:bg-blue-500/80 ">
+    <div className="w-full py-2 flex items-center hover:bg-blue-500/80" onClick={() => setFilter("Personal")}>
       <div className="w-5 h-5 mr-2 bg-pink-600 ml-4 rounded"></div>
       <p className="font-semibold text-gray-600 hover:text-blue-950">Personal</p>
-      <p className="ml-auto mr-4 font-semibold">8</p>
+      <p className="ml-auto mr-4 font-semibold">
+        {tasks.filter(task => task.list === 'Personal').length}
+      </p>
     </div>
-    <div className="w-full py-2 flex items-center hover:bg-blue-500/80">
+    <div className="w-full py-2 flex items-center hover:bg-blue-500/80" onClick={() => setFilter("Work")}>
       <div className="w-5 h-5 mr-2 bg-yellow-500 ml-4 rounded"></div>
       <p className="font-semibold text-gray-600">Work</p>
-      <p className="ml-auto mr-4 font-semibold">4</p>
+      <p className="ml-auto mr-4 font-semibold">
+        {tasks.filter(task => task.list === 'Work').length}
+      </p>
     </div>
-    <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-    <PlusCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600">Add New List</p>
+    <div className="w-full py-2 flex items-center hover:bg-blue-500/80" onClick={() => setFilter("Study")}>
+      <div className="w-5 h-5 mr-2 bg-yellow-500 ml-4 rounded"></div>
+      <p className="font-semibold text-gray-600">Study</p>
+      <p className="ml-auto mr-4 font-semibold">
+        {tasks.filter(task => task.list === 'Study').length}
+      </p>
     </div>
   </div>
 
