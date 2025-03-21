@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Activity, 
@@ -14,6 +14,9 @@ import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router-dom';
 
+import { collection, getDocs, query, where, Timestamp } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
+
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -22,13 +25,24 @@ const AdminDashboard = () => {
     recipientType: 'all',
     importance: 'normal'
   });
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [newUsersToday, setNewUsersToday] = useState(0);
+  const [genderDistribution, setGenderDistribution] = useState({ male: 0, female: 0 });
+  const [totalParents, setTotalParents] = useState(0);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [users, setUsers] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState({
+    engagement: {
+      activeParents: 0,
+      activeStudents: 0,
+      parentEngagementRate: '0%',
+      studentEngagementRate: '0%',
+    },
+  });
 
   // Sample data with expanded user details
-  const users = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active', lastLogin: '2024-10-26', type: 'Student', gender: 'Male' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive', lastLogin: '2024-10-25', type: 'Parent', gender: 'Female' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', status: 'Active', lastLogin: '2024-10-27', type: 'Student', gender: 'Male' },
-  ];
+  {/*
+  
 
   // Enhanced metrics with gender and engagement data
   const metrics = [
@@ -37,22 +51,74 @@ const AdminDashboard = () => {
     { title: 'New Today', value: '47', icon: TrendingUp, trend: '+8%' },
   ];
 
-  // Analytics data
-  const analyticsData = {
-    genderDistribution: {
-      male: 58,
-      female: 42
-    },
-    engagement: {
-      totalParents: 520,
-      totalStudents: 870,
-      activeParents: 456,
-      activeStudents: 789,
-      parentEngagementRate: '75%',
-      studentEngagementRate: '85%'
-    }
-  };
- const handleLogout = async () => {
+  */}
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const usersRef = collection(db, 'users');
+        const usersSnapshot = await getDocs(usersRef);
+        const usersData = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+        // Filter out admins
+        const nonAdminUsers = usersData.filter(user => user.role?.toLowerCase() !== 'admin');
+  
+        // Total Users (excluding admins)
+        setTotalUsers(nonAdminUsers.length);
+  
+        // New Users Today
+        const today = new Date();
+        const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const newUsersTodayCount = nonAdminUsers.filter(user => 
+          user.createdAt && user.createdAt.toDate() >= startOfDay
+        ).length;
+        setNewUsersToday(newUsersTodayCount);
+  
+        // Gender Distribution
+        const maleCount = nonAdminUsers.filter(user => user.gender && user.gender.toLowerCase() === 'male').length;
+        const femaleCount = nonAdminUsers.filter(user => user.gender && user.gender.toLowerCase() === 'female').length;
+        setGenderDistribution({ male: maleCount, female: femaleCount });
+  
+        // Total Parents & Students
+        const parentsCount = nonAdminUsers.filter(user => user.role?.toLowerCase() === 'parent').length;
+        const studentsCount = nonAdminUsers.filter(user => user.role?.toLowerCase() === 'student').length;
+        setTotalParents(parentsCount);
+        setTotalStudents(studentsCount);
+  
+        // Active Parents & Students
+        const activeParentsCount = nonAdminUsers.filter(user => 
+          user.role?.toLowerCase() === 'parent' && user.status?.toLowerCase() === 'active'
+        ).length;
+        const activeStudentsCount = nonAdminUsers.filter(user => 
+          user.role?.toLowerCase() === 'student' && user.status?.toLowerCase() === 'active'
+        ).length;
+  
+        // Engagement Rates
+        const parentEngagementRate = parentsCount > 0 ? `${Math.round((activeParentsCount / parentsCount) * 100)}%` : '0%';
+        const studentEngagementRate = studentsCount > 0 ? `${Math.round((activeStudentsCount / studentsCount) * 100)}%` : '0%';
+  
+        // Update State
+        setAnalyticsData({
+          engagement: {
+            activeParents: activeParentsCount,
+            activeStudents: activeStudentsCount,
+            parentEngagementRate,
+            studentEngagementRate,
+          },
+        });
+  
+        // Store Non-Admin Users Data for the Table
+        setUsers(nonAdminUsers);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+
+  const handleLogout = async () => {
     try {
       const auth = getAuth();
       await signOut(auth);  // Sign out the user from Firebase
@@ -68,6 +134,7 @@ const AdminDashboard = () => {
       // Handle error (optional, show an error message to the user)
     }
   };
+
   const handleDeleteUser = (userId) => {
     alert(`Deleting user with ID: ${userId}`);
   };
@@ -88,74 +155,56 @@ const AdminDashboard = () => {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <ArrowLeftOnRectangleIcon
-      className="h-8 w-8 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
-      onClick={handleLogout} // Add click handler
-    />
-       {/*  <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
-            <Bell className="h-5 w-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
-              <User className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-medium">Admin</span>
-          </div>
-        </div> */}
+          className="h-8 w-8 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
+          onClick={handleLogout} // Add click handler
+        />
       </div>
-        <div>
-          <ComparisonGraphs/>
-        </div>
-      {/* Basic Metrics */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {metrics.map((metric, index) => {
-          const Icon = metric.icon;
-          return (
-            <div key={index} className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center justify-between pb-2">
-                <p className="text-sm font-medium text-gray-500">{metric.title}</p>
-                <Icon className="h-4 w-4 text-gray-500" />
-              </div>
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-2xl font-bold">{metric.value}</h3>
-                <span className="text-green-500 text-sm">{metric.trend}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
   
+      {/* Basic Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between pb-2">
+            <p className="text-sm font-medium text-gray-500">Total Users</p>
+            <Users className="h-4 w-4 text-gray-500" />
+          </div>
+          <div className="flex items-baseline justify-between">
+            <h3 className="text-2xl font-bold">{totalUsers}</h3>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center justify-between pb-2">
+            <p className="text-sm font-medium text-gray-500">New Today</p>
+            <TrendingUp className="h-4 w-4 text-gray-500" />
+          </div>
+          <div className="flex items-baseline justify-between">
+            <h3 className="text-2xl font-bold">{newUsersToday}</h3>
+          </div>
+        </div>
+      </div>
+  
+      {/* Gender Distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-       
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-bold mb-4">Gender Distribution</h3>
           <div className="flex items-center justify-between">
             <p className="text-sm font-medium text-gray-500">Male</p>
-            <p className="text-2xl font-bold">{analyticsData.genderDistribution.male}%</p>
+            <p className="text-2xl font-bold">{genderDistribution.male}%</p>
           </div>
           <div className="flex items-center justify-between mt-2">
             <p className="text-sm font-medium text-gray-500">Female</p>
-            <p className="text-2xl font-bold">{analyticsData.genderDistribution.female}%</p>
+            <p className="text-2xl font-bold">{genderDistribution.female}%</p>
           </div>
         </div>
-
-        
+  
+        {/* User Engagement */}
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-bold mb-4">User Engagement</h3>
           <div className="grid grid-cols-2 gap-4">
+            {/* Parents */}
             <div className="border-r pr-4">
               <div className="mb-4">
                 <p className="text-sm text-gray-500">Total Parents</p>
-                <p className="text-2xl font-bold">{analyticsData.engagement.totalParents}</p>
+                <p className="text-2xl font-bold">{totalParents}</p>
               </div>
               <div className="mb-4">
                 <p className="text-sm text-gray-500">Active Parents</p>
@@ -163,10 +212,12 @@ const AdminDashboard = () => {
                 <p className="text-sm text-green-500">Engagement: {analyticsData.engagement.parentEngagementRate}</p>
               </div>
             </div>
+
+            {/* Students */}
             <div className="pl-4">
               <div className="mb-4">
                 <p className="text-sm text-gray-500">Total Students</p>
-                <p className="text-2xl font-bold">{analyticsData.engagement.totalStudents}</p>
+                <p className="text-2xl font-bold">{totalStudents}</p>
               </div>
               <div className="mb-4">
                 <p className="text-sm text-gray-500">Active Students</p>
@@ -176,8 +227,8 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-      </div> */}
-
+      </div>
+  
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* User Table */}
@@ -190,7 +241,8 @@ const AdminDashboard = () => {
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
@@ -200,7 +252,8 @@ const AdminDashboard = () => {
                     <tr key={user.id}>
                       <td className="px-6 py-4 whitespace-nowrap font-medium">{user.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{user.type}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{user.gender}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs ${
                           user.status === 'Active' 
@@ -223,7 +276,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-
+  
         {/* Notifications */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold mb-4">Send Notification</h2>
