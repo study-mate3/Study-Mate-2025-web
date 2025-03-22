@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
+import Alert from "./Alert";
 
 const ReportIssue = ({ userId  }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [issueDetails, setIssueDetails] = useState({});
+const [showAlert, setShowAlert] = useState(false);
+const [alertMessage, setAlertMessage] = useState("");
 
   const togglePopup = () => setIsOpen(!isOpen);
 
@@ -33,13 +36,16 @@ const ReportIssue = ({ userId  }) => {
       timestamp: new Date(),
     });
 
-    alert("Issue reported successfully!");
+    setAlertMessage(`Your issue has been reported! We’ll resolve it ASAP and get back to you.`);
+    setShowAlert(true);
+    setTimeout(() => navigate("/faq"), 1000);
     setIsOpen(false);
   };
 
   return (
     <>
       {/* Report Button */}
+       {showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}
       <button
         className="mt-6 text-white py-2 px-4 font-semibold"
         style={{
