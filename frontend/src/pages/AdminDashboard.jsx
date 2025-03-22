@@ -17,6 +17,11 @@ import { Navigate, useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/issues");
+  };
+
   const [notification, setNotification] = useState({
     message: '',
     recipientType: 'all',
@@ -87,10 +92,17 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <ArrowLeftOnRectangleIcon
-      className="h-8 w-8 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
+       
+    <div>
+    <button className="mt-6 text-red-600 py-2 px-4 font-[600] " style={{width: 200, height: 38, borderColor:'#FF0000',borderWidth:'0.2px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
+    onClick={handleNavigate} >
+    Reported Issues
+                  </button>
+                  <ArrowLeftOnRectangleIcon
+      className="h-8 w-8 ml-40 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
       onClick={handleLogout} // Add click handler
     />
+    </div>
        {/*  <div className="flex items-center gap-4">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
