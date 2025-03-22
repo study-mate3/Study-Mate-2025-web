@@ -16,6 +16,7 @@ const StudentDetailsPage = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [currentUserName, setCurrentUserName] = useState('');
+  const [studentNames, setStudentNames] = useState({}); 
 
   
   const formatTime = (seconds) => {
@@ -136,6 +137,11 @@ const StudentDetailsPage = () => {
     
             // Save student ID to addedStudents
             await saveStudentToFirebase(studentId);
+
+            setStudentNames((prevNames) => ({
+              ...prevNames,
+              [studentId]: studentData.name,
+            }));
 
             const templateParams = {
               student_name: studentData.name,
@@ -278,21 +284,26 @@ const StudentDetailsPage = () => {
       <div className="bg-gray-100 p-2 rounded shadow mb-6">
         <h2 className="font-bold mb-4 text-xl">Your Students</h2>
         {addedStudents.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {addedStudents.map((id) => (
-              <button
-                key={id}
-                onClick={() => showStudentDetails(id)}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-                style={{ width:120,background: 'linear-gradient(180deg, #0570B2 0%, #176BE8 100%)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
-              >
-                {id}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <p>No students added yet.</p>
-        )}
+      <div className="flex flex-wrap gap-2">
+        {addedStudents.map((id) => (
+          <button
+            key={id}
+            onClick={() => fetchStudentDetails(id)} // Fetch details on click
+            className="bg-blue-500 text-white px-3 py-1 rounded"
+            style={{
+              width: 120,
+              background: 'linear-gradient(180deg, #0570B2 0%, #176BE8 100%)',
+              boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+              borderRadius: 100,
+            }}
+          >
+            {studentNames[id] || id} {/* Show name if fetched, else show ID */}
+          </button>
+        ))}
+      </div>
+    ) : (
+      <p>No students added yet.</p>
+    )}
       </div>
 
       
