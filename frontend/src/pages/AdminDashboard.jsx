@@ -10,6 +10,20 @@ import {
   Trash2
 } from 'lucide-react';
 import ComparisonGraphs from '../components/ComparisonGraph';
+import { 
+  ComposedChart, 
+  Area, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer, 
+  PieChart, 
+  Pie, 
+  Cell 
+} from 'recharts';
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -17,6 +31,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 
+const COLORS = ['#0088FE', '#FFBB28', '#FF8042'];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -40,17 +55,17 @@ const AdminDashboard = () => {
     },
   });
 
+  const [userGrowthData, setUserGrowthData] = useState([]); 
+  const [dailyNewUsers, setDailyNewUsers] = useState([]);
+
   // Sample data with expanded user details
   {/*
-  
-
   // Enhanced metrics with gender and engagement data
   const metrics = [
     { title: 'Total Users', value: '1,234', icon: Users, trend: '+12%' },
     { title: 'Active Now', value: '423', icon: Activity, trend: '+5%' },
     { title: 'New Today', value: '47', icon: TrendingUp, trend: '+8%' },
   ];
-
   */}
 
   useEffect(() => {
@@ -65,7 +80,44 @@ const AdminDashboard = () => {
   
         // Total Users (excluding admins)
         setTotalUsers(nonAdminUsers.length);
-  
+
+        // Total Users Over Time & Daily New Users
+        const userCountByDate = {};
+        const cumulativeUsers = {};
+        let runningTotal = 0;
+
+        // Sort by date to ensure chronological order
+        nonAdminUsers.sort((a, b) => {
+          const dateA = a.createdAt?.toDate() || new Date(0);
+          const dateB = b.createdAt?.toDate() || new Date(0);
+          return dateA - dateB;
+        });
+
+        nonAdminUsers.forEach(user => {
+          const createdDate = user.createdAt?.toDate().toISOString().split('T')[0];
+          if (createdDate) {
+            // For daily new users
+            userCountByDate[createdDate] = (userCountByDate[createdDate] || 0) + 1;
+            
+            // For cumulative total
+            runningTotal += 1;
+            cumulativeUsers[createdDate] = runningTotal;
+          }
+        });
+
+        // Get all dates in chronological order
+        const allDates = Object.keys(userCountByDate).sort();
+        
+        // Create combined dataset for the charts
+        const combinedUserData = allDates.map(date => ({
+          date,
+          newUsers: userCountByDate[date],
+          totalUsers: cumulativeUsers[date]
+        }));
+
+        setUserGrowthData(combinedUserData);
+        setDailyNewUsers(combinedUserData);
+
         // New Users Today
         const today = new Date();
         const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -77,7 +129,12 @@ const AdminDashboard = () => {
         // Gender Distribution
         const maleCount = nonAdminUsers.filter(user => user.gender && user.gender.toLowerCase() === 'male').length;
         const femaleCount = nonAdminUsers.filter(user => user.gender && user.gender.toLowerCase() === 'female').length;
-        setGenderDistribution({ male: maleCount, female: femaleCount });
+        const unknownGenderCount = nonAdminUsers.length - maleCount - femaleCount;
+        setGenderDistribution({ 
+          male: maleCount, 
+          female: femaleCount,
+          unknown: unknownGenderCount
+        });
   
         // Total Parents & Students
         const parentsCount = nonAdminUsers.filter(user => user.role?.toLowerCase() === 'parent').length;
@@ -159,6 +216,151 @@ const AdminDashboard = () => {
           onClick={handleLogout} // Add click handler
         />
       </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+        {/* Combined Users Growth Chart - Takes 3/5 of the width */}
+        <div className="lg:col-span-3 bg-white rounded-lg shadow p-6 transform transition-all duration-300 hover:shadow-lg">
+          <h3 className="text-lg font-bold mb-4 text-gray-800">User Growth Trends</h3>
+          <ResponsiveContainer width="100%" height={320}>
+            <ComposedChart data={userGrowthData} margin={{ top: 10, right: 30, left: 10, bottom: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis 
+                dataKey="date" 
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }}
+                label={{ value: 'Date', position: 'insideBottomRight', offset: -5, fontSize: 12 }}
+              />
+              <YAxis 
+                yAxisId="left" 
+                label={{ value: 'Total Users', angle: -90, position: 'insideLeft', fontSize: 12 }}
+              />
+              <YAxis 
+                yAxisId="right" 
+                orientation="right" 
+                label={{ value: 'New Users', angle: 90, position: 'insideRight', fontSize: 12 }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  border: 'none' 
+                }}
+                formatter={(value, name) => {
+                  if (name === "totalUsers") {
+                    return [value, "Total Users"];
+                  } else if (name === "newUsers") {
+                    return [value, "New Users"];
+                  }
+                  return [value, name]; // Fallback
+                }}
+              />
+              <Legend wrapperStyle={{ paddingTop: 10 }} />
+              <Area 
+                type="monotone" 
+                dataKey="totalUsers" 
+                fill="rgba(0, 136, 254, 0.2)" 
+                stroke="#0088FE" 
+                strokeWidth={2}
+                yAxisId="left"
+                name="Total Users"
+                activeDot={{ r: 6, strokeWidth: 0 }}
+              />
+              <Bar 
+                dataKey="newUsers" 
+                fill="rgba(255, 128, 66, 0.8)" 
+                yAxisId="right"
+                name="New Users"
+                animationDuration={1500}
+                animationEasing="ease-in-out"
+                radius={[4, 4, 0, 0]}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="lg:col-span-1 bg-white rounded-lg shadow p-6 transform transition-all duration-300 hover:shadow-lg">
+          <h3 className="text-lg font-bold mb-4 text-gray-800">Gender Distribution</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+              <Pie
+                data={[
+                  { name: 'Male', value: genderDistribution.male },
+                  { name: 'Female', value: genderDistribution.female },
+                  { name: 'Not Specified', value: genderDistribution.unknown }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={45}
+                outerRadius={70}
+                paddingAngle={2}
+                dataKey="value"
+                animationBegin={0}
+                animationDuration={1200}
+                animationEasing="ease-out"
+                label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                labelLine={true}
+              >
+                <Cell fill="#0088FE" />
+                <Cell fill="#FF6B8B" />
+                <Cell fill="#AAAAAA" />
+              </Pie>
+              <Tooltip 
+                formatter={(value, name) => [value, name]}
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  border: 'none'
+                }}
+              />
+              <Legend layout="vertical" verticalAlign="bottom" align="center" />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="lg:col-span-1 bg-white rounded-lg shadow p-6 transform transition-all duration-300 hover:shadow-lg">
+          <h3 className="text-lg font-bold mb-4 text-gray-800">User Role Distribution</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+              <Pie
+                data={[
+                  { name: 'Parents', value: totalParents },
+                  { name: 'Students', value: totalStudents }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={45}
+                outerRadius={70}
+                paddingAngle={2}
+                dataKey="value"
+                animationBegin={200}
+                animationDuration={1200}
+                animationEasing="ease-out"
+                label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                labelLine={true}
+              >
+                <Cell fill="#36B37E" />
+                <Cell fill="#FFAB00" />
+              </Pie>
+              <Tooltip 
+                formatter={(value, name) => [value, name]}
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  border: 'none'
+                }}
+              />
+              <Legend layout="vertical" verticalAlign="bottom" align="center" />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      
   
       {/* Basic Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
