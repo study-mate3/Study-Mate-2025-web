@@ -32,7 +32,7 @@ const ParentDashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [completedPomodoros, setCompletedPomodoros] = useState(null);
   const [userId, setUserId] = useState(null);
-
+  
   // Fetch parent name and student data
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -84,13 +84,13 @@ const ParentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div style={sidePanelStyle}>
+       <div style={sidePanelStyle}>
         <ParentSidePanel/>
-      </div>
+      </div> 
       <StDashHeader userDetails={userDetails}/>
       <div className='p-16'>
       <div className="flex justify-between items-center mb-8">
-        <StudentDetailsPage/>
+        <StudentDetailsPage/> 
         
         {/* <button
           onClick={handleLogout}
