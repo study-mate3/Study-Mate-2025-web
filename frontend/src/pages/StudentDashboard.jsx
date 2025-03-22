@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LogOut, CheckCircle, Clock, Target, TrendingUp } from 'lucide-react';
@@ -13,19 +13,6 @@ import RewardComponent from '../components/Rewards/RewardComponent';
 import LastSessionSummary from '../components/LastSessionSummary';
 import CountUp from 'react-countup';
 
-const mockData = {
-  user: {
-    name: "Alex Johnnson",
-    email: "alex.j@university.edu",
-    studentId: "STU2024125"
-  },
-  tasks: {
-    completed: 24,
-    inProgress: 8,
-    total: 35
-  },
-  
-};
 
 const DashboardCard = ({ userId, title, children, className = '' }) => (
   <div
@@ -45,15 +32,21 @@ const DashboardCard = ({ userId, title, children, className = '' }) => (
 const StudentDashboard = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [completedPomodoros, setCompletedPomodoros] = useState(null);
-   const [userId, setUserId] = useState(null);
-   const [initialTime, setInitialTime] = useState(null);
 
+  const [userId, setUserId] = useState(null);
+  const [initialTime, setInitialTime] = useState(null);
 
-   useEffect(() => {
+  const [tasks, setTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState(0);
+
+  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid); // Set the user ID when authenticated
         fetchPomodoroTime(user.uid);
+        fetchCompletedPomodoros(user.uid);
+        fetchUserData(user.uid);
+        fetchTasks(user.uid);
       } else {
         console.error("User is not logged in!");
       }
@@ -134,6 +127,21 @@ const StudentDashboard = () => {
     }
   };
 
+  const fetchTasks = async (userId) => {
+    try {
+      const userTasksRef = collection(db, `users/${userId}/tasks`);
+      const q = query(userTasksRef);
+      const querySnapshot = await getDocs(q);
+      const tasks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setTasks(tasks);
+
+      const completed = tasks.filter(task => task.completed).length;
+      setCompletedTasks(completed);
+    } catch (error) {
+      console.error("Error fetching tasks from Firestore:", error);
+    }
+  };
+
   // Convert seconds to H:M:S format
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600000);
@@ -198,8 +206,10 @@ const StudentDashboard = () => {
         <CheckCircle className="text-green-600" size={24} />
       </div>
       <div>
-        <p className="text-2xl font-bold text-black">{mockData.tasks.completed}/{mockData.tasks.total}</p>
+
+        <p className="text-2xl font-bold text-black">{completedTasks}/{tasks.length}</p>
         <p className="text-black text-sm mt-2">Tasks Completed</p>
+
       </div>
     </div>
   </DashboardCard>

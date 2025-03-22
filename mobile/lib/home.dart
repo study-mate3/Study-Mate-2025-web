@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:mobile/styled_components/styled_logo.dart';
+import 'package:mobile/timer.dart';
 import 'aboutsc1.dart';
 
 class Home extends StatelessWidget {
@@ -11,9 +12,10 @@ class Home extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           //padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 106),
+
           children: [
             Container(
-              height: 550,
+              height: 500,
               width: 400,
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -24,21 +26,13 @@ class Home extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.topCenter,
                 children: [
-                  Positioned(
-                    top: 100,
-                    child: Image.asset(
-                      'assets/img/logo2.png',
-                      height: 60,
-                      width: 185,
-                      color: Colors.white,
-                    ),
-                  ),
+                  const StyledLogo(),
                   Positioned(
                       top: 150, child: Image.asset('assets/img/childplay.gif')),
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
             const Center(
               child: Column(children: [
                 Text(
@@ -67,7 +61,8 @@ class Home extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Aboutsc1()),
+                      MaterialPageRoute(
+                          builder: (context) => const OnboardingScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -79,6 +74,36 @@ class Home extends StatelessWidget {
                     ),
                   ),
                   child: const Text('Get Started',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: SizedBox(
+                width: 250,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PomodoroApp()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0570B2),
+                    minimumSize: const Size(100, 50),
+                    padding: const EdgeInsets.all(5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: const Text('Set Study Plan',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 17,

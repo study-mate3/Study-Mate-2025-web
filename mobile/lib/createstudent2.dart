@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/createparent2.dart';
-import 'package:mobile/login.dart';
 
-class Createparent extends StatefulWidget {
-  const Createparent({super.key});
+class Createstudent2 extends StatefulWidget {
+  const Createstudent2({super.key});
 
   @override
-  State<Createparent> createState() => _CreateparentState();
+  State<Createstudent2> createState() => _Createstudent2State();
 }
 
-class _CreateparentState extends State<Createparent> {
+class _Createstudent2State extends State<Createstudent2> {
+  String? selectedOption;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +37,7 @@ class _CreateparentState extends State<Createparent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'User Name',
+                      'Email',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -49,33 +48,9 @@ class _CreateparentState extends State<Createparent> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                         ), // Add a border around the input
-                        hintText: 'Enter Your User Name', // Placeholder text
+                        hintText: 'Enter Your Email', // Placeholder text
                       ),
                     )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Email",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                        height: 8), // Spacing between label and input
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ), // Add a border around the input
-                        hintText:
-                            "Enter Your Email Address", // Placeholder text
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -102,17 +77,53 @@ class _CreateparentState extends State<Createparent> {
                   ],
                 ),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Select Your Gender',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        RadioListTile<String>(
+                          title: const Text('Male'),
+                          value: 'Male',
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value;
+                            });
+                          },
+                        ),
+                        RadioListTile<String>(
+                          title: const Text('Female'),
+                          value: 'Female',
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value;
+                            });
+                          },
+                        ),
+                      ],
+                    )),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
               Center(
                   child: SizedBox(
                 width: 250,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Createparent2()));
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0570B2),
                     padding: const EdgeInsets.all(5),
@@ -120,7 +131,7 @@ class _CreateparentState extends State<Createparent> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  child: const Text('Next',
+                  child: const Text('Create Account',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 17,
