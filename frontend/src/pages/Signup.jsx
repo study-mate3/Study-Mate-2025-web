@@ -65,12 +65,20 @@ const SignUp = () => {
         await setDoc(userDocRef, userData);
 
         const statsRef = doc(db, 'stats', 'userCounts');
-      await updateDoc(statsRef, {
-        [`gender.${gender}`]: increment(1), // Increment gender count
-        ...(role === "student" && { [`grades.${grade}`]: increment(1) }), // Increment grade count
-        ...(role === "parent" && { parentCount: increment(1) }), // Increment parent count
-      });
-  
+
+        // Ensure the fields exist before incrementing
+        await setDoc(statsRef, {
+          gender: { male: 0, female: 0, other: 0 }, // Initialize gender counts
+          grades: {}, // Empty object for grades
+          parentCount: 0, // Initialize parent count
+        }, { merge: true });
+        
+        await updateDoc(statsRef, {
+          [`gender.${gender}`]: increment(1), // Increment gender count
+          ...(role === "student" && { [`grades.${grade}`]: increment(1) }), // Increment grade count
+          ...(role === "parent" && { parentCount: increment(1) }), // Increment parent count
+        });
+        
         // Show success message
         toast.success("User registered successfully!", {
           position: "top-right",
