@@ -138,10 +138,7 @@ const StudentDetailsPage = () => {
             // Save student ID to addedStudents
             await saveStudentToFirebase(studentId);
 
-            setStudentNames((prevNames) => ({
-              ...prevNames,
-              [studentId]: studentData.name,
-            }));
+           
 
             const templateParams = {
               student_name: studentData.name,
@@ -232,6 +229,11 @@ const StudentDetailsPage = () => {
                    
                 // Save student ID to addedStudents
                 await saveStudentToFirebase(studentId);
+
+                setStudentNames((prevNames) => ({
+                  ...prevNames,
+                  [studentId]: studentData.name,
+                }));
             } else {
                 setError('No student found with the provided ID.');
             }
@@ -288,7 +290,7 @@ const StudentDetailsPage = () => {
         {addedStudents.map((id) => (
           <button
             key={id}
-            onClick={() => fetchStudentDetails(id)} // Fetch details on click
+            onClick={() => showStudentDetails(id)} // Fetch details on click
             className="bg-blue-500 text-white px-3 py-1 rounded"
             style={{
               width: 120,
