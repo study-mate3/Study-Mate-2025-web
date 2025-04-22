@@ -85,6 +85,7 @@ const [alertMessage, setAlertMessage] = useState("");
                 <option value="">-- Choose --</option>
                 <option value="Parent/Account Issues">🔹 Parent/Account Issues</option>
                 <option value="App Issues">🔹 App Issues</option>
+                <option value="Request Quiz">🔹 Request Quiz</option>
                 <option value="Other Issues">🔹 Other Issues</option>
               </select>
             </div>
@@ -110,6 +111,20 @@ const [alertMessage, setAlertMessage] = useState("");
                   <option value="To-Do List issue">To-Do List issue</option>
                   <option value="Notification problem">Notification problem</option>
                 </select>
+              </>
+            )}
+             {selectedCategory === "Request Quiz" && (
+              <>
+                <label>Academic Level:</label>
+                <select name="grade" className="border p-2 w-full" onChange={handleChange}>
+                  <option value="">-- Select --</option>
+                  <option value="Grade 6-9">Grade 6-9</option>
+                  <option value="Grade 10-11">Grade 10-11</option>
+                  <option value="Grade 12-13">Grade 12-13</option>
+                  <option value="University">University</option>
+                </select>
+                <label>Subject and Topics:</label>
+                <textarea name="Subject" className="border p-2 w-full" onChange={handleChange}></textarea>
               </>
             )}
 

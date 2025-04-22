@@ -3,6 +3,7 @@ import { UserIcon, HomeIcon, ClockIcon, PencilIcon, BellIcon, ArrowLeftOnRectang
 QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
+import { NewspaperIcon } from 'lucide-react';
 
 const SidePanel = ({setName}) => {
   const navigate = useNavigate();
@@ -31,33 +32,37 @@ const SidePanel = ({setName}) => {
       {/* Top section icons */}
       <div className="space-y-6 mt-4">
       
-    <UserIcon className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" 
+    <UserIcon className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='user dashboard'
     onClick={handleClick} />
   
         {/* Wrap the HomeIcon with Link */}
         <Link to="/">
-          <HomeIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+          <HomeIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='home page'/>
         </Link>
 
         <Link to="/timer">
-          <ClockIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+          <ClockIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='timer'/>
         </Link>
 
         <Link to="/todo-after-login">
-          <PencilIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+          <PencilIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='to do list'/>
+        </Link>
+
+        <Link to='/quiz' title='quiz'>
+          <NewspaperIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"/>
         </Link>
 
         <Link to="/notifications">
-          <BellIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" />
+          <BellIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='notifications'/>
         </Link>
 
       
         <ArrowLeftOnRectangleIcon
-      className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"
+      className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='log out'
       onClick={handleLogout} // Add click handler
     />
         <Link to="/faq">
-          <QuestionMarkCircleIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" />
+          <QuestionMarkCircleIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" title='faq' />
         </Link>
       </div>
     </div>

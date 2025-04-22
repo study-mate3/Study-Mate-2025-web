@@ -7,7 +7,10 @@ import {
   PlusCircleIcon,
   CheckCircleIcon,
   CalendarDaysIcon,
-  RectangleStackIcon
+  RectangleStackIcon,
+  Bars3Icon,
+  XMarkIcon
+
 
 } from "@heroicons/react/24/solid";
 
@@ -118,6 +121,7 @@ TaskCard.propTypes = {
 
 const ToDoListPage = () => {
   const today = new Date().toISOString().split("T")[0];
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
     description: "",
@@ -130,6 +134,7 @@ const ToDoListPage = () => {
 
   const [editingTask, setEditingTask] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [isTaskFormOpen, setTaskFormOpen] = useState(true);
 
 
 
@@ -383,93 +388,125 @@ const ToDoListPage = () => {
 
 <div className="flex h-[83.333vh] justify-between pl-20">
 
+<button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="absolute top-4 left-4 z-50 md:hidden bg-blue-500 text-white p-2 rounded"
+      >
+        {isSidebarOpen ? (
+          <XMarkIcon className="w-6 h-6" />
+        ) : (
+          <Bars3Icon className="w-6 h-6" />
+        )}
+      </button>
+
+      <button
+  onClick={() => setTaskFormOpen(true)}
+  className="md:hidden fixed bottom-6 right-6 z-40 bg-blue-700 text-white p-4 rounded-full shadow-lg hover:bg-blue-800 transition duration-300"
+  aria-label="Open Task Form"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+  </svg>
+</button>
+
 {/* 1st Column: Navigation Panel */}
 <div style={sidePanelStyle}>
         <SidePanel/>
       </div>
 
 {/* 2nd Column: Task Tracker */}
-<div className="w-[250px] bg-blue-200 rounded-[15px] flex flex-col space-y-3 ">
-  <div className="w-full">
-    <h2 className="text-lg font-semibold mt-2 ml-4">Tasks</h2>
-    <div 
-     className="w-full py-2 flex hover:bg-blue-500/80"
-     onClick={() => setFilter("all")}
-    >
-      <RectangleStackIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600 ">All Tasks</p>
-      <p className="ml-auto mr-4 font-semibold">
-        {tasks.length}
-      </p>
-    </div>
-    <div 
-     className="w-full py-2 flex hover:bg-blue-500/80"
-     onClick={() => setFilter("upcoming")}
-    >
-      <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600 ">Upcoming</p>
-      <p className="ml-auto mr-4 font-semibold">
-        {tasks.filter(task => task.dueDate > today && !task.completed).length}
-      </p>
-    </div>
-    <div 
-     className="w-full py-2 flex hover:bg-blue-500/80"
-     onClick={() => setFilter("today")}
-    >
-      <CalendarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600">Today</p>
-      <p className="ml-auto mr-4 font-semibold">
-        {tasks.filter(task => task.dueDate === today && !task.completed).length}
-      </p>
-    </div>
-    <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
-      <CalendarDaysIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600">Calender</p>
-    </div>
-  </div>
+<div
+        className={`fixed md:static z-40 top-0 left-0 h-full transition-transform duration-300 ease-in-out bg-blue-200 rounded-r-[15px] w-[250px] flex flex-col space-y-3 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        <div className="w-full">
+          <h2 className="text-lg font-semibold mt-4 ml-4">Tasks</h2>
+          <div
+            className="w-full py-2 flex hover:bg-blue-500/80"
+            onClick={() => setFilter("all")}
+          >
+            <RectangleStackIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <p className="font-semibold text-gray-600">All Tasks</p>
+            <p className="ml-auto mr-4 font-semibold">{tasks.length}</p>
+          </div>
+          <div
+            className="w-full py-2 flex hover:bg-blue-500/80"
+            onClick={() => setFilter("upcoming")}
+          >
+            <ArrowRightIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <p className="font-semibold text-gray-600">Upcoming</p>
+            <p className="ml-auto mr-4 font-semibold">
+              {
+                tasks.filter(
+                  (task) => task.dueDate > today && !task.completed
+                ).length
+              }
+            </p>
+          </div>
+          <div
+            className="w-full py-2 flex hover:bg-blue-500/80"
+            onClick={() => setFilter("today")}
+          >
+            <CalendarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <p className="font-semibold text-gray-600">Today</p>
+            <p className="ml-auto mr-4 font-semibold">
+              {
+                tasks.filter(
+                  (task) => task.dueDate === today && !task.completed
+                ).length
+              }
+            </p>
+          </div>
+          <div className="w-full py-2 flex space-x-2 hover:bg-blue-500/80">
+            <CalendarDaysIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <p className="font-semibold text-gray-600">Calendar</p>
+          </div>
+        </div>
 
-  <div className="w-full">
-    <h2 className="text-lg font-semibold mt-2 ml-4">Lists</h2>
-    <div className="w-full py-2 flex items-center hover:bg-blue-500/80" onClick={() => setFilter("Personal")}>
-      <div className="w-5 h-5 mr-2 bg-pink-600 ml-4 rounded"></div>
-      <p className="font-semibold text-gray-600 hover:text-blue-950">Personal</p>
-      <p className="ml-auto mr-4 font-semibold">
-        {tasks.filter(task => task.list === 'Personal').length}
-      </p>
-    </div>
-    <div className="w-full py-2 flex items-center hover:bg-blue-500/80" onClick={() => setFilter("Work")}>
-      <div className="w-5 h-5 mr-2 bg-yellow-500 ml-4 rounded"></div>
-      <p className="font-semibold text-gray-600">Work</p>
-      <p className="ml-auto mr-4 font-semibold">
-        {tasks.filter(task => task.list === 'Work').length}
-      </p>
-    </div>
-    <div className="w-full py-2 flex items-center hover:bg-blue-500/80" onClick={() => setFilter("Study")}>
-      <div className="w-5 h-5 mr-2 bg-yellow-500 ml-4 rounded"></div>
-      <p className="font-semibold text-gray-600">Study</p>
-      <p className="ml-auto mr-4 font-semibold">
-        {tasks.filter(task => task.list === 'Study').length}
-      </p>
-    </div>
-  </div>
+        <div className="w-full">
+          <h2 className="text-lg font-semibold mt-2 ml-4">Lists</h2>
+          {["Personal", "Work", "Study"].map((list) => (
+            <div
+              key={list}
+              className="w-full py-2 flex items-center hover:bg-blue-500/80"
+              onClick={() => setFilter(list)}
+            >
+              <div
+                className={`w-5 h-5 mr-2 ml-4 rounded ${
+                  list === "Personal"
+                    ? "bg-pink-600"
+                    : list === "Work"
+                    ? "bg-yellow-500"
+                    : "bg-green-500"
+                }`}
+              ></div>
+              <p className="font-semibold text-gray-600">{list}</p>
+              <p className="ml-auto mr-4 font-semibold">
+                {tasks.filter((task) => task.list === list).length}
+              </p>
+            </div>
+          ))}
+        </div>
 
-  <div className="w-full">
-    <div 
-     className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950"
-     onClick={() => setFilter("important")}
-    >
-      <StarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600 ">Important Tasks</p>
-    </div>
-    <div 
-     className="w-full py-2 flex space-x-2 hover:bg-blue-500/80"
-     onClick={() => setFilter("completed")}
-    >
-      <CheckCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
-      <p className="font-semibold text-gray-600">Completed Tasks</p>
-    </div>
-  </div>
-</div>
+        <div className="w-full">
+          <div
+            className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950"
+            onClick={() => setFilter("important")}
+          >
+            <StarIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <p className="font-semibold text-gray-600">Important Tasks</p>
+          </div>
+          <div
+            className="w-full py-2 flex space-x-2 hover:bg-blue-500/80"
+            onClick={() => setFilter("completed")}
+          >
+            <CheckCircleIcon className="h-6 w-6 text-gray-600 ml-4 mr-2" />
+            <p className="font-semibold text-gray-600">Completed Tasks</p>
+          </div>
+        </div>
+      </div>
+  
 
 {/* 3rd Column: Task Cards (Scrollable) */}
 <div className="w-[500px] bg-gray-50 p-4 overflow-y-auto">
@@ -498,99 +535,66 @@ const ToDoListPage = () => {
 </div>
 
 {/* 4th Column: Form to Set Tasks */}
-<div className="w-[350px] bg-white p-4 flex flex-col border-2 border-blue-950/80
-mr-[20px] rounded-[15px]">
+<div className={`fixed md:static top-0 right-0 z-30 h-full md:h-auto transition-transform duration-300 transform bg-white border-2 border-blue-950/80 rounded-[15px] w-[350px] p-4 overflow-y-auto ${isTaskFormOpen ? "translate-x-0" : "translate-x-full"} md:translate-x-0`}>
+  {/* Header for Mobile */}
+  <div className="flex justify-between items-center md:hidden mb-4">
+    <h2 className="text-xl font-bold text-blue-800">Task Form</h2>
+    <button onClick={() => setTaskFormOpen(false)} className="text-gray-600 hover:text-black text-xl">✕</button>
+  </div>
 
-  <div className="flex items-center px-3 w-full p-2 border-[1.5px] border-black/50 bg-gray-200 rounded-md 
-    text-lg font-semibold ">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" 
-    className="size-5 mr-3 text-gray-500">
+  <div className="flex items-center px-3 w-full p-2 border-[1.5px] border-black/50 bg-gray-200 rounded-md text-lg font-semibold">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 mr-3 text-gray-500">
       <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
     </svg>
-    <h2 className="text-gray-500">
-      Set Your Tasks
-    </h2>
+    <h2 className="text-gray-500">Set Your Tasks</h2>
   </div>
-    
+
   <div>
     <h2 className="mt-3 mb-2 font-bold">Description</h2>
     <textarea
-      className="w-full h-24 p-2 border bg-gray-200 border-gray-300 rounded focus:outline-none 
-      focus:ring-2 focus:ring-gray-500"
+      className="w-full h-24 p-2 border bg-gray-200 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
       placeholder="+ Add a Description about the Task"
       value={newTask.description}
       onChange={(e) => {
         setNewTask({ ...newTask, description: e.target.value });
-        if (editingTask) {
-          setEditingTask({ ...editingTask, description: e.target.value });
-        }
+        if (editingTask) setEditingTask({ ...editingTask, description: e.target.value });
       }}
     />
   </div>
 
-  <div className="w-full mt-4 ">
+  <div className="w-full mt-4">
     <div className="flex items-center mb-3">
-      <div className="w-1/2 items-center">
-        <p className="block font-bold mb-2">List</p>
+      <div className="w-1/2">
+        <p className="font-bold mb-2">List</p>
       </div>
-      <div className="w-1/2 flex items-center">
-        <select 
-        className="w-auto px-3 py-1 border bg-gray-200 border-gray-300 rounded-md focus:outline-none 
-        focus:ring-2 focus:ring-blue-500"
-        value={newTask.list}
-        onChange={(e) => {
-          setNewTask({ ...newTask, list: e.target.value });
-          if (editingTask) {
-            setEditingTask({ ...editingTask, list: e.target.value });
-          }
-        }}
+      <div className="w-1/2">
+        <select
+          className="w-auto px-3 py-1 border bg-gray-200 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={newTask.list}
+          onChange={(e) => {
+            setNewTask({ ...newTask, list: e.target.value });
+            if (editingTask) setEditingTask({ ...editingTask, list: e.target.value });
+          }}
         >
           {listOptions.map((option, index) => (
-            <option key={index} value={option}>
-              {option}
-            </option>
+            <option key={index} value={option}>{option}</option>
           ))}
         </select>
       </div>
     </div>
 
-
     <div className="flex items-center mb-3">
-      <div className="w-1/2 flex items-center">
-        <p className="block font-bold mb-2">Due Date</p>
+      <div className="w-1/2">
+        <p className="font-bold mb-2">Due Date</p>
       </div>
-      <div className="w-1/2 flex items-center">
-        <input 
-          type="date" 
-          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
-          focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
+      <div className="w-1/2">
+        <input
+          type="date"
+          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-400"
           value={newTask.dueDate}
           onChange={(e) => {
             setNewTask({ ...newTask, dueDate: e.target.value });
-            if (editingTask) {
-              setEditingTask({ ...editingTask, dueDate: e.target.value });
-            }
-          }}
-        />
-      </div> 
-    </div>
-
-    <div className="flex items-center mb-3">
-      <div className="w-1/2 flex items-center">
-        <p className="block font-bold mb-2">Sub Tasks</p>
-      </div>
-      <div className="w-1/2 flex items-center">
-        <input 
-          type="text" 
-          placeholder="+ Add a subtask" 
-          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
-          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          value={newTask.subTasks}
-          onChange={(e) => {
-            setNewTask({ ...newTask, subTasks: e.target.value });
-            if (editingTask) {
-              setEditingTask({ ...editingTask, subTasks: e.target.value });
-            }
+            if (editingTask) setEditingTask({ ...editingTask, dueDate: e.target.value });
           }}
         />
       </div>
@@ -598,18 +602,33 @@ mr-[20px] rounded-[15px]">
 
     <div className="flex items-center mb-3">
       <div className="w-1/2">
-        <p className="block font-bold mb-2">Prioritized Level</p>
+        <p className="font-bold mb-2">Sub Tasks</p>
       </div>
-      <div className="w-1/2 flex items-center">
-        <select 
-          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm 
-          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+      <div className="w-1/2">
+        <input
+          type="text"
+          placeholder="+ Add a subtask"
+          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          value={newTask.subTasks}
+          onChange={(e) => {
+            setNewTask({ ...newTask, subTasks: e.target.value });
+            if (editingTask) setEditingTask({ ...editingTask, subTasks: e.target.value });
+          }}
+        />
+      </div>
+    </div>
+
+    <div className="flex items-center mb-3">
+      <div className="w-1/2">
+        <p className="font-bold mb-2">Prioritized Level</p>
+      </div>
+      <div className="w-1/2">
+        <select
+          className="block w-full p-2 border bg-gray-200 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           value={newTask.priority}
           onChange={(e) => {
             setNewTask({ ...newTask, priority: e.target.value });
-            if (editingTask) {
-              setEditingTask({ ...editingTask, priority: e.target.value });
-            }
+            if (editingTask) setEditingTask({ ...editingTask, priority: e.target.value });
           }}
         >
           <option value="low">Low</option>
@@ -620,16 +639,14 @@ mr-[20px] rounded-[15px]">
     </div>
   </div>
 
-  {/* Add Task Button */}
   <button
-    className="w-[40%] mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4 justify-end"
+    className="w-[40%] mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4"
     onClick={editingTask ? handleUpdateTask : addTask}
   >
     {editingTask ? "Update Task" : "Add Task"}
   </button>
-
-
 </div>
+
 
 </div>
 

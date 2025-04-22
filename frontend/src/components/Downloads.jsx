@@ -14,18 +14,22 @@ const DownloadSection = () => {
         
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col-reverse md:flex-row  items-center justify-between">
           <div >
             <img src={HomeImg2} alt="" className="w-[500px]" />
           </div>
-          <div className='w-2/3'>
-            <p className="text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
+
+          {/* <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10 max-w-7xl w-full pb-16">
+          <div className="md:w-1/2 w-full text-center md:text-left"> */}
+
+          <div className='md:w-2/3 w-full text-center md:text-left' >
+            <p className="text-[20px] sm:text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left ">
             Your perfect study partner is
             </p>
-            <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
+            <p className="text-[30px] sm:text-[50px]  font-bold text-headingColor text-center md:text-left">
             Just a Tap Away!            </p>
           
-            <p className="text-gray-600 mt-4 text-[20px] text-center md:text-left">
+            <p className="text-gray-600 mt-4 text-[16px] sm:text-[20px] text-center md:text-left">
             Take control of your study plans or keep track of your child's progress
             effortlessly with StudyMate. <br />
             <span className="font-bold">Best of all, it's free!</span> <br />
@@ -38,12 +42,12 @@ const DownloadSection = () => {
         </div>
 
       
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col-reverse md:flex-row items-center justify-between">
       <div className='w-2/3'>
-            <p className="text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
+            <p className="text-[20px] sm:text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
             Master Your Time with the 
             </p>
-            <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
+            <p className="text-[30px] sm:text-[50px] font-bold text-headingColor text-center md:text-left">
             Pomodoro Technique
             </p>
           
@@ -62,15 +66,15 @@ const DownloadSection = () => {
 
 
 
-      <div className="flex items-center justify-between pt-20 gap-20">
+      <div className="flex flex-col-reverse md:flex-row  items-center justify-between pt-20 gap-20">
           <div >
             <img src={HomeImg4} alt="" className="w-[400px]" />
           </div>
           <div className='w-2/3'>
-            <p className="text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
+            <p className="text-[20px] sm:text-[40px] font-bold text-primaryColor mt-4 text-center md:text-left">
               Parents, Stay involved in
             </p>
-            <p className="text-[50px] font-bold text-headingColor text-center md:text-left">
+            <p className="text-[30px] sm:text-[50px] font-bold text-headingColor text-center md:text-left">
             Your Child's Progress 
             </p>
           

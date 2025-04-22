@@ -51,8 +51,8 @@ const RewardComponent = ({ userId }) => {
       ) : hasBadges ? (
         <div style={{ display: "flex", gap: "40px" }}>
           {rewards.earlybird > 5 && <img src={earlybirdImg} alt="Early Bird" width="160" title="You have earned the Early Bird reward!"  />}
-          {rewards.nightowl > 5 && <img src={nightowlImg} alt="Night Owl" width="160" />}
-          {rewards.points > 40 && <img src={focuspearlImg} alt="Points" width="160" />}
+          {rewards.nightowl > 5 && <img src={nightowlImg} alt="Night Owl" width="160" title="You have earned the Night Owl reward!"/>}
+          {rewards.points > 40 && <img src={focuspearlImg} alt="Points" width="160" title="You have earned the Focus Pearl reward!"/>}
         </div>
       ) : (
         <p>No Badges Earned</p>

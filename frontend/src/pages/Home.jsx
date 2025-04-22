@@ -28,7 +28,7 @@ const Home = () => {
       </div>
       <section className="py-4 px-20" ref={downloadRef}>
         <div>
-          <h2 className="text-[30px] font-extra-bold text-center tracking-super-wide text-headingColor">
+          <h2 className="text-[22px] sm:text-[30px] font-extra-bold text-center tracking-super-wide text-headingColor">
             DOWNLOADS
           </h2>
           <DownloadSection />
