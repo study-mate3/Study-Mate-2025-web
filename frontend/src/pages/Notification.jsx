@@ -1,38 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell, Trash2, Check, Circle, ArrowLeft, MoreVertical } from 'lucide-react';
 import { format } from 'date-fns';
+import { db } from '../firebase/firebaseConfig';
+import { doc,getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import SidePanel from '../components/SidePanel';
 
 const Notification = () => {
   // Sample notification data - replace with your actual data
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Assignment Due Reminder",
-      message: "Your Mathematics assignment is due tomorrow at 11:59 PM",
-      timestamp: new Date(2024, 9, 26, 14, 30),
-      read: false,
-      type: "urgent",
-      course: "Mathematics"
-    },
-    {
-      id: 2,
-      title: "Course Material Updated",
-      message: "New lecture notes have been uploaded for Physics Chapter 7",
-      timestamp: new Date(2024, 9, 25, 9, 15),
-      read: true,
-      type: "info",
-      course: "Physics"
-    },
-    {
-      id: 3,
-      title: "Schedule Change",
-      message: "Computer Science class on Friday has been rescheduled to 2:00 PM",
-      timestamp: new Date(2024, 9, 24, 16, 45),
-      read: false,
-      type: "important",
-      course: "Computer Science"
-    }
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const sidePanelStyle = {
+    position: 'fixed',
+    left: -10,
+    top: '200px',
+  };
+    const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      try {
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+          console.error("No user logged in");
+          setLoading(false);
+          return;
+        }
+
+        // Step 1: Get user role from 'users' collection
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+          console.error("User document not found");
+          setLoading(false);
+          return;
+        }
+
+        const userRole = userDocSnap.data().role; // should be 'student' or 'parent'
+        const recipientType = userRole === "student" ? "students" : "parents";
+
+        // Step 2: Get notifications matching the recipient type
+        const notificationsQuery = query(
+          collection(db, "notifications"),
+          where("recipientType", "==", recipientType)
+        );
+
+        const querySnapshot = await getDocs(notificationsQuery);
+        const fetchedNotifications = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          timestamp: doc.data().timestamp?.toDate() || new Date()
+        }));
+
+        setNotifications(fetchedNotifications);
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [showActions, setShowActions] = useState(null);
@@ -77,12 +109,18 @@ const Notification = () => {
       default:
         return 'bg-blue-100 text-blue-800';
     }
+
+    
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+        <div style={sidePanelStyle}>
+         <SidePanel/>
+        </div>
       {/* Header */}
       <div className="bg-white shadow">
+
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

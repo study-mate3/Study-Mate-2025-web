@@ -15,6 +15,19 @@
     border-bottom-right-radius: 15px
 }
 
+.slider-row label {
+    flex: 1;
+    font-size: 16px;
+    color: #615F5F;
+    font-family: 'Inter';
+    font-weight: bold;
+    margin-left: 25px;
+   
+
+    
+}
+
+
 .box-header {
     margin-top: 0px;
     font-size: 18px;
@@ -53,8 +66,9 @@
 
 /* Small screens (600px and below) */
 @media (max-width: 600px) {
+   
     .slider-customization-box {
-        top: 35%;
+        top: 25%;
         transform: translate(-50%, -15%);
         width: auto;
         padding: 15px;
@@ -63,8 +77,9 @@
     }
 
     .box-header {
-        font-size: 16px;
+        font-size: 12px;
         margin-left: 10px;
+        
     }
 
     .close-btn {
@@ -81,7 +96,7 @@
     }
 
     .slider-row label {
-        font-size: 14px;
+        font-size: 8px;
         margin-left: 5px;
     }
 
@@ -90,8 +105,8 @@
     }
 
     .save-btn {
-        padding: 8px;
-        font-size: 14px;
+        padding: 4px;
+        font-size: 12px;
     }
 
     .optionHeading {
@@ -130,7 +145,7 @@
     }
 
     .slider-row label {
-        font-size: 15px;
+        font-size:8px;
         margin-left: 15px;
     }
 
@@ -152,17 +167,6 @@
 
 
 
-.slider-row label {
-    flex: 1;
-    font-size: 16px;
-    color: #615F5F;
-    font-family: 'Inter';
-    font-weight: bold;
-    margin-left: 25px;
-   
-
-    
-}
 
 .slider {
     flex: 2;

@@ -21,6 +21,7 @@ import FAQPage from '../pages/Contact';
 import PomodoroReview from '../components/Rewards/PomodoroReview';
 import IssuesList from '../pages/IssuesList';
 import Quiz from '../pages/Quiz';
+import PayPage from '../pages/Paypage';
 
 const Routers = () => {
   return (
@@ -46,6 +47,7 @@ const Routers = () => {
           <Route path="/PomodoroReview" element={<PrivateRoute roleRequired="student"><PomodoroReview/></PrivateRoute>} />
           <Route path="/issues" element={<PrivateRoute roleRequired="admin"><IssuesList/></PrivateRoute>} />
           <Route path="/quiz" element={<PrivateRoute roleRequired="student"><Quiz/></PrivateRoute>} />
+          <Route path="/payment" element={<PrivateRoute roleRequired="student"><PayPage/></PrivateRoute>} />
 
 
 

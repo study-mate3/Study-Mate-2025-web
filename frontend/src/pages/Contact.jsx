@@ -36,7 +36,15 @@ useEffect(() => {
          className="w-[160px] h-auto mt-10 "
        /></div>
       
-      <div className="text-[30px] font-bold text-center mt-2 text-headingColor"><h1>Frequently Asked Questions</h1></div>
+      <div>
+      <div className="flex items-center justify-center mt-2">
+  <h2 className="text-[30px] font-extrabold text-headingColor mr-2">
+  Frequently Asked Questions
+  </h2>
+  <img src="/faq.png" alt="Faq" className="w-24 h-24" />
+</div>
+
+      </div>
      <div className="flex justify-center items-center flex-col">
     {/*  <button className=" mt-6 text-white py-2 px-4 font-[600] " style={{width: 253, height: 38, background: '#0E3167', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}>
                     <Link to='/'>Facing any issues? Report it!</Link>
