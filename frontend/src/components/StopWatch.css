@@ -62,7 +62,7 @@
 }
 
 .quote-text {
-    font-size: 16px;
+    font-size: 20px;
     font-family: 'Inter', sans-serif;
     font-style: italic;
     font-weight: 600;
@@ -250,184 +250,11 @@ h5 {
     color: #012862;
 }
 
-/* Media Queries for responsiveness */
-
-/* Small screens (mobile phones, 600px and below) */
-@media (max-width: 600px) {
-    .header-container {
-        text-align: center;
-        margin-top: 70px;
-    }
-
-    .greeting-box {
-        width: calc(100% - 20px);
-        margin: 0 auto; /* Center align */
-    }
-
-    .greeting-text {
-        font-size: 20px;
-        margin-left: 10px;
-    }
-
-    .quote-container {
-        margin-top: 20px;
-    }
-
-    .quote-start, .quote-end {
-        font-size: 48px;
-    }
-
-    .quote-text {
-        font-size: 16px;
-    }
-
-    .quote-author {
-        font-size: 14px;
-        margin-right: 20px;
-    }
-
-    .StopWatch {
-        padding: 0 10px;
-    }
-
-    
-    .btns {
-        flex-direction: row;
-        gap: 10px;
-    height: auto;
-    
- }
-
-        
-
-    .btns button img {
-        width: 30px;
-        height: 30px;
-    }
-
-    h5 {
-        font-size: 80px;
-    }
-
-    .text-container {
-        width: auto;
-        height: auto;
-        flex-direction: column;
-        padding: 10px;
-        text-align: center;
-    }
-
-    .text-container img {
-        width: 20px;
-        height: 20px;
-    }
-
-    .reminder-text, .highlight-text {
-        font-size: 12px;
-    }
-
-    .topics {
-        flex-direction:row;
-        gap: 10px;
-    }
-
-    .pomodoro, .breaks, .lbreaks, .timer-option {
-        width: 100%;
-        font-size: 16px;
-        padding: 5px;
-        border: #ffffff solid 1px;
-    }
-}
 
 
 
-/* Medium screens (tablets, 601px to 1024px) */
-@media (min-width: 601px) and (max-width: 1024px) {
-    .header-container {
-        margin-left: 15px;
-    }
 
-    .greeting-box {
-        width: 80%;
-        margin-left: 80px;
-        height: auto;
-        margin-top: 50px;
-    }
 
-    .greeting-text {
-        font-size: 22px;
-        margin-left: 35px;
-    }
-
-    .quote-container {
-        position: absolute;
-     top: 20px; /* Adjust as needed */
-    left: 20px; /* Adjust as needed */
-    color: #012862;
-    font-size: 1.2em;
-    font-style: italic;
-    z-index: 10; /* Ensure it stays on top*/
-    }
-
-    .quote-start, .quote-end {
-        font-size: 56px;
-    }
-
-    .quote-text {
-        font-size: 14px;
-    }
-
-    .quote-author {
-        font-size: 12px;
-        margin-right: 30px;
-    }
-
-    .StopWatch {
-        padding: 0 20px;
-    }
-
-    .btns {
-        flex-direction: row;
-        gap: 10px;
-    }
-
-    .btns button img {
-        width: 30px;
-        height: 30px;
-    }
-
-    h5 {
-        font-size: 150px !important;
-        font-weight: 900 !important;
-        color: #ffffff !important;
-    }
-
-    .text-container {
-        width: auto;
-        height: 35px;
-        flex-direction: row;
-        padding: 15px;
-    }
-
-    .text-container img {
-        width: 60px;
-        height: 60px;
-    }
-
-    .reminder-text, .highlight-text {
-        font-size: 13px;
-    }
-
-    .topics {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .pomodoro, .breaks, .lbreaks, .timer-option {
-        width: 130px;
-        font-size: 17px;
-    }
-}
 
 .alert-box {
     position: fixed;
@@ -597,6 +424,12 @@ h5 {
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
+    .timerbody{
+        overflow-x: hidden;
+    }
+    h5 {
+        font-size: 100px !important;          
+    }
     .alert-box {
         width: 95%; /* Wider width on small screens */
         padding: 15px; /* Adjust padding */
@@ -614,6 +447,43 @@ h5 {
 }
 
 @media (max-width: 480px) {
+    .timerbody{
+        overflow-x: hidden;
+    }
+    .pomodoro, .breaks, .lbreaks {
+        font-size: 12px;
+        width: 100px;
+        height: 28px;
+    }
+    .greeting-text {
+      
+        font-size: 22px;
+       
+    }
+    .btns {
+        gap: 30px;
+        margin-top: -20px;
+        width: 400px;
+        height: 30px;
+       
+    }
+    
+    .btns button {
+           font-size: 12px;
+        
+    }
+
+    
+    
+    .quote-text {
+        font-size: 16px;
+          }
+    
+   
+    
+    h5 {
+        font-size: 80px !important;          
+    }
     .alert-box {
         width: 70%; /* Full width on very small screens */
         max-width: none; /* Remove max-width restriction */
@@ -629,4 +499,5 @@ h5 {
         width: 50px; /* Adjust image size */
         height: 50px; /* Adjust image size */
     }
+   
 }

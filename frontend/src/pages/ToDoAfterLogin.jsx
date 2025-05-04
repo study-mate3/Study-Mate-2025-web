@@ -380,11 +380,12 @@ const ToDoListPage = () => {
   return (
     <div>
 
-<div className="text-[30px] font-bold text-center mb-8 mt-8  text-headingColor">
-        <h2 >
-        Manage Your To-Do List
-      </h2>
-        </div>
+<div className="flex items-center justify-center mt-2">
+  <h2 className="text-[30px] font-extrabold text-headingColor mr-2">
+  Manage Your To-Do List
+  </h2>
+  <img src="/task.png" alt="Quiz" className="w-24 h-24" />
+</div>
 
 <div className="flex h-[83.333vh] justify-between pl-20">
 

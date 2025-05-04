@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.0",
@@ -33,6 +34,7 @@
     "react-spinners": "^0.14.1",
     "react-toastify": "^10.0.6",
     "recharts": "^2.15.1",
+    "stripe": "^18.0.0",
     "swiper": "^11.1.14"
   },
   "devDependencies": {

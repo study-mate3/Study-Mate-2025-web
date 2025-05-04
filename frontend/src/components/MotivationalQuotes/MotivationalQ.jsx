@@ -42,8 +42,7 @@ function MotivationalQ() {
     <div
       className="motivational-quotes"
       style={{
-        fontFamily: 'Caveat, cursive',
-        fontSize: '20px',
+        fontFamily: 'Caveat, cursive',       
         marginTop: '16px',
         marginBottom: '18px',
         textAlign: 'center',

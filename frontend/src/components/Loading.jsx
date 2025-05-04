@@ -4,8 +4,9 @@ const Loading = () => {
   return (
     <div style={styles.container}>
       <img
-        src='../components/loading.gif'
+        src='/loading.gif'
         alt="Loading..."
+
         style={styles.gif}
       />
     </div>
@@ -20,7 +21,7 @@ const styles = {
     height: '100vh',
   },
   gif: {
-    width: '150px', // Adjust size as needed
+    width: '250px', // Adjust size as needed
   },
 };
 
