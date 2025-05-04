@@ -28,7 +28,7 @@ import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { collection, getDocs, query, where, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, Timestamp, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 
 const COLORS = ['#0088FE', '#FFBB28', '#FF8042'];
@@ -201,16 +201,29 @@ const AdminDashboard = () => {
     alert(`Deleting user with ID: ${userId}`);
   };
 
-  const handleNotificationSubmit = (e) => {
+  const handleNotificationSubmit = async (e) => {
     e.preventDefault();
-    alert(`Notification sent: ${JSON.stringify(notification, null, 2)}`);
-    setNotification({
-      message: '',
-      recipientType: 'all',
-      importance: 'normal'
-    });
+  
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        message: notification.message,
+        recipientType: notification.recipientType,
+        importance: notification.importance,
+        timestamp: new Date()
+      });
+  
+      alert('Notification sent successfully!');
+      setNotification({
+        message: '',
+        recipientType: 'all',
+        importance: 'normal'
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      alert('Failed to send notification. Please try again.');
+    }
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       {/* Header */}

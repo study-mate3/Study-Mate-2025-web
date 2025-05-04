@@ -20,6 +20,7 @@ import Loading from '../components/Loading';
 import FAQPage from '../pages/Contact';
 import PomodoroReview from '../components/Rewards/PomodoroReview';
 import IssuesList from '../pages/IssuesList';
+import Quiz from '../pages/Quiz';
 
 const Routers = () => {
   return (
@@ -44,6 +45,8 @@ const Routers = () => {
           <Route path="/student-details" element={<PrivateRoute roleRequired="parent"><StudentDetailsPage/></PrivateRoute>} />
           <Route path="/PomodoroReview" element={<PrivateRoute roleRequired="student"><PomodoroReview/></PrivateRoute>} />
           <Route path="/issues" element={<PrivateRoute roleRequired="admin"><IssuesList/></PrivateRoute>} />
+          <Route path="/quiz" element={<PrivateRoute roleRequired="student"><Quiz/></PrivateRoute>} />
+
 
 
           {/*<Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} /> */}

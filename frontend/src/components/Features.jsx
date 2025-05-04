@@ -54,7 +54,7 @@ const Features = () => {
 
   return (
     <div className="px-20">
-      <h2 className="text-[40px] font-extra-bold text-center mb-6 tracking-super-wide text-headingColor">
+      <h2 className="text-[22px] sm:text-[30px] font-extra-bold text-center mb-6 tracking-super-wide text-headingColor">
         FEATURES
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 justify-between gap-8">
