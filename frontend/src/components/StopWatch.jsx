@@ -12,6 +12,7 @@ import SidePanel from './SidePanel';
 import { Link, useNavigate } from 'react-router-dom';
 import FocusMonitor from './Rewards/FocusMonitor';
 import ScreenRecorder from './ScreenRecoder/ScreenRecorder';
+import AudioPlayer from './AudioPlayer';
 
 
 
@@ -161,6 +162,9 @@ export default function StopWatch() {
         setIsRunning(false);
     };
 
+    const handleExtendTime = () => {
+        setTime(prevTime => prevTime + 10 * 60 * 1000); // Add 10 minutes in milliseconds
+    }; 
     const handlePomodoroClick = () => {
         setCurrentMode('pomodoro'); // Set mode to Pomodoro
         setTime(initialTime); // Set time to the current Pomodoro time
@@ -430,11 +434,18 @@ export default function StopWatch() {
         
         <div className='timerbody'>
             
-            <div style={sidePanelStyle}>
+     <div style={sidePanelStyle}>
           {/*   <ScreenRecorder currentMode={currentMode} /> */}
         <SidePanel setName={setName}/>
       </div>
+
+      <div className="fixed right-0 top-0">
+    <AudioPlayer />
+</div>
+
+      
             <div className="header-container">
+            
                 <FocusMonitor currentMode={currentMode}/>
             <div className=" flex justify-center items-center mb-14">
                         <div className="w-[120px]"><img src="whitelogo.png" alt="" /></div>
@@ -445,11 +456,12 @@ export default function StopWatch() {
                 <div className="quote-container">
 {/*                  <span className="quote-start">“</span>
  */}                   
+
                 <span className="quote-text"><MotivationalQ/></span>
-{/*                  <span className="quote-end">”</span>
- */}                  {/*   <span className="quote-author"> <br/></span>
-                    <span className="quote-author">– Mahatma Gandhi</span>  */}
+                  
                 </div>
+
+                
 
                 <div className="stopwatch-container">
                     
@@ -488,10 +500,13 @@ export default function StopWatch() {
                                 <button className="reset" onClick={handleReset}>
                                     <img src="https://i.imgur.com/Y4iDX1g.png" alt="Reset" />
                                 </button>
+                                <button className="extend" onClick={handleExtendTime}>
+                                    <img src="https://i.imgur.com/KYdc80b.png" alt="Add 10 minutes" />
+                                </button>
                             </div>
                             <button className="manage-to-do-list" onClick={handleManageToDoListClick}>Manage To-do List</button>
                         </div>
-
+                   
                         
                     </div>
                     
@@ -529,18 +544,7 @@ export default function StopWatch() {
                 <source src="bell-notification.wav" type="audio/wav" />
                 Your browser does not support the audio element.
             </audio>
-           {/*  {!responseMessage ? (
-                <div className='alert-box'>
-                    <img src="are_you_awake.png" alt="Question Image" className="inline-image" />
-                    <p>Hi, are you studying or busy with something else?</p>
-                    <button onClick={handleYesClick}>Yes, I'm focused on my studies!</button>
-                </div>
-            ) : (
-                <>
-                    <p>{responseMessage}</p>
-                    <button onClick={handleCloseAlert}>Close</button>
-                </>
-            )} */}
+  
         </div>
     </>
 )}
