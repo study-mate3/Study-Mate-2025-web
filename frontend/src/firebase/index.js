@@ -3,29 +3,38 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-const db = admin.firestore();
+// Schedule function to run every Sunday at 00:00 Sri Lanka time
+exports.resetWeeklyRewards = functions.pubsub
+  .schedule("0 0 * * 0")
+  .timeZone("Asia/Colombo")
+  .onRun(async (context) => {
+    const usersRef = admin.firestore().collection("users");
 
-// Runs every Monday at 00:00 (midnight) UTC
-exports.resetWeeklyRewards = functions.pubsub.schedule("every monday 00:00")
-    .timeZone("Asia/Colombo") // Set your timezone
-    .onRun(async (context) => {
+    try {
+      const usersSnapshot = await usersRef.get();
+
+      // Loop through each user
+      usersSnapshot.forEach(async (userDoc) => {
+        const rewardsRef = usersRef.doc(userDoc.id).collection("rewards");
+
+        // Reset 'count' field for earlybird and nightowl documents
+        const earlybirdRef = rewardsRef.doc("earlybird");
+        const nightowlRef = rewardsRef.doc("nightowl");
+
         try {
-            const usersSnapshot = await db.collection("users").get();
+          await earlybirdRef.update({ count: 0 });
+          await nightowlRef.update({ count: 0 });
 
-            const batch = db.batch();
-
-            usersSnapshot.forEach(userDoc => {
-                const rewardsRef = db.collection("users").doc(userDoc.id).collection("rewards");
-
-                // Reset earlybird, nightowl, and points for each user
-                batch.update(rewardsRef.doc("points"), { points: 0 });
-                batch.update(rewardsRef.doc("earlybird"), { earlybird: 0 });
-                batch.update(rewardsRef.doc("nightowl"), { nightowl: 0 });
-            });
-
-            await batch.commit();
-            console.log("Weekly rewards reset successfully.");
+          console.log(`Weekly reset done for ${userDoc.id}`);
         } catch (error) {
-            console.error("Error resetting weekly rewards:", error);
+          console.error(`Error resetting rewards for user ${userDoc.id}:`, error);
         }
-    });
+      });
+
+      console.log("Weekly reset completed for all users!");
+    } catch (error) {
+      console.error("Failed to reset weekly rewards:", error);
+    }
+
+    return null;
+  });

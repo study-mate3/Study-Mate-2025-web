@@ -28,13 +28,18 @@ import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { getAuth, signOut } from 'firebase/auth';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-import { collection, getDocs, query, where, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, Timestamp, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 
 const COLORS = ['#0088FE', '#FFBB28', '#FF8042'];
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/issues");
+  };
+
   const [notification, setNotification] = useState({
     message: '',
     recipientType: 'all',
@@ -196,25 +201,64 @@ const AdminDashboard = () => {
     alert(`Deleting user with ID: ${userId}`);
   };
 
-  const handleNotificationSubmit = (e) => {
+  const handleNotificationSubmit = async (e) => {
     e.preventDefault();
-    alert(`Notification sent: ${JSON.stringify(notification, null, 2)}`);
-    setNotification({
-      message: '',
-      recipientType: 'all',
-      importance: 'normal'
-    });
+  
+    try {
+      await addDoc(collection(db, 'notifications'), {
+        message: notification.message,
+        recipientType: notification.recipientType,
+        importance: notification.importance,
+        timestamp: new Date()
+      });
+  
+      alert('Notification sent successfully!');
+      setNotification({
+        message: '',
+        recipientType: 'all',
+        importance: 'normal'
+      });
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      alert('Failed to send notification. Please try again.');
+    }
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <ArrowLeftOnRectangleIcon
-          className="h-8 w-8 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
-          onClick={handleLogout} // Add click handler
-        />
+       
+    <div>
+    <button className="mt-6 text-red-600 py-2 px-4 font-[600] " style={{width: 200, height: 38, borderColor:'#FF0000',borderWidth:'0.2px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
+    onClick={handleNavigate} >
+    Reported Issues
+                  </button>
+                  <ArrowLeftOnRectangleIcon
+      className="h-8 w-8 ml-40 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
+      onClick={handleLogout} // Add click handler
+    />
+    </div>
+       {/*  <div className="flex items-center gap-4">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300">
+            <Bell className="h-5 w-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <User className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-medium">Admin</span>
+          </div>
+        </div> */}
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">

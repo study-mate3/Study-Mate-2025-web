@@ -19,6 +19,9 @@ import StudentDetailsPage from '../components/StudentDetails';
 import Loading from '../components/Loading';
 import FAQPage from '../pages/Contact';
 import PomodoroReview from '../components/Rewards/PomodoroReview';
+import IssuesList from '../pages/IssuesList';
+import Quiz from '../pages/Quiz';
+import PayPage from '../pages/Paypage';
 
 const Routers = () => {
   return (
@@ -31,7 +34,7 @@ const Routers = () => {
           <Route path="/signup/:role" element={<SignUp/>} />
           <Route path="/role" element={<RoleSelection/>}/>
           <Route path="/login" element={<Login />} />
-          <Route path="/faq" element={<FAQPage/>} />
+          <Route path="/faq" element={<PrivateRoute roleRequired="student"><FAQPage/></PrivateRoute>} />
           <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/timer" element={<PomodoroTimer/>} />
@@ -42,6 +45,10 @@ const Routers = () => {
           <Route path="/student-dashboard/:studentId" element={<PrivateRoute roleRequired="student"><StudentDashboard/></PrivateRoute>} />
           <Route path="/student-details" element={<PrivateRoute roleRequired="parent"><StudentDetailsPage/></PrivateRoute>} />
           <Route path="/PomodoroReview" element={<PrivateRoute roleRequired="student"><PomodoroReview/></PrivateRoute>} />
+          <Route path="/issues" element={<PrivateRoute roleRequired="admin"><IssuesList/></PrivateRoute>} />
+          <Route path="/quiz" element={<PrivateRoute roleRequired="student"><Quiz/></PrivateRoute>} />
+          <Route path="/payment" element={<PrivateRoute roleRequired="student"><PayPage/></PrivateRoute>} />
+
 
 
           {/*<Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} /> */}

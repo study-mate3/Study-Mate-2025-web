@@ -15,7 +15,7 @@ const Footer = () => {
           <div >
             <img src={logo2} alt="Logo" className="w-[120px] h-auto" />
           </div> 
-          <span className="font-semibold text-lg">| 2024</span>
+          <span className="font-semibold text-sm sm:text-lg">| 2024</span>
         </div>
         <span className="font-semibold">www.studymate.com</span>
       </div>
