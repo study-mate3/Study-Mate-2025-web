@@ -15,11 +15,20 @@ const Login = () => {
   const navigate = useNavigate();
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    // Check if email or password is empty
+    if (!email || !password) {
+      setErrorMessage('Please fill out all fields'); // Set error message
+      return;
+    }
+
+    // Clear error message if fields are filled
+    setErrorMessage('');
+
     try {
       // Sign in the user with email and password
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -33,7 +42,8 @@ const Login = () => {
   
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        toast.success('Login successful!');
         // Check role and navigate accordingly
         if (userData.role === "student") {
           navigate('/timer'); // Navigate to the timer page for students
@@ -68,10 +78,11 @@ const Login = () => {
       </div>
 
       <h2 className="text-2xl font-bold mb-8 flex justify-center items-center">Log in to your Account</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-4">
         <div className="flex flex-col space-y-2">
           <label htmlFor="email" className="font-semibold text-gray-700">Email</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -84,6 +95,7 @@ const Login = () => {
         <div className="flex flex-col space-y-2">
           <label htmlFor="password" className="font-semibold text-gray-700">Password</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -99,6 +111,7 @@ const Login = () => {
         >
           Log In
         </button>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       </form>
 
         <p className="mt-4 text-center">
