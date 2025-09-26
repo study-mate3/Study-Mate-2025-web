@@ -36,7 +36,7 @@ const SliderCustomizationBox = ({ onClose, onSelect }) => {
                 Custom
             </div>
             
-            <div className="slider-options">
+            <div className="scb-content">
                 <div className="slider-row">
                     <label className='pomo' style={{fontFamily: "'Roboto', sans-serif"}} >Pomodoro (minutes):</label>
                     <input

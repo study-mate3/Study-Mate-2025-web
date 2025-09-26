@@ -248,135 +248,160 @@ const StudentDetailsPage = () => {
 
     
 
-  return (
-    <div className="container mx-auto pt-40">
-      <div className="flex justify-between items-center mb-6">
-      {showAlert && <Alert message={alertMessage} onClose={() => setShowAlert(false)} />}
-
-  <h1 className="text-2xl font-bold mb-4">View Your Student's Details</h1>
-  <div className="flex items-center">
-    <input
-      type="text"
-      value={studentIdInput}
-      onChange={(e) => setStudentIdInput(e.target.value)}
-      placeholder="Enter Student ID"
-      className=" rounded-xl shadow-sm border border-blue-600 p-2  mr-2"
-    />
-    <button
-      onClick={() => fetchStudentDetails(studentIdInput)}
-      className="bg-blue-500 text-white p-2 rounded"
-      disabled={!studentIdInput || loading}
-      style={{ width:100, background: 'linear-gradient(180deg, #0570B2 0%, #176BE8 100%)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
-
-    >
-      {loading ? 'Loading...' : 'ADD'}
-    </button>
-    
-  </div>
-  
-</div>
-<p className='text-md text-blue-700 mb-10 font-semibold' >You can add a student using the student ID, which will be displayed in the student dashboard.</p>
-
-{error && <p className="text-red-500">{error}</p>}
-
-
-
-
-      {/* Top bar showing added student IDs */}
-      <div className="bg-gray-100 p-2 rounded shadow mb-6">
-        <h2 className="font-bold mb-4 text-xl">Your Students</h2>
-        {addedStudents.length > 0 ? (
-      <div className="flex flex-wrap gap-2">
-        {addedStudents.map((id) => (
-          <button
-            key={id}
-            onClick={() => showStudentDetails(id)} // Fetch details on click
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-            style={{
-              width: 120,
-              background: 'linear-gradient(180deg, #0570B2 0%, #176BE8 100%)',
-              boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-              borderRadius: 100,
-            }}
-          >
-            {studentNames[id] || id} {/* Show name if fetched, else show ID */}
-          </button>
-        ))}
-      </div>
-    ) : (
-      <p>No students added yet.</p>
+return (
+  <div className="mx-auto max-w-7xl px-12 pt-20 sm:px-6 lg:px-8 lg:pt-36 ">
+    {/* alert */}
+    {showAlert && (
+      <Alert message={alertMessage} onClose={() => setShowAlert(false)} />
     )}
-      </div>
 
-      
-      {studentDetails && (
-  <div className="bg-gray-100 p-6 rounded shadow-md">
-    <h2 className="text-2xl font-semibold mb-4">
-    Progress Overview of {studentDetails?.name}
-  </h2>
-    {/* First Row: Name, Email, and Completed Pomodoros */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-lg font-medium">Name</h3>
-        <p>{studentDetails.name}</p>
-      </div>
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-lg font-medium">Email</h3>
-        <p>{studentDetails.email}</p>
-      </div>
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-lg font-medium">Completed Pomodoros</h3>
-        <p>{studentDetails.completedPomodoros ? studentDetails.completedPomodoros: 0}</p>
-      </div>
-      <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-lg font-medium">Total Completed Pomodoro Time</h3>
-      <p className='text-2xl font-medium'> {studentDetails.initialTime || "Not Available"}</p>
+    {/* Title + Add form */}
+    <div className="mb-4 sm:mb-6">
+      <h1 className="text-xl sm:text-2xl font-bold">
+        View Your Student&apos;s Details
+      </h1>
     </div>
-      {/* <div>
-        {studentDetails?.sessionSummary?.length > 0 ? (
-            studentDetails.sessionSummary.map((session, index) => (
-                <div key={index} className="mb-4">
-                    <p className="font-medium">Focus: {session.focus || 'Not Available'}</p>
-                    <p className="font-medium">Productivity: {session.productivity || 'Not Available'}</p>
-                    <p className="font-medium">Session Activity: {session.sessionActivity || 'Not Available'}</p>
-                    <p className="font-medium">Timestamp: {session.timestamp || 'Not Available'}</p>
-                    <p className="font-medium">Total Pomodoros: {session.totalPomodoro || 'Not Available'}</p>
+
+    {/* Input + button — stack on mobile */}
+    <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+      <p className="text-sm sm:text-base text-blue-700 font-semibold">
+        You can add a student using the student ID shown in the student dashboard.
+      </p>
+
+      <div className="flex w-full sm:w-auto gap-2">
+        <input
+          type="text"
+          value={studentIdInput}
+          onChange={(e) => setStudentIdInput(e.target.value)}
+          placeholder="Enter Student ID"
+          className="w-full sm:w-56 rounded-xl border border-blue-600/70 px-3 py-2 text-sm sm:text-base shadow-sm outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <button
+          onClick={() => fetchStudentDetails(studentIdInput)}
+          disabled={!studentIdInput || loading}
+          className="
+            w-full sm:w-[110px]
+            rounded-full text-white text-sm sm:text-base font-semibold
+            py-2 px-4 shadow
+            disabled:opacity-60 disabled:cursor-not-allowed
+            bg-gradient-to-b from-[#0570B2] to-[#176BE8]
+          "
+        >
+          {loading ? 'Loading…' : 'ADD'}
+        </button>
+      </div>
+    </div>
+
+    {error && <p className="text-red-500 text-sm sm:text-base mb-4">{error}</p>}
+
+    {/* Added students (chips) */}
+    <div className="bg-gray-50 border border-gray-200 mt-4 rounded-xl p-4 sm:p-5 mb-6 ">
+      <h2 className="font-bold text-lg sm:text-xl mb-3">Your Students</h2>
+
+      {addedStudents.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {addedStudents.map((id) => (
+            <button
+              key={id}
+              onClick={() => showStudentDetails(id)}
+              className="
+                rounded-full px-3 py-1 text-sm text-white shadow
+                bg-gradient-to-b from-[#0570B2] to-[#176BE8]
+                hover:brightness-110
+              "
+            >
+              {studentNames[id] || id}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-600 text-sm sm:text-base">No students added yet.</p>
+      )}
+    </div>
+
+    {/* Details */}
+    {studentDetails && (
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-6">
+        <h2 className="text-lg sm:text-2xl font-semibold mb-4">
+          Progress Overview of {studentDetails?.name}
+        </h2>
+
+        {/* Info cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+            <h3 className="text-sm sm:text-base font-medium text-gray-700">Name</h3>
+            <p className="mt-1 text-base sm:text-lg font-semibold">{studentDetails.name}</p>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+            <h3 className="text-sm sm:text-base font-medium text-gray-700">Email</h3>
+            <p className="mt-1 text-base sm:text-lg font-semibold break-all">
+              {studentDetails.email}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
+            <h3 className="text-sm sm:text-base font-medium text-gray-700">Completed Pomodoros</h3>
+            <p className="mt-1 text-base sm:text-lg font-semibold">
+              {studentDetails.completedPomodoros || 0}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 md:col-span-2 lg:col-span-1">
+            <h3 className="text-sm sm:text-base font-medium text-gray-700">
+              Total Completed Pomodoro Time
+            </h3>
+            <p className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">
+              {studentDetails.initialTime || 'Not Available'}
+            </p>
+          </div>
+        </div>
+
+        {/* Achievements */}
+        <div className="text-center">
+          <h3 className="text-lg sm:text-2xl font-semibold mb-3 sm:mb-4">
+            Your Child&apos;s Achievements This Week
+          </h3>
+
+          {studentDetails?.earlybird > 5 ||
+          studentDetails?.nightowl > 5 ||
+          studentDetails?.points > 40 ? (
+            <div
+              className="
+                grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 items-center justify-items-center
+              "
+            >
+              {studentDetails?.earlybird > 5 && (
+                <div className="flex flex-col items-center">
+                  <img src="earlybird.png" alt="Early Bird" className="w-28 sm:w-40 h-auto" />
+                  <span className="mt-2 text-sm font-medium">Early Bird</span>
                 </div>
-            ))
-        ) : (
-            <p>No session summary data available.</p>
-        )}
-    </div> */}
-         
-           
-               {/*  <div>
-                   {/*  <p className="font-medium">Points: {studentDetails?.points || 'Not Available'}</p>  
-                     <p className="font-medium">Total Completed Pomodoro Time: {initialTime|| 'Not Available'}</p>
-                    {/*  <p className="font-medium">no: {studentDetails?.nightowl || 'Not Available'}</p>
-                     <p className="font-medium">eb: {studentDetails?.earlybird || 'Not Available'}</p> 
-                </div> */}
-    </div>
-
-    {/* Second Row: Absent Times */}
-    <div className="achievements-container text-center">
-  <h2 className="text-2xl font-semibold mb-4">Your Child's Achievements This Week</h2>
-  {studentDetails?.earlybird > 5 || studentDetails?.nightowl > 5 || studentDetails?.points > 40 ? (
-    <div className="achievements-row flex justify-center gap-10">
-      {studentDetails?.earlybird > 5 && <img src="earlybird.png" width="160" alt="Early Bird" />}
-      {studentDetails?.nightowl > 5 && <img src="nightowl.png" width="160" alt="Night Owl" />}
-      {studentDetails?.points > 40 && <img src="focuspearl.png" width="160" alt="Points Achieved" />}
-    </div>
-  ) : (
-    <p className="text-lg text-gray-600 font-semibold mt-4">No badges achieved 😕. Encourage your child to study more! </p>
-  )}
-
-
-</div>
+              )}
+              {studentDetails?.nightowl > 5 && (
+                <div className="flex flex-col items-center">
+                  <img src="nightowl.png" alt="Night Owl" className="w-28 sm:w-40 h-auto" />
+                  <span className="mt-2 text-sm font-medium">Night Owl</span>
+                </div>
+              )}
+              {studentDetails?.points > 40 && (
+                <div className="flex flex-col items-center">
+                  <img src="focuspearl.png" alt="Focus Pearl" className="w-28 sm:w-40 h-auto" />
+                  <span className="mt-2 text-sm font-medium">Focus Pearl</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm sm:text-base text-gray-600 font-semibold mt-3">
+              No badges achieved 😕. Encourage your child to study more!
+            </p>
+          )}
+        </div>
+      </div>
+    )}
   </div>
-)}
+);
 
-    </div>
-  );
 };
 
 

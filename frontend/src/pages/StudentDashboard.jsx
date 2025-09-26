@@ -24,7 +24,7 @@ const DashboardCard = ({ userId, title, children, className = '' }) => (
       border: '0.02px solid rgba(154, 157, 161, 0.38)',
     }}
   >
-    <h3 className="text-lg font-semibold mb-4 text-black">{title}</h3>
+    <h3 className="text-md lg:text-lg font-semibold mb-4 text-black">{title}</h3>
     {children}
   </div>
 );
@@ -172,82 +172,82 @@ const StudentDashboard = () => {
         <SidePanel/>
       </div>
       <StDashHeader userDetails={userDetails}/>
-      <div className='p-40'>
-      <div className="flex justify-between items-center mb-8">
+      <div className="px-20 sm:px-6 lg:px-12 xl:px-24 pt-20 lg:pt-40">
+      <div className="flex items-center mb-8">
        </div>
 
       {/* Profile Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-  {/* Personal Details Section - Left Column */}
-  <DashboardCard title="Personal Details">
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <p className="text-black">Name</p>
-        <p className="font-medium">{userDetails?.name}</p>
+{/* Top row */}
+<div className="grid grid-cols-12 gap-6 mb-6">
+  {/* Personal Details — narrower on lg+ */}
+  <div className="col-span-12 lg:col-span-5 xl:col-span-4">
+    <DashboardCard title="Personal Details" className="h-full overflow-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <p className="text-sm lg:text-base">Name</p>
+          <p className="font-medium text-sm lg:text-base">{userDetails?.name}</p>
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm lg:text-base">Email</p>
+          <p className="font-medium text-sm lg:text-base break-words">{userDetails?.email}</p>
+        </div>
+        <div>
+          <p className="text-sm lg:text-base">Student ID</p>
+          <p className="font-medium text-sm lg:text-base">{userDetails?.studentId}</p>
+        </div>
       </div>
-      <div>
-        <p className="text-black">Email</p>
-        <p className="font-medium">{userDetails?.email}</p>
-      </div>
-      <div>
-      <p className="text-black">Student ID</p>
-      <p className="font-medium">{userDetails?.studentId}</p>
-      </div>
-      
-    </div>
-  </DashboardCard>
+    </DashboardCard>
+  </div>
 
-  {/* Stats Grid - Right Column */}
-<div className="flex gap-6">
-  {/* Task Progress Card */}
-  <DashboardCard title="Task Progress" className="flex-1">
-    <div className="flex items-center gap-4">
-      <div className="p-3 bg-green-100 rounded-full">
+  {/* Right side — wider on lg+ */}
+  <div className="col-span-12 lg:col-span-7 xl:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+  {/* Task Progress */}
+  <DashboardCard title="Task Progress" className="h-full overflow-hidden">
+    <div className="flex items-center gap-3">
+      {/* Icon only visible on lg+ */}
+      <div className="hidden lg:flex p-3 bg-green-100 rounded-full">
         <CheckCircle className="text-green-600" size={24} />
       </div>
-      <div>
 
+      <div className="min-w-0">
         <p className="text-2xl font-bold text-black">{completedTasks}/{tasks.length}</p>
-        <p className="text-black text-sm mt-2">Tasks Completed</p>
-
+        <p className="text-black text-sm mt-1">Tasks Completed</p>
       </div>
     </div>
   </DashboardCard>
 
-  {/* Pomodoro Sessions Card */}
-  <DashboardCard title="Pomodoro Sessions" className="flex-1">
-    <div className="flex items-center gap-4">
-      <div className="p-3 bg-blue-100 rounded-full">
-        <Clock className="text-blue-600" size={24} />
+  {/* Pomodoro Sessions */}
+  <DashboardCard title="Pomodoro Sessions" className="h-full overflow-hidden">
+    <div className="grid grid-cols-[1fr] lg:grid-cols-[auto,1fr,auto] items-center gap-4 min-w-0">
+      {/* Icon only visible on lg+ */}
+      <div className="hidden lg:flex p-2 bg-blue-100 rounded-full">
+        <Clock className="text-blue-600" size={20} />
       </div>
-      <div>
+
+      {/* totals block */}
+      <div className="min-w-0">
         <p className="text-2xl font-bold text-black">
-        {completedPomodoros !== null ? (
-              <CountUp start={0} end={completedPomodoros} duration={2} separator="," />
-            ) : (
-              "Loading..."
-            )}
+          {completedPomodoros !== null
+            ? <CountUp start={0} end={completedPomodoros} duration={2} separator="," />
+            : "Loading..."}
         </p>
-        <p className="text-black text-sm">Total Completed Pomodoros</p>
+        <p className="text-black text-sm break-words">Total Completed Pomodoros</p>
       </div>
-
-                <p className="text-2xl font-bold text-black">
-                  {initialTime !== null ?  <CountUp
-                start={0}
-                end={initialTime}
-                duration={2}
-                formattingFn={(value) => formatTime(value)} // Formats time correctly
-              /> : "Loading..."}
-                </p>
-                <p className="text-black text-sm">Total Pomodoro Time</p>
-       
-
+        <div className="min-w-0 lg:text-right">
+          <p className="text-lg sm:text-2xl font-bold text-black truncate">
+            {initialTime !== null
+              ? <CountUp start={0} end={initialTime} duration={2} formattingFn={formatTime} />
+              : "Loading..."}
+          </p>
+          <p className="text-black text-sm break-words">Total Pomodoro Time</p>
+        </div>
     </div>
   </DashboardCard>
 </div>
 
 </div>
-<div className='mt-15 mb-10'>
+
+<div className='mt-15 mb-6'>
       <RewardComponent userId={userId} />
     </div>
 

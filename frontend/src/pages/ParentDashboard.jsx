@@ -88,7 +88,7 @@ const ParentDashboard = () => {
         <ParentSidePanel/>
       </div> 
       <StDashHeader userDetails={userDetails}/>
-      <div className='p-16'>
+      <div className="px-4 sm:px-6 lg:px-12 xl:px-24 pt-24 lg:pt-10">
       <div className="flex justify-between items-center mb-8">
         <StudentDetailsPage/> 
         

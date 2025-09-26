@@ -465,7 +465,7 @@ export default function StopWatch() {
 
                 <div className="stopwatch-container">
                     
-                    <div className='middle-container'>
+                    <div className='timer-grid'>
                     <div className='topics'>
                         <div className={`pomodoro ${currentMode === 'pomodoro' ? 'active' : ''}`} 
                              style={{ background: currentMode === 'pomodoro' ? '#D9D9D9' : '#012862', color: currentMode === 'pomodoro' ? '#012862' : '#D9D9D9' }} 
@@ -517,12 +517,19 @@ export default function StopWatch() {
                         </audio>
                     )}
 
-                    {isCustomizing && (
-                        <>
-                            <CustomTimerBox onClose={handleCloseCustomTimerBox} onSelect={handleSelectTimer} />
-                            <SliderCustomizationBox onClose={handleCloseSliderCustomizationBox} onSelect={handleSelectTimer} />
-                        </>
-                    )}
+                  {isCustomizing && (
+                        <div className="modal-viewport">
+                            <CustomTimerBox
+                            onClose={handleCloseCustomTimerBox}
+                            onSelect={handleSelectTimer}
+                            />
+                            <SliderCustomizationBox
+                            onClose={handleCloseSliderCustomizationBox}
+                            onSelect={handleSelectTimer}
+                            />
+                        </div>
+                        )}
+
 
                     {isManagingToDoList && (
                         <ToDoListBox onClose={handleCloseToDoListBox} />

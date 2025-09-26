@@ -121,7 +121,7 @@ TaskCard.propTypes = {
 
 const ToDoListPage = () => {
   const today = new Date().toISOString().split("T")[0];
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
     description: "",
@@ -134,7 +134,7 @@ const ToDoListPage = () => {
 
   const [editingTask, setEditingTask] = useState(null);
   const [filter, setFilter] = useState("all");
-  const [isTaskFormOpen, setTaskFormOpen] = useState(true);
+  const [isTaskFormOpen, setTaskFormOpen] = useState(false);
 
 
 
@@ -336,6 +336,22 @@ const ToDoListPage = () => {
       console.error("Error updating task: ", error);
     }
   };
+useEffect(() => {
+  const mq = window.matchMedia('(min-width: 768px)'); // md breakpoint
+  const syncToViewport = () => {
+    if (mq.matches) {
+      setIsSidebarOpen(true);
+      setTaskFormOpen(true);
+    } else {
+      setIsSidebarOpen(false);
+      setTaskFormOpen(false);
+    }
+  };
+
+  syncToViewport(); // set initial
+  mq.addEventListener('change', syncToViewport);
+  return () => mq.removeEventListener('change', syncToViewport);
+}, []); 
 
   const getFilteredTasks = () => {
     
@@ -381,10 +397,10 @@ const ToDoListPage = () => {
     <div>
 
 <div className="flex items-center justify-center mt-2">
-  <h2 className="text-[30px] font-extrabold text-headingColor mr-2">
+  <h2 className="text-[20px] lg:text-[30px] font-extrabold text-headingColor mr-2">
   Manage Your To-Do List
   </h2>
-  <img src="/task.png" alt="Quiz" className="w-24 h-24" />
+  <img src="/task.png" alt="Quiz" className="w-20 h-20 lg:w-24 lg:h-24" />
 </div>
 
 <div className="flex h-[83.333vh] justify-between pl-20">
@@ -466,7 +482,7 @@ const ToDoListPage = () => {
         </div>
 
         <div className="w-full">
-          <h2 className="text-lg font-semibold mt-2 ml-4">Lists</h2>
+          <h2 className="lg:text-lg text-md font-semibold mt-2 ml-4">Lists</h2>
           {["Personal", "Work", "Study"].map((list) => (
             <div
               key={list}
@@ -543,11 +559,11 @@ const ToDoListPage = () => {
     <button onClick={() => setTaskFormOpen(false)} className="text-gray-600 hover:text-black text-xl">✕</button>
   </div>
 
-  <div className="flex items-center px-3 w-full p-2 border-[1.5px] border-black/50 bg-gray-200 rounded-md text-lg font-semibold">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 mr-3 text-gray-500">
+  <div className="flex items-center px-3 w-full p-2 text-lg font-semibold">
+   {/*  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 mr-3 text-gray-500">
       <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-    </svg>
-    <h2 className="text-gray-500">Set Your Tasks</h2>
+    </svg> */}
+    <h2 className="text-blue-700 font-bold">Set Your Tasks Here</h2>
   </div>
 
   <div>
