@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
-import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import SidePanel from "../components/SidePanel";
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
 import logo2 from '/whitelogo.png'
 
 
