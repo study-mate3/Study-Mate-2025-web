@@ -37,7 +37,7 @@
 .greeting-text {
     color: white;
     font-size: 32px;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 550;
     line-height: 40px;
     flex: 1; /* Allow text to fill available space */
@@ -313,7 +313,15 @@ h5 {
     font-size: medium;
     
 }
-
+.help-btn{
+    color: #0E3167;
+    font-family: 'Inter', sans-serif;
+    font-weight:600;
+    margin-top: 70px;
+    margin-right: 60px;
+    font-size: medium;
+    
+}
 
 .alert-box button:hover {
     background: #bbd8f7;
@@ -610,6 +618,17 @@ h5 {
   .btns {
     width: 80%;
   }
+
+  .help-btn{
+    color: #0E3167;
+    font-family: 'Inter', sans-serif;
+    font-weight:600;
+    margin-top: 100px;
+    margin-right: 60px;
+    font-size: small;
+    
+}
+
     
     .quote-text {
         font-size: 12px;

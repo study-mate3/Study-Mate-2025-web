@@ -19,10 +19,10 @@ const CustomTimerBox = ({ onClose, onSelect }) => {
     };
 
     return (
-        <div className="custom-timer-box" style={{ fontFamily: "'Roboto', sans-serif" }}>
-  <div className="box-header" style={{ fontFamily: "'Roboto', sans-serif" }}>
+        <div className="custom-timer-box" style={{ fontFamily: "'Inter', sans-serif" }}>
+  <div className="box-header" style={{ fontFamily: "'Inter', sans-serif" }}>
     <h3 style={{ fontWeight: 700 }}>Customize Your Timer</h3>
-    <button className="close-btn" onClick={onClose} style={{ fontFamily: "'Roboto', sans-serif" }}>
+    <button className="close-btn" onClick={onClose} style={{ fontFamily: "'Inter', sans-serif" }}>
       ×
     </button>
   </div>
@@ -35,13 +35,13 @@ const CustomTimerBox = ({ onClose, onSelect }) => {
           className="option"
           onClick={() => handleSelect(20 * 60 * 1000, 5 * 60 * 1000, 15 * 60 * 1000)}
         >
-          <div className="option-content" style={{ fontFamily: "'Roboto', sans-serif" }}>
+          <div className="option-content" style={{ fontFamily: "'Inter', sans-serif" }}>
             <div className="circle"></div>
-            <div className="optionHeading" style={{ fontFamily: "'Roboto', sans-serif",fontWeight: 500 }}>
+            <div className="optionHeading" style={{ fontFamily: "'Inter', sans-serif",fontWeight: 500 }}>
               Popular
             </div>
           </div>
-          <div className="details" style={{ fontFamily: "'Roboto', sans-serif" }}>
+          <div className="details" style={{ fontFamily: "'Inter', sans-serif" }}>
             20 min Pomodoro<br />5 min Break<br />15 min Long Break
           </div>
         </div>
@@ -53,13 +53,13 @@ const CustomTimerBox = ({ onClose, onSelect }) => {
           className="option"
           onClick={() => handleSelect(40 * 60 * 1000, 8 * 60 * 1000, 20 * 60 * 1000)}
         >
-          <div className="option-content" style={{ fontFamily: "'Roboto', sans-serif" }}>
+          <div className="option-content" style={{ fontFamily: "'Inter', sans-serif" }}>
             <div className="circle"></div>
-            <div className="optionHeading" style={{ fontFamily: "'Roboto', sans-serif",fontWeight: 500 }}>
+            <div className="optionHeading" style={{ fontFamily: "'Inter', sans-serif",fontWeight: 500 }}>
               Medium
             </div>
           </div>
-          <div className="details" style={{ fontFamily: "'Roboto', sans-serif" }}>
+          <div className="details" style={{ fontFamily: "'Inter', sans-serif" }}>
             40 min Pomodoro<br />8 min Break<br />20 min Long Break
           </div>
         </div>
@@ -71,13 +71,13 @@ const CustomTimerBox = ({ onClose, onSelect }) => {
           className="option"
           onClick={() => handleSelect(60 * 60 * 1000, 10 * 60 * 1000, 25 * 60 * 1000)}
         >
-          <div className="option-content" style={{ fontFamily: "'Roboto', sans-serif" }}>
+          <div className="option-content" style={{ fontFamily: "'Inter', sans-serif" }}>
             <div className="circle"></div>
-            <div className="optionHeading" style={{fontFamily: "'Roboto', sans-serif", fontWeight: 500 }}>
+            <div className="optionHeading" style={{fontFamily: "'Inter', sans-serif", fontWeight: 500 }}>
               Extended
             </div>
           </div>
-          <div className="details" style={{ fontFamily: "'Roboto', sans-serif" }}>
+          <div className="details" style={{ fontFamily: "'Inter', sans-serif" }}>
             60 min Pomodoro<br />10 min Break<br />25 min Long Break
           </div>
         </div>

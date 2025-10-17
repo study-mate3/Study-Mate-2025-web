@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import logo2 from '../assets/images/HomePageIcons/scrolledLogo.png'
+import logo2 from '/whitelogo.png'
 import { Link } from 'react-router-dom';
 import ReportIssue from '../components/ReportIssue';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
+import SidePanel from '../components/SidePanel';
 
 
 const FAQPage = () => {
 
-  const [currentUser, setCurrentUser] = useState(null);
+const [currentUser, setCurrentUser] = useState(null);
 const [studentData, setStudentData] = useState(null);
 
 useEffect(() => {
@@ -28,56 +29,72 @@ useEffect(() => {
   fetchStudentData();
 }, []);
 
+ const sidePanelStyle = {
+    position: 'fixed', // Fixes the panel position
+    left: -10,
+    top: '200px',
+        }
+
   return (
+    <div>
+      <div style={sidePanelStyle}>
+        <SidePanel/>
+      </div>
+   
     <div className=" bg-gray-100 bg-[url('./assets/images/HomePageIcons/loginbg.jpeg')] bg-cover bg-center" >
-      <div  className="flex justify-center items-center flex-col"><img
-         src={logo2}
-         alt="Logo"
-         className="w-[160px] h-auto mt-10 "
-       /></div>
-      
-      <div>
-      <div className="flex items-center justify-center mt-2">
-  <h2 className="text-[30px] font-extrabold text-headingColor mr-2">
-  Frequently Asked Questions
-  </h2>
-  <img src="/faq.png" alt="Faq" className="w-24 h-24" />
+     
+   <div className="fixed top-0 left-0 w-full bg-blue-500 p-3 z-40 shadow-md">
+  {/* Logo (top-left) */}
+  <div className="absolute top-3 left-4">
+    <img
+      src={logo2}
+      alt="Logo"
+      className="lg:w-[160px] w-[80px] md:w-[100px] h-auto"
+    />
+  </div>
+
+  {/* Title + FAQ image (centered) */}
+  <div className="flex items-center justify-center">
+    <h2 className="mt-5 lg:text-[30px] text-[20px] font-bold text-white mr-2">
+      Frequently Asked Questions
+    </h2>
+    <img src="/faq.png" alt="Faq" className="w-16 h-16" />
+  </div>
+
+  {/* Report Issue button (centered below title) */}
+  <div className="flex justify-center items-center flex-col mt-[-20px] p-2">
+    <ReportIssue userId={currentUser?.uid} />
+  </div>
 </div>
 
-      </div>
-     <div className="flex justify-center items-center flex-col">
-    {/*  <button className=" mt-6 text-white py-2 px-4 font-[600] " style={{width: 253, height: 38, background: '#0E3167', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}>
-                    <Link to='/'>Facing any issues? Report it!</Link>
-                  </button> */}
-                  <ReportIssue userId={currentUser?.uid} />
-     </div>
       
 
-      <section className='ml-20 font-sans bg-white'>
+      <section className='ml-24 font-sans bg-white mt-40'>
         <div style={{ marginBottom: '22px' }}>
-          <p className='text-[22px] text-blue-700 ' ><strong>1. What is this app, and how can it help me?</strong></p>
-          <p>This app helps you manage your study sessions efficiently using features like Pomodoro timers, task management, progress tracking, and motivational quotes. It keeps you focused and organized throughout your study routine.</p>
+          <p className='lg:text-[22px] text-[18px] text-blue-700 ' ><strong>1. What is this app, and how can it help me?</strong></p>
+          <p className='lg:text-[16px] text-[14px]'>This app helps you manage your study sessions efficiently using features like Pomodoro timers, task management, progress tracking, and motivational quotes. It keeps you focused and organized throughout your study routine.</p>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <p className='text-[22px] text-blue-700 ' ><strong>2. How do I set a study timer?</strong></p>
-          <p>Simply select the desired study session from the timer options, or customize your own timer settings, and click "Start" to begin. You can pause and reset the timer whenever needed.</p>
+          <p className='lg:text-[22px] text-[18px] text-blue-700 ' ><strong>2. How do I set a study timer?</strong></p>
+          <p className='lg:text-[16px] text-[14px]'>Simply select the desired study session from the timer options, or customize your own timer settings, and click "Start" to begin. You can pause and reset the timer whenever needed.</p>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <p className='text-[22px] text-blue-700 ' ><strong>3. Can I track my study progress?</strong></p>
-          <p>Yes, the app offers visual progress tracking, showing your study hours, tasks completed, and overall progress.</p>
+          <p className='lg:text-[22px] text-[18px] text-blue-700 ' ><strong>3. Can I track my study progress?</strong></p>
+          <p className='lg:text-[16px] text-[14px]'>Yes, the app offers visual progress tracking, showing your study hours, tasks completed, and overall progress.</p>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <p className='text-[22px] text-blue-700 ' ><strong>4. Can I set reminders for my study tasks?</strong></p>
-          <p>Yes, you can set reminders for each task to ensure you stay on track with your study goals.</p>
+          <p className='lg:text-[22px] text-[18px] text-blue-700 ' ><strong>4. Can I set reminders for my study tasks?</strong></p>
+          <p className='lg:text-[16px] text-[14px]'>Yes, you can set reminders for each task to ensure you stay on track with your study goals.</p>
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <p className='text-[22px] text-blue-700 ' ><strong>5. Is there a mobile version of the app?</strong></p>
-          <p>Yes, the app is available for both web and mobile platforms, ensuring you can stay organized and focused wherever you are.</p>
+          <p className='lg:text-[22px] text-[18px] text-blue-700 ' ><strong>5. Is there a mobile version of the app?</strong></p>
+          <p className='lg:text-[16px] text-[14px]'>Yes, the app is available for both web and mobile platforms, ensuring you can stay organized and focused wherever you are.</p>
         </div>
       </section>
 
       
     </div>
+     </div>
   );
 };
 

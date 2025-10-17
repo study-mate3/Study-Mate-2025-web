@@ -13,6 +13,8 @@ import {
 
 
 } from "@heroicons/react/24/solid";
+import logo2 from '/whitelogo.png'
+
 
 import { collection, addDoc, query, where, getDocs, updateDoc, doc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseConfig";
@@ -23,12 +25,12 @@ import PropTypes from 'prop-types';
 // TaskCard component for each task
 const TaskCard = ({ task, index, handleDelete, handleComplete, handleImportance, handleEditTask, handleUpdateTask }) => {
   return (
-    <div className="bg-gray-200 px-4 py-2 mb-2 rounded-[15px] shadow">
+    <div className="bg-blue-100 px-4 py-2 mb-2 rounded-[15px] shadow-xl"  style={{fontFamily: '"Inter", sans-serif'}}>
       <div className="flex items-center justify-between mb-2">
-        <div className="text-[25px] font-semibold">{task.description}</div>
+        <div className="lg:text-[25px] text-[18px] font-semibold">{task.description}</div>
         <div className="px-2 py-1 flex items-center justify-between w-auto bg-blue-700 rounded-full
         space-x-2">
-          <p className="font-semibold text-[12px] text-white">Mark as Completed</p>
+          <p className="font-semibold lg:text-[12px] text-[8px] text-white">Mark as Completed</p>
           <input
           type="checkbox"
           checked={task.completed}
@@ -396,14 +398,22 @@ useEffect(() => {
   return (
     <div>
 
-<div className="flex items-center justify-center mt-2">
-  <h2 className="text-[20px] lg:text-[30px] font-extrabold text-headingColor mr-2">
+<div className="fixed top-0 left-0 w-full bg-blue-500 p-3 z-40 shadow-md">
+    <div className="absolute top-3 left-4">
+            <img
+              src={logo2}
+              alt="Logo"
+              className="lg:w-[160px] w-[80px] md:w-[100px] h-auto "
+            />
+          </div>
+           <div className="flex items-center justify-center">
+   <h2 className="lg:text-[30px] text-[20px] font-bold text-white mr-2">
   Manage Your To-Do List
   </h2>
-  <img src="/task.png" alt="Quiz" className="w-20 h-20 lg:w-24 lg:h-24" />
+    <img src="/task.png" alt="Quiz" className="w-20 h-20 lg:w-24 lg:h-24" /></div>
 </div>
 
-<div className="flex h-[83.333vh] justify-between pl-20">
+<div className="flex h-[83.333vh] justify-between pl-20 mt-40">
 
 <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -433,9 +443,10 @@ useEffect(() => {
 
 {/* 2nd Column: Task Tracker */}
 <div
-        className={`fixed md:static z-40 top-0 left-0 h-full transition-transform duration-300 ease-in-out bg-blue-200 rounded-r-[15px] w-[250px] flex flex-col space-y-3 ${
+        className={`fixed md:static top-24 left-0 h-full transition-transform duration-300 ease-in-out bg-blue-200 rounded-r-[15px] w-[250px] flex flex-col space-y-3 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
+        style={{fontFamily: '"Inter", sans-serif'}}
       >
         <div className="w-full">
           <h2 className="text-lg font-semibold mt-4 ml-4">Tasks</h2>
@@ -506,7 +517,7 @@ useEffect(() => {
           ))}
         </div>
 
-        <div className="w-full">
+        <div className="w-full" style={{fontFamily: '"Inter", sans-serif'}}>
           <div
             className="w-full py-2 flex space-x-2 hover:bg-blue-500/80 hover:text-blue-950"
             onClick={() => setFilter("important")}
@@ -531,7 +542,7 @@ useEffect(() => {
   {filter === "all" ? "All Tasks" : `Showing: ${filter.charAt(0).toUpperCase() + filter.slice(1)} Tasks`}
 </h2>
 
-  <div className="space-y-4">
+  <div className="space-y-4" style={{fontFamily: '"Inter", sans-serif'}}>
     {getFilteredTasks().length === 0 ? (
       <p>No tasks available for this category.</p>
     ) : (
@@ -544,6 +555,7 @@ useEffect(() => {
           handleComplete={handleComplete}
           handleImportance={handleImportance}
           handleEditTask={handleEditTask}
+          style={{fontFamily: '"Inter", sans-serif'}}
         />
       ))
     )}
@@ -552,7 +564,7 @@ useEffect(() => {
 </div>
 
 {/* 4th Column: Form to Set Tasks */}
-<div className={`fixed md:static top-0 right-0 z-30 h-full md:h-auto transition-transform duration-300 transform bg-white border-2 border-blue-950/80 rounded-[15px] w-[350px] p-4 overflow-y-auto ${isTaskFormOpen ? "translate-x-0" : "translate-x-full"} md:translate-x-0`}>
+<div className={`fixed md:static top-0 right-0 z-30 h-full md:h-auto transition-transform duration-300 transform bg-white border-2 border-blue-950/80 rounded-[15px] w-[350px] p-4 overflow-y-auto ${isTaskFormOpen ? "translate-x-0" : "translate-x-full"} md:translate-x-0`} style={{fontFamily: '"Inter", sans-serif'}}>
   {/* Header for Mobile */}
   <div className="flex justify-between items-center md:hidden mb-4">
     <h2 className="text-xl font-bold text-blue-800">Task Form</h2>
@@ -563,10 +575,10 @@ useEffect(() => {
    {/*  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5 mr-3 text-gray-500">
       <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
     </svg> */}
-    <h2 className="text-blue-700 font-bold">Set Your Tasks Here</h2>
+    <h2 className="text-blue-700 font-bold"  style={{fontFamily: '"Inter", sans-serif'}}>Set Your Tasks Here</h2>
   </div>
 
-  <div>
+  <div className="tasks" style={{fontFamily: '"Inter", sans-serif'}}>
     <h2 className="mt-3 mb-2 font-bold">Description</h2>
     <textarea
       className="w-full h-24 p-2 border bg-gray-200 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -579,14 +591,15 @@ useEffect(() => {
     />
   </div>
 
-  <div className="w-full mt-4">
+  <div className="w-full mt-4" style={{fontFamily: '"Inter", sans-serif'}}>
     <div className="flex items-center mb-3">
       <div className="w-1/2">
         <p className="font-bold mb-2">List</p>
       </div>
-      <div className="w-1/2">
+      <div className="w-1/2" style={{fontFamily: '"Inter", sans-serif'}}>
         <select
           className="w-auto px-3 py-1 border bg-gray-200 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{fontFamily: '"Inter", sans-serif'}}
           value={newTask.list}
           onChange={(e) => {
             setNewTask({ ...newTask, list: e.target.value });
@@ -600,7 +613,7 @@ useEffect(() => {
       </div>
     </div>
 
-    <div className="flex items-center mb-3">
+    <div className="flex items-center mb-3" style={{fontFamily: '"Inter", sans-serif'}}>
       <div className="w-1/2">
         <p className="font-bold mb-2">Due Date</p>
       </div>
@@ -617,7 +630,7 @@ useEffect(() => {
       </div>
     </div>
 
-    <div className="flex items-center mb-3">
+    <div className="flex items-center mb-3" style={{fontFamily: '"Inter", sans-serif'}}>
       <div className="w-1/2">
         <p className="font-bold mb-2">Sub Tasks</p>
       </div>
@@ -635,7 +648,7 @@ useEffect(() => {
       </div>
     </div>
 
-    <div className="flex items-center mb-3">
+    <div className="flex items-center mb-3" style={{fontFamily: '"Inter", sans-serif'}}>
       <div className="w-1/2">
         <p className="font-bold mb-2">Prioritized Level</p>
       </div>
@@ -657,8 +670,8 @@ useEffect(() => {
   </div>
 
   <button
-    className="w-[40%] mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4"
-    onClick={editingTask ? handleUpdateTask : addTask}
+    className="w-[40%] text-sm mx-auto px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 mt-4"
+    onClick={editingTask ? handleUpdateTask : addTask} style={{fontFamily: '"Inter", sans-serif'}}
   >
     {editingTask ? "Update Task" : "Add Task"}
   </button>

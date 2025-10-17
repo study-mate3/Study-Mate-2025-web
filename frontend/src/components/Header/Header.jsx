@@ -64,7 +64,7 @@ const Header = ({ onScrollToSection }) => {
               style={{
                 textAlign: 'right',
                 color: 'white',    
-                fontFamily: '"Roboto", sans-serif',
+                fontFamily: '"Inter", sans-serif',
                 fontWeight: '600',
                 wordWrap: 'break-word',
               }}

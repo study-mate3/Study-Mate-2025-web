@@ -7,7 +7,7 @@ const FocusMonitor = ({ currentMode }) => {
                 const message = "Hey! Stay focused on your Study session!";
 
                 // Display alert
-                alert(message);
+              /*   alert(message); */
 
                 // Voice Alert (Text-to-Speech)
                 const speech = new SpeechSynthesisUtterance(message);

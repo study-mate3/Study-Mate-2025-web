@@ -143,7 +143,7 @@ const EngagementChart = ({ userId }) => {
     <p>Loading...</p>
   ) : (
     <div>
-      <p className="text-black" style={{fontFamily: '"Roboto", sans-serif', fontWeight: '600', fontSize:'20px'}}>Engagement Over Time</p>
+      <p className="text-black" style={{fontFamily: '"Inter", sans-serif', fontWeight: '600', fontSize:'20px'}}>Engagement Over Time</p>
       <div style={{ width: '70%', height: '380px' }}>
      <Line
       ref={chartRef}

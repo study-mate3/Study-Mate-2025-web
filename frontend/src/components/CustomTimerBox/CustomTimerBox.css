@@ -44,7 +44,7 @@
 .option-column {
     flex: 1;
     margin: 0 10px;
-    font-family: '"Roboto", sans-serif';
+    font-family: '"Inter", sans-serif';
 }
 
 .option {
@@ -56,7 +56,7 @@
    
 }
 .option-content {
-    font-family: 'Roboto', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
   
 .option:hover {
