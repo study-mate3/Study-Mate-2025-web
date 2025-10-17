@@ -25,28 +25,30 @@ const RoleSelection = () => {
         <h2 className="text-xl text-[#002761] font-bold mb-10">Choose your role.</h2>
         <div className="flex justify-center space-x-10">
 
-        <div className="w-[400px] h-[172px] bg-[#bfd8fd] rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col items-center justify-between p-4">
+        <div className="w-[400px] h-[172px] bg-[#bfd8fd] rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col items-center justify-between p-4"
+        onClick={() => handleRoleSelection("student")}>
         <img
             src={studentIcon}
             alt="Student Icon"
             className="w-[100px] h-[100px] mb-2" 
           />
           <button
-            onClick={() => handleRoleSelection("student")}
+            
             className="w-full text-black font-semibold py-2 rounded hover:bg-blue-300"
           >
             Student
           </button>
         </div>
 
-        <div className="w-[400px] h-[172px] bg-[#bfd8fd] rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col items-center justify-between p-4">
+        <div className="w-[400px] h-[172px] bg-[#bfd8fd] rounded-[20px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] flex flex-col items-center justify-between p-4"
+         onClick={() => handleRoleSelection("parent")}>
           <img
             src={parentIcon}
             alt="Parent Icon"
             className="w-[100px] h-[100px] mb-2" 
           />
           <button
-            onClick={() => handleRoleSelection("parent")}
+           
             className="w-full text-black font-semibold py-2 rounded hover:bg-blue-300"
           >
             Parent

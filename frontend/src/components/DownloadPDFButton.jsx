@@ -16,15 +16,28 @@ const DownloadPDFButton = () => {
     pdf.save("StudyMate_Progress_Analysis.pdf");
   };
 
-  return <button className=" flex items-center w-[160px]  text-white font-semibold text-[16px] h-[34px] bg-gradient-to-b from-[#0570b2] to-[#0745a2] rounded-[100px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] px-4 space-x-2"
-   onClick={handleSaveAsPDF}>
-   <img 
-      src="/downloadIcon.png" // Replace with your icon's path
-      alt="Save Icon" 
-      className="w-5 h-5" // Adjust width and height as needed
-    />
- <span>Export Data</span>
- </button>;
+  return<div className="relative">
+  <button
+    onClick={handleSaveAsPDF}
+    className="
+      absolute top-8       /* mobile: move down */
+      sm:static sm:ml-auto           /* ≥640px: back to normal flow */
+      flex items-center justify-center
+      h-8 px-3 text-[12px] w-[120px]
+      sm:h-9 sm:px-3.5 sm:text-[13px] sm:w-[140px]
+      md:h-[34px] md:px-4 md:text-[16px] md:w-[160px]
+      text-white font-semibold
+      bg-gradient-to-b from-[#0570b2] to-[#0745a2]
+      rounded-[100px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]
+      space-x-2
+    "
+  >
+    <img src="/downloadIcon.png" alt="Save" className="w-4 h-4 md:w-5 md:h-5" />
+    <span className="hidden sm:inline">Export Data</span>
+  </button>
+</div>
+
+
 };
 
 export default DownloadPDFButton;

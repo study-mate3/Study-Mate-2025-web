@@ -22,6 +22,10 @@ import PomodoroReview from '../components/Rewards/PomodoroReview';
 import IssuesList from '../pages/IssuesList';
 import Quiz from '../pages/Quiz';
 import PayPage from '../pages/Paypage';
+import QuizGenerator from '../pages/QuizGenerator';
+import OLQuiz from '../pages/Olquiz';
+import AdminAddQuestion from '../pages/Adminquiz/AdminAddQuestions';
+import UpdatePapers from '../pages/Adminquiz/UpdatePapers';
 
 const Routers = () => {
   return (
@@ -48,6 +52,10 @@ const Routers = () => {
           <Route path="/issues" element={<PrivateRoute roleRequired="admin"><IssuesList/></PrivateRoute>} />
           <Route path="/quiz" element={<PrivateRoute roleRequired="student"><Quiz/></PrivateRoute>} />
           <Route path="/payment" element={<PrivateRoute roleRequired="student"><PayPage/></PrivateRoute>} />
+          <Route path="/quizGenerator" element={<QuizGenerator/>}   />
+          <Route path="/olquiz" element={<OLQuiz/>}   />
+          <Route path="/adminQuiz" element={<AdminAddQuestion/>}/>
+          <Route path="/updateQuiz" element={<UpdatePapers/>}/>
 
 
 

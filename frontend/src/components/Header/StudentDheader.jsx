@@ -11,14 +11,19 @@ const StDashHeader = ({ userDetails }) => {
       <DownloadPDFButton/>
         </div>
        
-        <h1 className="text-3xl font-bold" style={{ position: 'relative', top: '-20px' }}>
+        <h1 className="text-lg font-bold lg:text-3xl" style={{ position: 'relative', top: '-23px' }}>
           {userDetails?.role === 'student'
             ? `Hello ${userDetails?.name}, Let's Check Out Your Progress!`
             : `Hello ${userDetails?.name}, view your student's progress here.`}
         </h1>
-        <div className="absolute top-0 right-12" style={{ width: '160px', height: 'auto' }}>
-          <img src={logo} alt="Logo" className="logo" />
-        </div>
+        <div className="absolute top-2 right-3 sm:top-2 sm:right-6 md:top-0 md:right-12">
+  <img
+    src={logo}
+    alt="Logo"
+    className="w-20 sm:w-28 md:w-40 h-auto"
+  />
+</div>
+
       </div>
     </header>
   );

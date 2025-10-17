@@ -37,7 +37,7 @@
 .greeting-text {
     color: white;
     font-size: 32px;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 550;
     line-height: 40px;
     flex: 1; /* Allow text to fill available space */
@@ -149,7 +149,7 @@ h3 {
 }
 
 h5 {
-    font-size: 180px !important;
+    font-size: 160px !important;
     font-weight: 900 !important;
     color: #ffffff !important;
     margin-top: auto;
@@ -313,7 +313,15 @@ h5 {
     font-size: medium;
     
 }
-
+.help-btn{
+    color: #0E3167;
+    font-family: 'Inter', sans-serif;
+    font-weight:600;
+    margin-top: 70px;
+    margin-right: 60px;
+    font-size: medium;
+    
+}
 
 .alert-box button:hover {
     background: #bbd8f7;
@@ -422,19 +430,49 @@ h5 {
     display: block;
 }
 
+.timer-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-areas:
+    "topics timer"
+    "controls controls";
+  align-items: center;
+  gap: 20px;
+}
+
+/* Map areas */
+.topics { grid-area: topics; }
+.StopWatch { grid-area: timer; }
+.controls-container { grid-area: controls; }
+
+/* Desktop look for the mode buttons */
+.topics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 0;
+}
+
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     .timerbody{
         overflow-x: hidden;
     }
     h5 {
-        font-size: 100px !important;          
+        font-size: 84px !important;  
+        margin-top: 80px !important;
+        padding-left: 40px;        
     }
     .alert-box {
         width: 95%; /* Wider width on small screens */
         padding: 15px; /* Adjust padding */
     }
-
+     .greeting-text {
+      
+        font-size: 16px;
+        margin-top: 40px;
+       
+    }
     .alert-box button {
         padding: 6px 15px; /* Smaller button padding */
         font-size: 0.9rem; /* Smaller font size */
@@ -444,12 +482,98 @@ h5 {
         width: 60px; /* Adjust image size */
         height: 60px; /* Adjust image size */
     }
+
+     .timer-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "timer"
+      "controls"
+      "topics";
+     }
+  .controls-container {
+    width: 100%;
+    padding-left: 40px;
+  }
+  .topics{
+    padding-left: 80px;
+    margin-top: -30px;
+  }
+  .topics .pomodoro,
+  .topics .breaks,
+  .topics .lbreaks {
+    width: 80% !important;
+    height: 34px;
+    font-size: 16px;
+  }
+
+
+
+  
+
+  .btns {
+    display: flex;
+    flex-direction: column;   /* stack into rows */
+    align-items: stretch;     /* let children fill width */
+    gap: 12px;
+    width: 90%;
+    height: auto;
+    padding: 8px;
+    margin-top: 10px;
+
+  }
+
+  /* Row 1: Customize Timer (full width) */
+  .btns .customize-timer {
+    width: 100%;
+    padding: 1px 1px;
+    background: transparent;  /* keep your look; change if needed */
+    text-align: center;
+    margin-top: 0px;
+  }
+
+  .quote-text {
+        font-size: 14px;
+          }
+    
+
+
+  /* Row 2: the icon buttons stay side-by-side */
+  .btns .button-container {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    width: 100%;
+    margin-top: -10px;
+  }
+
+  /* Row 3: Manage To-do List (full width) */
+  .btns .manage-to-do-list {
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    text-align: center;
+    font-size: 12px;
+    margin-top: -10px;
+  }
+
+   .reminder-text{
+        font-size: 14px;
+    }
+    .highlight-text{
+        font-size: 14px;
+    }
+    .text-container{
+        width: 600px;
+        margin-top: 80px;
+    }
 }
 
 @media (max-width: 480px) {
+   
     .timerbody{
         overflow-x: hidden;
-    }
+        padding-left: 40px;
+    } 
     .pomodoro, .breaks, .lbreaks {
         font-size: 12px;
         width: 100px;
@@ -457,32 +581,66 @@ h5 {
     }
     .greeting-text {
       
-        font-size: 22px;
+        font-size: 16px;
+        margin-top: 40px;
+        position: fixed !important;
+        padding-left: 100px;
        
     }
-    .btns {
-        gap: 30px;
-        margin-top: -20px;
-        width: 400px;
-        height: 30px;
-       
-    }
+  .btns { 
+    padding: 0;
+    margin: 0;
+ }
+  .btns .button-container {
+    gap: 8px;
+  }
+  .btns .button-container button img { width: 20px; height: 20px; }
+.topics {
+    margin-top: -40px;
+    padding-left: 40px;
+}
+
+ .btns .customize-timer {
+    width: 100%;
+    background: transparent;  /* keep your look; change if needed */
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 0px;
+  }
+    .topics .pomodoro,
+  .topics .breaks,
+  .topics .lbreaks {
+    width: 80% !important;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .btns {
+    width: 80%;
+  }
+
+  .help-btn{
+    color: #0E3167;
+    font-family: 'Inter', sans-serif;
+    font-weight:600;
+    margin-top: 100px;
+    margin-right: 60px;
+    font-size: small;
     
-    .btns button {
-           font-size: 12px;
-        
-    }
+}
 
     
-    
     .quote-text {
-        font-size: 16px;
+        font-size: 12px;
           }
     
    
     
     h5 {
-        font-size: 80px !important;          
+        font-size: 45px !important;
+        margin-top: 20px !important;
+        padding-left: 40px;
+             
     }
     .alert-box {
         width: 70%; /* Full width on very small screens */
@@ -499,5 +657,51 @@ h5 {
         width: 50px; /* Adjust image size */
         height: 50px; /* Adjust image size */
     }
-   
+
+    .text-container img {
+    width: 45px;
+    height: 45px;
+    margin-top: -10px;
+}
+    .reminder-text{
+        font-size: 12px;
+    }
+    .highlight-text{
+        font-size: 12px;
+    }
+    .text-container{
+        width: 400px;
+    }
+
+.modal-viewport {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px;          /* keep small padding around the stack */
+    background: rgba(0,0,0,.35);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+  }
+
+  /* kill desktop offsets and margins that cause the gap */
+  .custom-timer-box,
+  .slider-customization-box {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 0 0 12px 0 !important;     /* <-- removes the huge top space */
+    width: 100% !important;
+    max-width: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18) !important;
+  }
+
+  /* if you keep a margin-top anywhere else, nuke it here too */
+  .slider-customization-box { margin-top: 0 !important; }
+  .custom-timer-box       { margin-top: 0 !important; }
+
 }

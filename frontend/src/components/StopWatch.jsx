@@ -13,6 +13,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import FocusMonitor from './Rewards/FocusMonitor';
 import ScreenRecorder from './ScreenRecoder/ScreenRecorder';
 import AudioPlayer from './AudioPlayer';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+
 
 
 
@@ -37,7 +40,280 @@ export default function StopWatch() {
     const [name, setName] = useState('Learner');
     const auth = getAuth();
     const db = getFirestore();
+
+ const tourSteps = [
+  {
+    element: "#pomodoro-tab",
+    popover: {
+      title: "Pomodoro Timer",
+      description:
+        "Here you can start your Pomodoro timer — a focused study method where you work for a set time (like 25 minutes) and take breaks in between. It's great for improving concentration and avoiding burnout.",
+      side: "bottom",
+      align: "start",
+    },
+  },
+  {
+    element: "#breaks-tab",
+    popover: {
+      title: "Short Break",
+      description:
+        "Set your short breaks here, usually around 5 minutes. Short breaks help you refresh your mind before starting the next study session.",
+      side: "bottom",
+      align: "start",
+    },
+  },
+  {
+    element: "#longbreak-tab",
+    popover: {
+      title: "Long Break",
+      description:
+        "Use this to set your long break, for example 15–30 minutes. Taking longer breaks after several Pomodoro sessions helps your brain recover and stay productive.",
+      side: "bottom",
+      align: "start",
+    },
+  },
+  {
+    element: '#start-btn',
+    popover: {
+      title: 'Start Button',
+      description: 'Click to start your timer.',
+      side: 'top',
+      align: 'center'
+    }
+  },
+  {
+    element: '#stop-btn',
+    popover: {
+      title: 'Stop Button',
+      description: 'Pause your current timer at any time.',
+      side: 'top',
+      align: 'center'
+    }
+  },
+  {
+    element: '#reset-btn',
+    popover: {
+      title: 'Reset Timer',
+      description: 'Reset your timer to its original value.',
+      side: 'top',
+      align: 'center'
+    }
+  },
+  {
+    element: '#extend-btn',
+    popover: {
+      title: 'Add 10 Minutes',
+      description: 'Click here to extend your focus session by 10 minutes.',
+      side: 'top',
+      align: 'center'
+    }
+  },
+  {
+    element: "#user",
+    popover: {
+      title: "Your Dashboard",
+      description:
+        "Here’s your personal dashboard — you can view your study progress, earned rewards, and detailed analytics about your performance.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#home",
+    popover: {
+      title: "Home",
+      description:
+        "This takes you back to the main page of the web app.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#timer",
+    popover: {
+      title: "Timer",
+      description:
+        "Here you can set your main timer, customize Pomodoro sessions, and even upload background music to help you stay focused while studying.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#todo",
+    popover: {
+      title: "To-Do List",
+      description:
+        "Go to the To-Do page to manage your daily tasks efficiently and stay on track with your study goals.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#quiz",
+    popover: {
+      title: "Practice Quizzes",
+      description:
+        "Take short quizzes here to test your knowledge and improve your learning through practice.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#notifications",
+    popover: {
+      title: "Notifications",
+      description:
+        "You’ll receive important updates and announcements from our team here. Keep an eye on this section for new features or reminders.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#logout",
+    popover: {
+      title: "Logout",
+      description:
+        "If you want to log out from your account, click here safely.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#faq",
+    popover: {
+      title: "FAQ & Support",
+      description:
+        "Find answers to the most frequently asked questions. You can also submit any issue or feedback to our support team from here.",
+      side: "right",
+      align: "center",
+    },
+  },
+  
+  {
+    element: "#customizeTimer",
+    popover: {
+      title: "Customize Timer",
+      description:
+        "Adjust your Pomodoro, short break, and long break durations here — personalize them the way you study best.",
+      side: "right",
+      align: "center",
+    },
+  },
+  {
+    element: "#music",
+    popover: {
+      title: "Music",
+      description:
+        "You can upload your preferred music file here and listen while studying. It helps you stay calm, focused, and relaxed during long sessions.",
+      side: "right",
+      align: "center",
+    },
+  },
+  
+  {
+    popover: {
+      title: "You're All Set!",
+      description:
+        "That’s the quick tour of your study partner - StudyMate. Now you can explore and start your focused learning journey! 🎯",
+    },
+  },
+];
+
+
+
     
+    
+   /*  useEffect(() => {
+    const driverObj = driver({
+    animate: false,
+    showProgress: true,
+    showButtons: ['previous', 'next', 'close'],
+    steps: [
+      {
+        element: '#side-panel',
+        popover: {
+          title: 'Navigation Bar',
+          description: 'Here you can explore different sections like Focus Monitor, To-do List, and Rewards.',
+          side: 'right',
+          align: 'start'
+        }
+      },
+      {
+        element: '#pomodoro-tab',
+        popover: {
+          title: 'Pomodoro Mode',
+          description: 'Start your focused work session here.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '#breaks-tab',
+        popover: {
+          title: 'Breaks',
+          description: 'Take short 5-minute breaks between sessions.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '#longbreak-tab',
+        popover: {
+          title: 'Long Breaks',
+          description: 'Enjoy a longer rest after several Pomodoro rounds.',
+          side: 'bottom',
+          align: 'start'
+        }
+      },
+      {
+        element: '#start-btn',
+        popover: {
+          title: 'Start Button',
+          description: 'Click to start your Pomodoro timer.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#stop-btn',
+        popover: {
+          title: 'Stop Button',
+          description: 'Pause your current timer at any time.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#reset-btn',
+        popover: {
+          title: 'Reset Timer',
+          description: 'Reset your timer to its original value.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        element: '#extend-btn',
+        popover: {
+          title: 'Add 10 Minutes',
+          description: 'Click here to extend your focus session by 10 minutes.',
+          side: 'top',
+          align: 'center'
+        }
+      },
+      {
+        popover: {
+          title: 'All Set!',
+          description: 'You’re ready to master your focus time — enjoy using the timer! 🎯'
+        }
+      }
+    ]
+  });
+
+  driverObj.drive();
+    }, []); */
+
+
      
 
      useEffect(() => {
@@ -434,19 +710,33 @@ export default function StopWatch() {
         
         <div className='timerbody'>
             
-     <div style={sidePanelStyle}>
+     <div id="side-panel" style={sidePanelStyle}>
           {/*   <ScreenRecorder currentMode={currentMode} /> */}
         <SidePanel setName={setName}/>
       </div>
 
-      <div className="fixed right-0 top-0">
+      <div id="music" className="fixed right-0 top-0">
     <AudioPlayer />
+    <button
+        className="help-btn"
+        onClick={() => {
+            const guide = driver({
+            showButtons: ['previous', 'next', 'close'],
+            steps: tourSteps
+            });
+            guide.drive();
+        }}
+        >
+        Show Guide
+        </button>
+
+
 </div>
 
       
             <div className="header-container">
             
-                <FocusMonitor currentMode={currentMode}/>
+               {/*  <FocusMonitor currentMode={currentMode}/> */}
             <div className=" flex justify-center items-center mb-14">
                         <div className="w-[120px]"><img src="whitelogo.png" alt="" /></div>
                       </div>
@@ -465,17 +755,17 @@ export default function StopWatch() {
 
                 <div className="stopwatch-container">
                     
-                    <div className='middle-container'>
+                    <div className='timer-grid'>
                     <div className='topics'>
-                        <div className={`pomodoro ${currentMode === 'pomodoro' ? 'active' : ''}`} 
+                        <div id="pomodoro-tab" className={`pomodoro ${currentMode === 'pomodoro' ? 'active' : ''}`} 
                              style={{ background: currentMode === 'pomodoro' ? '#D9D9D9' : '#012862', color: currentMode === 'pomodoro' ? '#012862' : '#D9D9D9' }} 
                              onClick={handlePomodoroClick}>Pomodoros
                         </div>
-                        <div className={`breaks ${currentMode === 'break' ? 'active' : ''}`} 
+                        <div id="breaks-tab" className={`breaks ${currentMode === 'break' ? 'active' : ''}`} 
                              style={{ background: currentMode === 'break' ? '#D9D9D9' : '#012862', color: currentMode === 'break' ? '#012862' : '#D9D9D9' }} 
                              onClick={handleBreaksClick}>Breaks
                         </div>
-                        <div className={`lbreaks ${currentMode === 'longBreak' ? 'active' : ''}`} 
+                        <div id="longbreak-tab" className={`lbreaks ${currentMode === 'longBreak' ? 'active' : ''}`} 
                              style={{ background: currentMode === 'longBreak' ? '#D9D9D9' : '#012862', color: currentMode === 'longBreak' ? '#012862' : '#D9D9D9' }} 
                              onClick={handleLongBreaksClick}>Long Breaks
                         </div>
@@ -489,22 +779,22 @@ export default function StopWatch() {
                     </div>
                     <div className="controls-container">
                     <div className="btns">
-                            <button className="customize-timer" onClick={handleCustomizeClick}>Customize Timer</button>
+                            <button id="customizeTimer" className="customize-timer" onClick={handleCustomizeClick}>Customize Timer</button>
                             <div className="button-container">
-                                <button className="start" onClick={handleStart}>
+                                <button id="start-btn" className="start" onClick={handleStart}>
                                     <img src="https://i.imgur.com/u82cGA3.png" alt="Start" />
                                 </button>
-                                <button className="stop" onClick={handleStop}>
+                                <button id="stop-btn" className="stop" onClick={handleStop}>
                                     <img src="https://i.imgur.com/7sBZBI0.png" alt="Stop" />
                                 </button>
-                                <button className="reset" onClick={handleReset}>
+                                <button id="reset-btn" className="reset" onClick={handleReset}>
                                     <img src="https://i.imgur.com/Y4iDX1g.png" alt="Reset" />
                                 </button>
-                                <button className="extend" onClick={handleExtendTime}>
+                                <button id="extend-btn" className="extend" onClick={handleExtendTime}>
                                     <img src="https://i.imgur.com/KYdc80b.png" alt="Add 10 minutes" />
                                 </button>
                             </div>
-                            <button className="manage-to-do-list" onClick={handleManageToDoListClick}>Manage To-do List</button>
+                            <button id="to-do" className="manage-to-do-list" onClick={handleManageToDoListClick}>Manage To-do List</button>
                         </div>
                    
                         
@@ -517,12 +807,19 @@ export default function StopWatch() {
                         </audio>
                     )}
 
-                    {isCustomizing && (
-                        <>
-                            <CustomTimerBox onClose={handleCloseCustomTimerBox} onSelect={handleSelectTimer} />
-                            <SliderCustomizationBox onClose={handleCloseSliderCustomizationBox} onSelect={handleSelectTimer} />
-                        </>
-                    )}
+                  {isCustomizing && (
+                        <div className="modal-viewport">
+                            <CustomTimerBox
+                            onClose={handleCloseCustomTimerBox}
+                            onSelect={handleSelectTimer}
+                            />
+                            <SliderCustomizationBox
+                            onClose={handleCloseSliderCustomizationBox}
+                            onSelect={handleSelectTimer}
+                            />
+                        </div>
+                        )}
+
 
                     {isManagingToDoList && (
                         <ToDoListBox onClose={handleCloseToDoListBox} />

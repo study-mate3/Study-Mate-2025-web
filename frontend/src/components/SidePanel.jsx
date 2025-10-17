@@ -32,37 +32,37 @@ const SidePanel = ({setName}) => {
       {/* Top section icons */}
       <div className="space-y-6 mt-4">
       
-    <UserIcon className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='user dashboard'
+    <UserIcon id="user" className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='user dashboard'
     onClick={handleClick} />
   
         {/* Wrap the HomeIcon with Link */}
         <Link to="/">
-          <HomeIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='home page'/>
+          <HomeIcon id="home" className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='home page'/>
         </Link>
 
         <Link to="/timer">
-          <ClockIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='timer'/>
+          <ClockIcon  id="timer" className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='timer'/>
         </Link>
 
         <Link to="/todo-after-login">
-          <PencilIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='to do list'/>
+          <PencilIcon id="todo" className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='to do list'/>
         </Link>
 
         <Link to='/quiz' title='quiz'>
-          <NewspaperIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"/>
+          <NewspaperIcon id="quiz" className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer"/>
         </Link>
 
         <Link to="/notifications">
-          <BellIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='notifications'/>
+          <BellIcon id="notifications" className="h-5 w-5 mt-4 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='notifications'/>
         </Link>
 
       
-        <ArrowLeftOnRectangleIcon
+        <ArrowLeftOnRectangleIcon id="logout"
       className="h-5 w-5 text-white hover:text-blue-950 hover:font-extrabold cursor-pointer" title='log out'
       onClick={handleLogout} // Add click handler
     />
         <Link to="/faq">
-          <QuestionMarkCircleIcon className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" title='faq' />
+          <QuestionMarkCircleIcon id="faq" className="h-5 w-5 mt-4 text-white hover:text-blue-950 cursor-pointer" title='faq' />
         </Link>
       </div>
     </div>

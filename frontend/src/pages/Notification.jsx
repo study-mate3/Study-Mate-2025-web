@@ -5,6 +5,8 @@ import { db } from '../firebase/firebaseConfig';
 import { doc,getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import SidePanel from '../components/SidePanel';
+import logo2 from '/whitelogo.png'
+
 
 const Notification = () => {
   // Sample notification data - replace with your actual data
@@ -119,26 +121,23 @@ const Notification = () => {
          <SidePanel/>
         </div>
       {/* Header */}
-      <div className="bg-white shadow">
-
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <ArrowLeft className="h-6 w-6 text-gray-600" />
-              <h1 className="text-2xl font-semibold text-gray-800">Notifications</h1>
-            </div>
-            <button
-              onClick={markAllAsRead}
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
-              Mark all as read
-            </button>
-          </div>
-        </div>
+      <div className="fixed top-0 left-0 w-full bg-blue-500 p-3 z-40 shadow-md">
+          <div className="absolute top-3 left-4">
+                  <img
+                    src={logo2}
+                    alt="Logo"
+                    className="lg:w-[160px] w-[80px] md:w-[100px] h-auto "
+                  />
+                </div>
+                 <div className="flex items-center justify-center">
+         <h2 className="lg:text-[30px] text-[20px] font-bold text-white mr-2">
+        Notifications
+        </h2>
+        <img src="/notifications.png" alt="Quiz" className="w-20 h-20 lg:w-24 lg:h-24" /></div>
       </div>
 
       {/* Filters */}
-      <div className="max-w-4xl mx-auto px-4 py-4">
+      <div className="max-w-4xl mt-40 mx-auto px-4 py-4">
         <div className="flex space-x-4 mb-6">
           <button
             onClick={() => filterNotifications('all')}

@@ -73,7 +73,9 @@ const [alertMessage, setAlertMessage] = useState("");
             }}
           >
             <h2 className="text-xl font-bold mb-4">Report an Issue</h2>
-            <button className="absolute top-4 right-6 text-gray-600" onClick={togglePopup}>✖</button>
+            <button 
+                className="absolute top-4 right-6 bg-red-600 text-white font-bold rounded-md px-2 py-1 shadow-md hover:bg-red-700 transition"
+                onClick={togglePopup}>X</button>
 
             {/* Category Selection */}
             <div className="mb-4">

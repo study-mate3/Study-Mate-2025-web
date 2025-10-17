@@ -26,6 +26,11 @@
 
     
 }
+.scb-content {
+  max-height: min(60vh, 520px);
+  overflow: auto;
+  padding: 16px 18px 6px;
+}
 
 
 .box-header {
@@ -68,7 +73,6 @@
 @media (max-width: 600px) {
    
     .slider-customization-box {
-        top: 25%;
         transform: translate(-50%, -15%);
         width: auto;
         padding: 15px;
@@ -80,6 +84,7 @@
         font-size: 12px;
         margin-left: 10px;
         
+        
     }
 
     .close-btn {
@@ -87,16 +92,16 @@
     }
 
     .slider-options {
-        margin-top: 15px;
+        margin-top: 10px;
     }
 
     .slider-row {
         font-size: 12px;
-        margin-bottom: 10px;
+        margin-bottom: 1px;
     }
 
     .slider-row label {
-        font-size: 8px;
+        font-size: 12px;
         margin-left: 5px;
     }
 
@@ -105,7 +110,7 @@
     }
 
     .save-btn {
-        padding: 4px;
+        padding: 2px;
         font-size: 12px;
     }
 

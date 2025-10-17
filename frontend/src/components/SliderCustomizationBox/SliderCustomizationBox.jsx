@@ -32,13 +32,13 @@ const SliderCustomizationBox = ({ onClose, onSelect }) => {
 
     return (
         <div className="slider-customization-box">
-            <div className="box-header" style={{fontFamily: "'Roboto', sans-serif"}} >
+            <div className="box-header" style={{fontFamily: "'Inter', sans-serif"}} >
                 Custom
             </div>
             
-            <div className="slider-options">
+            <div className="scb-content">
                 <div className="slider-row">
-                    <label className='pomo' style={{fontFamily: "'Roboto', sans-serif"}} >Pomodoro (minutes):</label>
+                    <label className='pomo' style={{fontFamily: "'Inter', sans-serif"}} >Pomodoro (minutes):</label>
                     <input
                         type="range"
                         min="1"
@@ -48,10 +48,10 @@ const SliderCustomizationBox = ({ onClose, onSelect }) => {
                         className="slider"
                         
                     />
-                    <span className='timespan' style={{fontFamily: "'Roboto', sans-serif"}} >{pomodoroTime / 60 / 1000} min</span>
+                    <span className='timespan' style={{fontFamily: "'Inter', sans-serif"}} >{pomodoroTime / 60 / 1000} min</span>
                 </div>
                 <div className="slider-row">
-                    <label className='break' style={{fontFamily: "'Roboto', sans-serif"}} >Break (minutes):</label>
+                    <label className='break' style={{fontFamily: "'Inter', sans-serif"}} >Break (minutes):</label>
                     <input
                         type="range"
                         min="1"
@@ -60,10 +60,10 @@ const SliderCustomizationBox = ({ onClose, onSelect }) => {
                         onChange={handleBreakChange}
                         className="slider"
                     />
-                    <span className='timespan' style={{fontFamily: "'Roboto', sans-serif"}} >{breakTime / 60 / 1000} min</span>
+                    <span className='timespan' style={{fontFamily: "'Inter', sans-serif"}} >{breakTime / 60 / 1000} min</span>
                 </div>
                 <div className="slider-row">
-                    <label className='longbreak' style={{fontFamily: "'Roboto', sans-serif"}} >Long Break (minutes):</label>
+                    <label className='longbreak' style={{fontFamily: "'Inter', sans-serif"}} >Long Break (minutes):</label>
                     <input
                         type="range"
                         min="1"
@@ -72,11 +72,11 @@ const SliderCustomizationBox = ({ onClose, onSelect }) => {
                         onChange={handleLongBreakChange}
                         className="slider"
                     />
-                    <span className='timespan' style={{fontFamily: "'Roboto', sans-serif"}} >{longBreakTime / 60 / 1000} min</span>
+                    <span className='timespan' style={{fontFamily: "'Inter', sans-serif"}} >{longBreakTime / 60 / 1000} min</span>
                 </div>
             </div>
 
-            <button className="save-btn" style={{fontFamily: "'Roboto', sans-serif"}} onClick={handleSave}>Save</button>
+            <button className="save-btn" style={{fontFamily: "'Inter', sans-serif"}} onClick={handleSave}>Save</button>
         </div>
     );
 };

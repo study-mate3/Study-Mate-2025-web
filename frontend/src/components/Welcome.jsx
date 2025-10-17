@@ -9,11 +9,11 @@ export default function Welcome() {
         
         {/* Text Section */}
         <div className="flex flex-col space-y-4 text-center md:text-left md:w-1/2 lg:mt-40">
-          <h1 className="text-[#f6fafc] text-3xl sm:text-4xl md:text-5xl font-extrabold font-['Roboto',sans-serif] leading-tight lg:-mt-10">
+          <h1 className="text-[#f6fafc] text-3xl sm:text-4xl md:text-5xl font-extrabold font-['Inter',sans-serif] leading-tight lg:-mt-10">
             Tick Tock, Study Rock
           </h1>
 
-          <div className="text-sm text-white sm:text-base font-normal font-['Roboto',sans-serif] leading-snug max-w-xl mx-auto md:mx-0 text-justify">
+          <div className="text-sm text-white sm:text-base font-normal font-['Inter',sans-serif] leading-snug max-w-xl mx-auto md:mx-0 text-justify">
             <p className="text-2xl text-white font-bold text-center md:text-left">Welcome to StudyMate!</p>
             <p className="mt-2  font-bold lg:font-normal">
               Take control of your study time with our innovative app. Join us for a smarter, more engaging way to study and achieve your academic goals!

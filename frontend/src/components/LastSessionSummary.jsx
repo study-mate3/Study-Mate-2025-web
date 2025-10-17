@@ -31,8 +31,8 @@ const LastSessionSummary = ({ userId }) => {
         borderRadius: 10,
         border: '0.02px solid rgba(154, 157, 161, 0.38)',
       }}>
-       <h2 className="text-black" style={{fontFamily: '"Roboto", sans-serif', fontWeight: '600', fontSize:'20px'}}>Your Last Session Progress - See How You Did! </h2>
-      <ul className="space-y-1 mt-5">
+       <h2 className="text-lg" style={{fontFamily: '"Inter", sans-serif', fontWeight: '600', fontSize:'20px'}}>Your Last Session Progress - See How You Did! </h2>
+      <ul className="space-y-1 mt-5 lg:text-sm">
       <li><strong>✍🏻 Session Activity:</strong> {sessionSummary.sessionActivity}</li>
       <li><strong>✍🏻 Total Pomodoros for completion:</strong> {sessionSummary.totalPomodoro}</li>
         <li><strong>🎯 Focus:</strong> {sessionSummary.focus}/5</li>
