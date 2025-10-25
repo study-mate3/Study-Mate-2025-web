@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
+import ChatAssistant from '../components/ChatAssistant/ChatAssistant';
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -21,6 +22,9 @@ const Layout = ({ children }) => {
       
       {/* Always render Footer */}
       <Footer />
+      
+      {/* Chat Assistant - available everywhere for logged-in users */}
+      <ChatAssistant />
     </div>
   );
 };

@@ -12,7 +12,7 @@ const Home = () => {
 
   return (
     <>
-     <div className="container relative h-[760px] bg-[url('./assets/images/HomePageIcons/bg_img_math.png')] 
+     <div className="container relative h-[760px] w-full bg-[url('./assets/images/HomePageIcons/bg_img_math.png')] 
            bg-center bg-no-repeat m-0 " >
       <Header
         onScrollToSection={(section) => {

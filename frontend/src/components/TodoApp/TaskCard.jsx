@@ -38,7 +38,7 @@ const TaskCard = ({
               <span className={`text-xs px-2 py-1 rounded-full ${getListColorLight(task.list)}`}>
                 {task.list}
               </span>
-              {task.dueDate && (
+              {task.dueDate ? (
                 <span className={`text-xs font-medium ${
                   isOverdue ? 'text-red-600' : 
                   isDueToday ? 'text-blue-600' : 'text-gray-500'
@@ -47,6 +47,10 @@ const TaskCard = ({
                     month: 'short',
                     day: 'numeric'
                   })}
+                </span>
+              ) : (
+                <span className="text-xs text-gray-400 italic">
+                  No due date
                 </span>
               )}
             </div>
@@ -141,7 +145,7 @@ TaskCard.propTypes = {
     id: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     list: PropTypes.string.isRequired,
-    dueDate: PropTypes.string.isRequired,
+    dueDate: PropTypes.string, // Made optional since it can be null
     subTasks: PropTypes.string,
     priority: PropTypes.string.isRequired,
     completed: PropTypes.bool.isRequired,
