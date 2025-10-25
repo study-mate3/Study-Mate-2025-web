@@ -6,7 +6,7 @@ import ChatWindow from './ChatWindow';
 
 const ChatAssistant = () => {
   const { currentUser } = useAuth();
-  const { addTask } = useTasks();
+  const { addTask, refetch } = useTasks();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -24,8 +24,10 @@ const ChatAssistant = () => {
 
   const handleTaskCreate = async (taskData) => {
     try {
-      await addTask(taskData);
-      return { success: true };
+      const newTask = await addTask(taskData);
+      // Auto-refresh the task list to show the new task immediately
+      await refetch();
+      return { success: true, task: newTask };
     } catch (error) {
       console.error('Error creating task from chat:', error);
       throw error;

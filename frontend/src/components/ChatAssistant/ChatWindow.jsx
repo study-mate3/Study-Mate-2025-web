@@ -5,7 +5,9 @@ import {
   PaperAirplaneIcon, 
   TrashIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon 
+  ExclamationTriangleIcon,
+  CheckIcon,
+  XCircleIcon
 } from '@heroicons/react/24/outline';
 import ChatMessage from './ChatMessage';
 import { useAuth } from '../../contexts/AuthContext';
@@ -23,6 +25,8 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+  const [pendingConfirmations, setPendingConfirmations] = useState([]);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -58,7 +62,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
     setIsTyping(true);
 
     try {
-      // Call AI backend API
+      // Call AI backend API with session ID
       const response = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
         headers: {
@@ -67,6 +71,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
         body: JSON.stringify({
           message: userMessage.message,
           userId: currentUser?.uid,
+          sessionId: sessionId, // Include session ID to maintain context
         }),
       });
 
@@ -75,6 +80,11 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
       }
 
       const data = await response.json();
+      
+      // Store session ID for future messages
+      if (data.sessionId) {
+        setSessionId(data.sessionId);
+      }
       
       setIsTyping(false);
       
@@ -88,32 +98,37 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // If AI extracted tasks, create them
+      // Show pending tasks info if any
+      if (data.pendingTasks && data.pendingTasks.length > 0) {
+        const pendingInfo = {
+          id: Date.now() + Math.random(),
+          message: `ℹ️ I'm gathering information for ${data.pendingTasks.length} task(s). I'll create them once I have all the details needed.`,
+          isUser: false,
+          timestamp: new Date(),
+          messageType: 'info',
+        };
+        setMessages(prev => [...prev, pendingInfo]);
+      }
+
+      // If AI extracted COMPLETE tasks, show confirmation UI
       if (data.tasks && data.tasks.length > 0) {
-        for (const task of data.tasks) {
-          try {
-            await onTaskCreate(task);
-            // Add success message
-            const successMessage = {
-              id: Date.now() + Math.random(),
-              message: `✅ Created task: "${task.description}"`,
-              isUser: false,
-              timestamp: new Date(),
-              messageType: 'success',
-            };
-            setMessages(prev => [...prev, successMessage]);
-          } catch (error) {
-            console.error('Error creating task:', error);
-            const errorMessage = {
-              id: Date.now() + Math.random(),
-              message: `❌ Failed to create task: "${task.description}"`,
-              isUser: false,
-              timestamp: new Date(),
-              messageType: 'error',
-            };
-            setMessages(prev => [...prev, errorMessage]);
-          }
-        }
+        // Add tasks to pending confirmations
+        const newConfirmations = data.tasks.map((task, index) => ({
+          id: Date.now() + index,
+          task: task,
+          confirmed: false,
+        }));
+        setPendingConfirmations(prev => [...prev, ...newConfirmations]);
+
+        // Show confirmation message
+        const confirmMessage = {
+          id: Date.now() + Math.random(),
+          message: `📋 I've prepared ${data.tasks.length} task(s) for you. Please confirm below to add them to your task list.`,
+          isUser: false,
+          timestamp: new Date(),
+          messageType: 'confirm',
+        };
+        setMessages(prev => [...prev, confirmMessage]);
       }
 
       // If AI has a follow-up question, ask it
@@ -147,6 +162,117 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
     }
   };
 
+  const handleConfirmTask = async (confirmationId) => {
+    const confirmation = pendingConfirmations.find(c => c.id === confirmationId);
+    if (!confirmation) return;
+
+    try {
+      const result = await onTaskCreate(confirmation.task);
+      
+      // Mark as confirmed
+      setPendingConfirmations(prev => 
+        prev.map(c => c.id === confirmationId ? { ...c, confirmed: true } : c)
+      );
+
+      // Add success message with more details
+      const successMessage = {
+        id: Date.now() + Math.random(),
+        message: `✅ Task added to your To-Do list: "${confirmation.task.description}"`,
+        isUser: false,
+        timestamp: new Date(),
+        messageType: 'success',
+      };
+      setMessages(prev => [...prev, successMessage]);
+
+      // Remove from pending after a delay
+      setTimeout(() => {
+        setPendingConfirmations(prev => prev.filter(c => c.id !== confirmationId));
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error creating task:', error);
+      const errorMessage = {
+        id: Date.now() + Math.random(),
+        message: `❌ Failed to create task: "${confirmation.task.description}". Please try again.`,
+        isUser: false,
+        timestamp: new Date(),
+        messageType: 'error',
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+
+  const handleUndoTask = (confirmationId) => {
+    const confirmation = pendingConfirmations.find(c => c.id === confirmationId);
+    if (!confirmation) return;
+
+    // Remove from pending confirmations
+    setPendingConfirmations(prev => prev.filter(c => c.id !== confirmationId));
+
+    // Add undo message
+    const undoMessage = {
+      id: Date.now() + Math.random(),
+      message: `🚫 Cancelled: "${confirmation.task.description}"`,
+      isUser: false,
+      timestamp: new Date(),
+      messageType: 'info',
+    };
+    setMessages(prev => [...prev, undoMessage]);
+  };
+
+  const handleConfirmAll = async () => {
+    const unconfirmed = pendingConfirmations.filter(c => !c.confirmed);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const confirmation of unconfirmed) {
+      try {
+        await onTaskCreate(confirmation.task);
+        // Mark as confirmed
+        setPendingConfirmations(prev => 
+          prev.map(c => c.id === confirmation.id ? { ...c, confirmed: true } : c)
+        );
+        successCount++;
+        // Small delay between creations
+        await new Promise(resolve => setTimeout(resolve, 300));
+      } catch (error) {
+        console.error('Error creating task:', error);
+        failCount++;
+      }
+    }
+
+    // Add summary message
+    if (successCount > 0) {
+      const summaryMessage = {
+        id: Date.now() + Math.random(),
+        message: `✅ Successfully added ${successCount} task(s) to your To-Do list!${failCount > 0 ? ` (${failCount} failed)` : ''}`,
+        isUser: false,
+        timestamp: new Date(),
+        messageType: 'success',
+      };
+      setMessages(prev => [...prev, summaryMessage]);
+    }
+
+    // Clear confirmed tasks after a delay
+    setTimeout(() => {
+      setPendingConfirmations(prev => prev.filter(c => !c.confirmed));
+    }, 2000);
+  };
+
+  const handleUndoAll = () => {
+    const count = pendingConfirmations.length;
+    setPendingConfirmations([]);
+
+    const undoMessage = {
+      id: Date.now() + Math.random(),
+      message: `🚫 Cancelled all ${count} pending task(s)`,
+      isUser: false,
+      timestamp: new Date(),
+      messageType: 'info',
+    };
+    setMessages(prev => [...prev, undoMessage]);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -163,6 +289,8 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
         timestamp: new Date(),
       }
     ]);
+    setSessionId(null); // Clear session to start fresh
+    setPendingConfirmations([]); // Clear any pending confirmations
   };
 
   if (!isOpen) return null;
@@ -205,6 +333,92 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
             messageType={msg.messageType}
           />
         ))}
+        
+        {/* Pending Task Confirmations */}
+        {pendingConfirmations.length > 0 && (
+          <div className="space-y-2 mt-4">
+            {pendingConfirmations.map((confirmation) => (
+              <div
+                key={confirmation.id}
+                className={`
+                  p-3 rounded-lg border-2 
+                  ${confirmation.confirmed 
+                    ? 'bg-green-50 border-green-300' 
+                    : 'bg-blue-50 border-blue-300'
+                  }
+                `}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-semibold text-gray-800">
+                        {confirmation.task.description}
+                      </span>
+                      {confirmation.confirmed && (
+                        <CheckCircleIcon className="w-5 h-5 text-green-600" />
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      <span className="inline-block mr-3">
+                        📅 {confirmation.task.dueDate}
+                      </span>
+                      <span className="inline-block mr-3">
+                        📁 {confirmation.task.list}
+                      </span>
+                      <span className="inline-block">
+                        🎯 {confirmation.task.priority}
+                      </span>
+                    </div>
+                    {confirmation.task.subTasks && (
+                      <div className="text-sm text-gray-500 mt-1">
+                        📝 {confirmation.task.subTasks}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!confirmation.confirmed && (
+                    <div className="flex space-x-2 ml-2">
+                      <button
+                        onClick={() => handleConfirmTask(confirmation.id)}
+                        className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                        title="Confirm and create task"
+                      >
+                        <CheckIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleUndoTask(confirmation.id)}
+                        className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                        title="Cancel this task"
+                      >
+                        <XCircleIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            
+            {/* Confirm/Undo All Buttons */}
+            {pendingConfirmations.some(c => !c.confirmed) && (
+              <div className="flex space-x-2 justify-end pt-2">
+                <button
+                  onClick={handleConfirmAll}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center space-x-1"
+                >
+                  <CheckIcon className="w-4 h-4" />
+                  <span>Confirm All</span>
+                </button>
+                <button
+                  onClick={handleUndoAll}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center space-x-1"
+                >
+                  <XCircleIcon className="w-4 h-4" />
+                  <span>Cancel All</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         
         {isTyping && (
           <ChatMessage

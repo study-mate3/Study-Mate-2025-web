@@ -73,8 +73,12 @@ async def chat_with_ai(message: ChatMessage):
         
         logger.info(f"Processing message from user {message.userId}: {message.message[:100]}...")
         
-        # Extract tasks using AI
-        result = task_extractor.extract_tasks_from_message(message.message, message.userId)
+        # Extract tasks using AI with session management
+        result = task_extractor.extract_tasks_from_message(
+            message.message, 
+            message.userId,
+            message.sessionId
+        )
         
         # Convert task dictionaries to TaskData models
         tasks = []
@@ -86,14 +90,27 @@ async def chat_with_ai(message: ChatMessage):
                 logger.error(f"Error creating TaskData: {e}")
                 continue
         
+        # Convert pending task dictionaries to PendingTask models
+        from models import PendingTask
+        pending_tasks = []
+        for pending_dict in result.get("pendingTasks", []):
+            try:
+                pending = PendingTask(**pending_dict)
+                pending_tasks.append(pending)
+            except Exception as e:
+                logger.error(f"Error creating PendingTask: {e}")
+                continue
+        
         response = ChatResponse(
             response=result.get("response", "I understand your message and I'm here to help!"),
             tasks=tasks,
+            pendingTasks=pending_tasks,
             needsFollowUp=result.get("needsFollowUp", False),
-            followUpQuestion=result.get("followUpQuestion", None)
+            followUpQuestion=result.get("followUpQuestion", None),
+            sessionId=result.get("sessionId")
         )
         
-        logger.info(f"Generated response with {len(tasks)} tasks")
+        logger.info(f"Generated response with {len(tasks)} complete tasks and {len(pending_tasks)} pending tasks")
         return response
         
     except HTTPException:
