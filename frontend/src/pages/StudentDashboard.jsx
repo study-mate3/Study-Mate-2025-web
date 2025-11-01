@@ -162,7 +162,7 @@ const StudentDashboard = () => {
   const sidePanelStyle = {
     position: 'fixed', // Fixes the panel position
     left: -10,
-    top: '240px',
+    top: '200px',
         }
 
 
