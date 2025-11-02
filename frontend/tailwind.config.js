@@ -24,6 +24,9 @@ export default {
       fontWeight: {
         'extra-bold': '800', // Custom font weight class
       },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'], 
+      },
     },
   },
   plugins: [],

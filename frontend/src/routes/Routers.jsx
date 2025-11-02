@@ -33,6 +33,8 @@ import AttemptDetails from '../pages/Quiz/AttemptDetails';
 import CompletedQuizzes from '../pages/Quiz/CompletedQuizzes';
 import ALQuiz from '../pages/Alquiz';
 import QuizInstructions from '../pages/Quiz/QuizInstructions';
+import Pomodoro from '../pages/Pomodoro';
+import ManageTime from '../pages/Pomodoro2';
 
 const Routers = () => {
   return (
@@ -70,7 +72,8 @@ const Routers = () => {
           <Route path="/attempt/:attemptId" element={<PrivateRoute roleRequired="student"><AttemptDetails /></PrivateRoute>} />
           <Route path="/complete-quizes" element={<PrivateRoute roleRequired="student"><CompletedQuizzes /></PrivateRoute>} />
           <Route path="/alquiz" element={<PrivateRoute roleRequired="student"><ALQuiz/></PrivateRoute>}   />
-
+          <Route path='/pomodoro' element={<Pomodoro/>}/>
+          <Route path='/time-management' element={<ManageTime/>}/>
 
 
 
