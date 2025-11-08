@@ -12,6 +12,7 @@ import SidePanel from '../components/SidePanel';
 import RewardComponent from '../components/Rewards/RewardComponent';
 import LastSessionSummary from '../components/LastSessionSummary';
 import CountUp from 'react-countup';
+import { useNavigate } from 'react-router-dom';
 
 
 const DashboardCard = ({ userId, title, children, className = '' }) => (
@@ -38,6 +39,7 @@ const StudentDashboard = () => {
 
   const [tasks, setTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -162,7 +164,7 @@ const StudentDashboard = () => {
   const sidePanelStyle = {
     position: 'fixed', // Fixes the panel position
     left: -10,
-    top: '240px',
+    top: '200px',
         }
 
 
@@ -255,12 +257,17 @@ const StudentDashboard = () => {
     <LastSessionSummary userId={userId}/>
     </div> 
 {/* Weekly Progress Chart */}
-<DashboardCard className='mt-15'>
+{/* <DashboardCard className='mt-15'>
 
   <EngagementChart userId={userId}/>
-</DashboardCard>
+</DashboardCard> */}
 
-
+ <div style={{boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10, fontSize: '15px', width:'300px', fontWeight:'500'}} className="bg-gradient-to-b from-[#0570b2] to-[#0745a2] flex items-center gap-3 w-64 py-2 px-4 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg transition cursor-pointer" onClick={() => navigate('/previous-attempts')}>
+          <img src="/results.png" alt="Previous Results" className="w-6 h-6" />
+          <div>
+            <h3 className='text-white font-inter'>View Your Previous Quiz Results</h3>
+          </div>
+        </div>
 
 {/* <div className='mt-20'>
 <h3 className="text-lg font-semibold mb-4 text-gray-800">

@@ -26,6 +26,15 @@ import QuizGenerator from '../pages/QuizGenerator';
 import OLQuiz from '../pages/Olquiz';
 import AdminAddQuestion from '../pages/Adminquiz/AdminAddQuestions';
 import UpdatePapers from '../pages/Adminquiz/UpdatePapers';
+import PaperSelector from '../components/PaperSelector';
+import QuizAttempt from '../pages/Quiz/QuizAttempt';
+import PreviousAttempts from '../pages/Quiz/PreviousAttempts';
+import AttemptDetails from '../pages/Quiz/AttemptDetails';
+import CompletedQuizzes from '../pages/Quiz/CompletedQuizzes';
+import ALQuiz from '../pages/Alquiz';
+import QuizInstructions from '../pages/Quiz/QuizInstructions';
+import Pomodoro from '../pages/Pomodoro';
+import ManageTime from '../pages/Pomodoro2';
 
 const Routers = () => {
   return (
@@ -52,10 +61,22 @@ const Routers = () => {
           <Route path="/issues" element={<PrivateRoute roleRequired="admin"><IssuesList/></PrivateRoute>} />
           <Route path="/quiz" element={<PrivateRoute roleRequired="student"><Quiz/></PrivateRoute>} />
           <Route path="/payment" element={<PrivateRoute roleRequired="student"><PayPage/></PrivateRoute>} />
-          <Route path="/quizGenerator" element={<QuizGenerator/>}   />
-          <Route path="/olquiz" element={<OLQuiz/>}   />
-          <Route path="/adminQuiz" element={<AdminAddQuestion/>}/>
-          <Route path="/updateQuiz" element={<UpdatePapers/>}/>
+          <Route path="/quizGenerator" element={<PrivateRoute roleRequired="student"><QuizGenerator/></PrivateRoute>}   />
+          <Route path="/olquiz" element={<PrivateRoute roleRequired="student"><OLQuiz/></PrivateRoute>}   />
+          <Route path="/adminQuiz" element={<PrivateRoute roleRequired="admin"><AdminAddQuestion/></PrivateRoute>}/>
+          <Route path="/updateQuiz" element={<PrivateRoute roleRequired="admin"><UpdatePapers/></PrivateRoute>}/>
+          <Route path="/paperSelector" element={<PaperSelector/>}/>
+          <Route path="/quiz/:category/:paperId/instructions" element={<PrivateRoute roleRequired="student"><QuizInstructions /></PrivateRoute>} />
+         <Route path="/quiz/:category/:paperId" element={<PrivateRoute roleRequired="student"><QuizAttempt /></PrivateRoute>} />
+         <Route path="/previous-attempts" element={<PrivateRoute roleRequired="student"><PreviousAttempts /></PrivateRoute>} />
+          <Route path="/attempt/:attemptId" element={<PrivateRoute roleRequired="student"><AttemptDetails /></PrivateRoute>} />
+          <Route path="/complete-quizes" element={<PrivateRoute roleRequired="student"><CompletedQuizzes /></PrivateRoute>} />
+          <Route path="/alquiz" element={<PrivateRoute roleRequired="student"><ALQuiz/></PrivateRoute>}   />
+          <Route path='/pomodoro' element={<Pomodoro/>}/>
+          <Route path='/time-management' element={<ManageTime/>}/>
+
+
+
 
 
 

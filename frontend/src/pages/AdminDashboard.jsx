@@ -39,6 +39,7 @@ const AdminDashboard = () => {
   const handleNavigate = () => {
     navigate("/issues");
   };
+  const handleQuizNavigate = () => {navigate("/adminQuiz"); };
 
   const [notification, setNotification] = useState({
     message: '',
@@ -231,12 +232,17 @@ const AdminDashboard = () => {
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
        
     <div>
-    <button className="mt-6 text-red-600 py-2 px-4 font-[600] " style={{width: 200, height: 38, borderColor:'#FF0000',borderWidth:'0.2px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
+       <button className="mt-6 text-blue-800 py-2 px-4 font-[700] mr-2" style={{width: 200, height: 38, borderColor:'#293dbcff',borderWidth:'0.2px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
+    onClick={handleQuizNavigate} >
+    Quiz Management
+                  </button>
+      <button className="mt-6 text-red-600 py-2 px-4 font-[600]" style={{width: 200, height: 38, borderColor:'#FF0000',borderWidth:'0.2px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
     onClick={handleNavigate} >
     Reported Issues
                   </button>
+   
                   <ArrowLeftOnRectangleIcon
-      className="h-8 w-8 ml-40 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
+      className="h-8 w-8 ml-80 mt-5 text-cyan-700 hover:text-blue-950 hover:font-extrabold cursor-pointer"
       onClick={handleLogout} // Add click handler
     />
     </div>

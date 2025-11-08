@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const mediums = ["English", "Sinhala", "Tamil"];
 
-const PaperSelector = () => {
-  const category = "ol";
+const ALPaperSelector = () => {
+  const category = "al";
   const [papers, setPapers] = useState([]);
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMedium, setSelectedMedium] = useState(null);
@@ -20,7 +20,7 @@ const PaperSelector = () => {
   useEffect(() => {
     const fetchPapers = async () => {
       try {
-        const papersRef = collection(db, "papers", "ol", "papersList");
+        const papersRef = collection(db, "papers", "al", "papersList");
         const snapshot = await getDocs(papersRef);
         const papersArray = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -118,7 +118,7 @@ const PaperSelector = () => {
           {filteredPapers.map((paper, idx) => (
             <div
             key={idx}
-             onClick={() => navigate(`/quiz/${category}/${paper.id}/instructions`)} 
+            onClick={() => navigate(`/quiz/${category}/${paper.id}/instructions`)}  // ✅ Go to quiz page
             className="border rounded p-4 flex flex-col items-start hover:shadow-lg transition cursor-pointer"
           >
             <img
@@ -139,4 +139,4 @@ const PaperSelector = () => {
   );
 };
 
-export default PaperSelector;
+export default ALPaperSelector;
