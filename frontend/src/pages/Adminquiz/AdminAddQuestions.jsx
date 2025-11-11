@@ -8,6 +8,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 const AdminAddQuestion = () => {
   const [paperDetails, setPaperDetails] = useState({
@@ -27,6 +28,7 @@ const AdminAddQuestion = () => {
   });
 
   const [selectedPaperId, setSelectedPaperId] = useState("");
+  const navigate = useNavigate();
 
   const handleAddOption = () => {
     if (currentQuestion.options.length < 5) {
@@ -57,7 +59,7 @@ const AdminAddQuestion = () => {
     const paperId = `${paperDetails.year}_${paperDetails.subject}_${paperDetails.medium}`;
     setSelectedPaperId(paperId);
 
-    const paperRef = doc(collection(db, "papers", paperDetails.category, paperId));
+    const paperRef = doc(db, "papers", paperDetails.category, "papersList", paperId);
 
     const data = {
       ...paperDetails,
@@ -74,7 +76,7 @@ const AdminAddQuestion = () => {
       alert("No paper selected to update!");
       return;
     }
-    const paperRef = doc(db, "papers", paperDetails.category, selectedPaperId);
+    const paperRef = doc(db, "papers", paperDetails.category, "papersList", selectedPaperId);
     await updateDoc(paperRef, { questions });
     alert("Questions updated successfully!");
   };
@@ -89,11 +91,19 @@ const AdminAddQuestion = () => {
     });
   };
 
+    const handleQuizNavigate = () => {navigate("/updateQuiz"); };
+
+
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white shadow rounded-lg">
       <h1 className="text-2xl font-bold mb-4 text-center text-blue-700">
         Paper Management Panel
       </h1>
+
+       <button className="mt-6 mb-6 text-blue-800 py-2 px-4 font-[700] mr-2" style={{width: 240, height: 38, borderColor:'#293dbcff',borderWidth:'0.2px', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100}}
+    onClick={handleQuizNavigate} >
+    Update Existing Papers
+                  </button>
 
       {/* Paper Details */}
       <div className="grid grid-cols-2 gap-4 mb-6">

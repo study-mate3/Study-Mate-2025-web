@@ -39,7 +39,7 @@ const Quiz = () => {
       {/* Top Row */}
       <div className="flex flex-wrap gap-4 justify-center">
         {/* Completed Quizzes */}
-        <div style={{background: '#EAF2FF', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center justify-between w-64 p-4 ">
+        <div style={{background: '#EAF2FF', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center justify-between w-64 p-4 transition cursor-pointer" onClick={() => navigate(`/complete-quizes`)}>
           <div className="flex items-center gap-3">
             <img src="/completed.png" alt="Completed Quizzes" className="w-10 h-10" />
             <div>
@@ -53,7 +53,7 @@ const Quiz = () => {
         </div>
 
         {/* Previous Results */}
-        <div style={{background: 'rgba(97.75, 160.65, 255, 0.34)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center gap-3 w-64 p-4 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg">
+        <div style={{background: 'rgba(97.75, 160.65, 255, 0.34)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center gap-3 w-64 p-4 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg transition cursor-pointer" onClick={() => navigate('/previous-attempts')}>
           <img src="/results.png" alt="Previous Results" className="w-10 h-10" />
           <div>
             <h3 className='text-gray-800 font-inter font-semibold '>Previous Results</h3>
@@ -83,7 +83,7 @@ const Quiz = () => {
           <span className="font-medium text-gray-700">O/L Past Papers</span>
         </button>
 
-        <button style={{ background: 'rgba(108.38, 245.22, 255, 0.6)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center gap-2 hover:bg-blue-100 px-5 py-3 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg">
+        <button style={{ background: 'rgba(108.38, 245.22, 255, 0.6)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center gap-2 hover:bg-blue-100 px-5 py-3 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg" onClick={() => navigate('/alquiz')}>
           <img src="/al.png" alt="A/L Past Papers" className="w-8 h-8" />
           <span className="font-medium text-gray-700">A/L Past Papers</span>
         </button>
