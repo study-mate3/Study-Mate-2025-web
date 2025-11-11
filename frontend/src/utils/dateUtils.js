@@ -7,6 +7,10 @@ export const formatDate = (date) => {
 };
 
 export const parseDate = (dateString) => {
+  // Handle null or undefined dateString
+  if (!dateString) {
+    return null;
+  }
   // Parse date string in local timezone to avoid timezone shift
   const [year, month, day] = dateString.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -17,14 +21,28 @@ export const isSameDay = (date1, date2) => {
 };
 
 export const isToday = (date) => {
+  // Handle null or undefined date
+  if (!date) {
+    return false;
+  }
   const today = new Date();
   const compareDate = typeof date === 'string' ? parseDate(date) : date;
+  if (!compareDate) {
+    return false;
+  }
   return isSameDay(today, compareDate);
 };
 
 export const isPastDate = (dateString) => {
+  // Handle null or undefined dateString
+  if (!dateString) {
+    return false;
+  }
   const today = new Date();
   const date = parseDate(dateString);
+  if (!date) {
+    return false;
+  }
   // Set both dates to start of day for proper comparison
   today.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
