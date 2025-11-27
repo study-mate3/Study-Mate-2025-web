@@ -291,9 +291,27 @@ If the user asks about tasks or productivity, gently let them know you can help 
         sri_lanka_tz = pytz.timezone('Asia/Colombo')
         current_date = datetime.now(sri_lanka_tz).strftime("%Y-%m-%d")
         
+        # Check if there are pending tasks from previous interactions
+        pending_tasks_context = ""
+        if state.get("pending_tasks"):
+            pending_tasks_context = "\n\n**IMPORTANT - ACTIVE PENDING TASKS:**\n"
+            pending_tasks_context += "You have the following incomplete tasks that need missing information:\n\n"
+            for idx, pending in enumerate(state["pending_tasks"], 1):
+                pending_tasks_context += f"{idx}. Task: {pending.get('description', 'Unknown')}\n"
+                if pending.get('list'):
+                    pending_tasks_context += f"   - List: {pending['list']}\n"
+                if pending.get('dueDate'):
+                    pending_tasks_context += f"   - Due Date: {pending['dueDate']}\n"
+                if pending.get('priority'):
+                    pending_tasks_context += f"   - Priority: {pending['priority']}\n"
+                pending_tasks_context += f"   - Missing: {', '.join(pending.get('missingFields', []))}\n\n"
+            
+            pending_tasks_context += "**YOUR IMMEDIATE GOAL**: If the user's current message provides the missing information for any of these pending tasks, complete them by moving them to the 'tasks' array with all required fields filled. DO NOT ask for information that was already provided in these pending tasks!\n"
+        
         system_prompt = f"""You are an AI task management assistant that helps users organize their work.
 
 Today's date (Sri Lanka time): {current_date}
+{pending_tasks_context}
 
 Your responsibilities:
 1. Extract actionable tasks from user messages
@@ -371,7 +389,7 @@ Response:
     "followUpQuestion": "When is your math exam scheduled?"
 }}
 
-User: "It's next Friday" (Context: pending task about math exam)
+User: "It's next Friday" (Context: pending task about math exam that was missing dueDate)
 Response:
 {{
     "response": "Perfect! I've prepared a study task for your math exam on next Friday. Please confirm to add it to your list.",
@@ -379,9 +397,28 @@ Response:
         {{
             "description": "Study for math exam",
             "list": "Study",
-            "dueDate": "2025-12-06",
-            "subTasks": ["Review chapters", "Practice problems"],
+            "dueDate": "next Friday",
+            "subTasks": null,
             "priority": "high",
+            "importance": false
+        }}
+    ],
+    "pendingTasks": [],
+    "needsFollowUp": false,
+    "followUpQuestion": null
+}}
+
+User: "November 29" (Context: pending task about project report that was missing dueDate)
+Response:
+{{
+    "response": "Got it! I've prepared a task to complete your project report by November 29. Please confirm to add it to your list.",
+    "tasks": [
+        {{
+            "description": "Complete project report",
+            "list": "Work",
+            "dueDate": "November 29",
+            "subTasks": null,
+            "priority": "medium",
             "importance": false
         }}
     ],
@@ -505,6 +542,12 @@ Response:
 }}
 
 Remember:
+- **HANDLING PENDING TASKS**: If there are active pending tasks (shown above), check if the user's message provides missing information:
+  - If user provides a date/time → complete the pending task by filling dueDate and moving it to "tasks" array
+  - If user provides task description → complete the pending task by filling description and moving it to "tasks" array
+  - Keep all other fields (list, priority, etc.) from the pending task
+  - Clear the pending task from "pendingTasks" array once completed
+  - DO NOT ask for information that's already in the pending task object!
 - NEVER add incomplete tasks to "tasks" array
 - ALWAYS use "pendingTasks" for missing information
 - **CRITICAL**: If user mentions ANY date reference (today, tomorrow, next Friday, in 3 days, November 29, etc.), that IS valid date information!
@@ -674,7 +717,8 @@ Remember:
         user_message: str,
         user_id: str,
         session_id: str = None,
-        conversation_history: List[Dict[str, str]] = None
+        conversation_history: List[Dict[str, str]] = None,
+        pending_tasks: List[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """
         Process a user message through the agent workflow
@@ -684,6 +728,7 @@ Remember:
             user_id: User ID from Firestore
             session_id: Optional session ID for continuity
             conversation_history: Previous conversation messages
+            pending_tasks: Pending tasks from previous interaction that need completion
             
         Returns:
             Dictionary with response and extracted data
@@ -701,7 +746,7 @@ Remember:
                 "conversation_history": conversation_history or [],
                 "intent": None,
                 "extracted_tasks": [],
-                "pending_tasks": [],
+                "pending_tasks": pending_tasks or [],  # Pass pending tasks from frontend
                 "task_confirmations": [],
                 "response": "",
                 "needs_follow_up": False,

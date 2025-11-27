@@ -115,7 +115,8 @@ async def chat_with_ai(message: ChatMessage):
             user_message=message.message,
             user_id=message.userId,
             session_id=message.sessionId,
-            conversation_history=message.conversationHistory or []
+            conversation_history=message.conversationHistory or [],
+            pending_tasks=message.pendingTasks or []
         )
         
         # Build response

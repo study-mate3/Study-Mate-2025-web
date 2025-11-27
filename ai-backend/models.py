@@ -133,6 +133,7 @@ class ChatMessage(BaseModel):
     userId: str
     sessionId: Optional[str] = None
     conversationHistory: Optional[List[Dict[str, str]]] = None
+    pendingTasks: Optional[List[Dict[str, Any]]] = None  # Pending tasks from previous interaction
 
 class ChatResponse(BaseModel):
     """Response from chat endpoint"""

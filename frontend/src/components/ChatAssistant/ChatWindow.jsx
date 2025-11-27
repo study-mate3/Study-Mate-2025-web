@@ -27,6 +27,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [pendingConfirmations, setPendingConfirmations] = useState([]);
+  const [pendingTasks, setPendingTasks] = useState([]); // Store pending tasks from bot
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -62,7 +63,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
     setIsTyping(true);
 
     try {
-      // Call AI backend API with session ID
+      // Call AI backend API with session ID and pending tasks
       const response = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
         headers: {
@@ -72,6 +73,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
           message: userMessage.message,
           userId: currentUser?.uid,
           sessionId: sessionId, // Include session ID to maintain context
+          pendingTasks: pendingTasks, // Include pending tasks for context continuity
         }),
       });
 
@@ -84,6 +86,13 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
       // Store session ID for future messages
       if (data.sessionId) {
         setSessionId(data.sessionId);
+      }
+      
+      // Store pending tasks for next request - CRITICAL for memory!
+      if (data.pendingTasks) {
+        setPendingTasks(data.pendingTasks);
+      } else {
+        setPendingTasks([]); // Clear if no pending tasks
       }
       
       setIsTyping(false);
@@ -291,6 +300,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
     ]);
     setSessionId(null); // Clear session to start fresh
     setPendingConfirmations([]); // Clear any pending confirmations
+    setPendingTasks([]); // Clear pending tasks
   };
 
   if (!isOpen) return null;
