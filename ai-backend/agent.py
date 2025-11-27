@@ -6,10 +6,11 @@ Implements Router-First Agentic Architecture with Human-in-the-Loop
 import os
 import json
 import uuid
-import re
 from typing import Annotated, Literal, Dict, Any, List
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
+import dateparser
+import pytz
 
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
@@ -30,92 +31,75 @@ logger = logging.getLogger(__name__)
 
 def parse_natural_date(date_str: str) -> str:
     """
-    Parse natural language dates into YYYY-MM-DD format.
+    Parse natural language dates into YYYY-MM-DD format using dateparser library.
+    Timezone: Asia/Colombo (Sri Lanka)
     
     Supported formats:
-    - "today" -> current date
+    - "today" -> current date in Sri Lanka timezone
     - "tomorrow" -> current date + 1 day
     - "next monday", "next friday", etc. -> next occurrence of that day
     - "this afternoon", "this evening" -> today
     - "November 29", "Dec 5", "Jan 15" -> specific date in current/next year
     - "2025-11-29" -> already formatted, return as-is
+    - "in 3 days", "in a week" -> relative dates
+    - And many more natural language formats
     
     Args:
         date_str: Natural language date string
         
     Returns:
-        Date in YYYY-MM-DD format
+        Date in YYYY-MM-DD format or None if parsing fails
     """
     if not date_str or not isinstance(date_str, str):
         return None
     
-    date_str = date_str.strip().lower()
-    today = datetime.now()
+    date_str = date_str.strip()
     
-    # Already in YYYY-MM-DD format
-    if re.match(r'^\d{4}-\d{2}-\d{2}$', date_str):
-        return date_str
+    # Get current time in Sri Lanka timezone
+    sri_lanka_tz = pytz.timezone('Asia/Colombo')
+    now_sri_lanka = datetime.now(sri_lanka_tz)
     
-    # Today
-    if date_str == "today":
-        return today.strftime("%Y-%m-%d")
+    # Try dateparser first with standard settings
+    parsed_date = dateparser.parse(
+        date_str,
+        settings={
+            'PREFER_DATES_FROM': 'future',  # Prefer future dates for ambiguous inputs
+            'RELATIVE_BASE': now_sri_lanka,  # Base date for relative dates (Sri Lanka time)
+            'TIMEZONE': 'Asia/Colombo',  # Sri Lanka timezone
+            'RETURN_AS_TIMEZONE_AWARE': True,  # Return timezone-aware datetime
+            'PARSERS': ['relative-time', 'absolute-time', 'timestamp'],  # Enable all parsers
+        },
+        languages=['en']  # Explicitly set English language
+    )
     
-    # Tomorrow
-    if date_str == "tomorrow":
-        return (today + timedelta(days=1)).strftime("%Y-%m-%d")
+    # If dateparser failed, try removing "next" and parsing just the day name
+    # dateparser handles "wednesday" better than "next wednesday"
+    if not parsed_date and date_str.lower().startswith('next '):
+        # Extract the day name after "next "
+        day_name = date_str[5:].strip()  # Remove "next " prefix
+        parsed_date = dateparser.parse(
+            day_name,
+            settings={
+                'PREFER_DATES_FROM': 'future',
+                'RELATIVE_BASE': now_sri_lanka,
+                'TIMEZONE': 'Asia/Colombo',
+                'RETURN_AS_TIMEZONE_AWARE': True,
+            },
+            languages=['en']
+        )
     
-    # This afternoon/evening/morning (treat as today)
-    if date_str.startswith("this "):
-        return today.strftime("%Y-%m-%d")
-    
-    # Next [day of week]
-    next_day_match = re.match(r'next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)', date_str)
-    if next_day_match:
-        day_name = next_day_match.group(1)
-        days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-        target_day = days.index(day_name)
-        current_day = today.weekday()
-        days_ahead = (target_day - current_day + 7) % 7
-        if days_ahead == 0:
-            days_ahead = 7
-        target_date = today + timedelta(days=days_ahead)
-        return target_date.strftime("%Y-%m-%d")
-    
-    # Month names with day (e.g., "November 29", "Dec 5")
-    month_day_match = re.match(r'(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s+(\d{1,2})', date_str)
-    if month_day_match:
-        month_str = month_day_match.group(1)
-        day = int(month_day_match.group(2))
+    # Return formatted date if parsing succeeded
+    if parsed_date:
+        # Convert to Sri Lanka timezone if not already
+        if parsed_date.tzinfo is None:
+            parsed_date = sri_lanka_tz.localize(parsed_date)
+        else:
+            parsed_date = parsed_date.astimezone(sri_lanka_tz)
         
-        # Map month names to numbers
-        month_map = {
-            'january': 1, 'jan': 1, 'february': 2, 'feb': 2,
-            'march': 3, 'mar': 3, 'april': 4, 'apr': 4,
-            'may': 5, 'june': 6, 'jun': 6,
-            'july': 7, 'jul': 7, 'august': 8, 'aug': 8,
-            'september': 9, 'sep': 9, 'october': 10, 'oct': 10,
-            'november': 11, 'nov': 11, 'december': 12, 'dec': 12
-        }
-        month = month_map[month_str]
-        
-        # Determine year (use current year if date hasn't passed, otherwise next year)
-        year = today.year
-        try:
-            target_date = datetime(year, month, day)
-            if target_date < today:
-                year += 1
-            return f"{year}-{month:02d}-{day:02d}"
-        except ValueError:
-            # Invalid date (e.g., Feb 30)
-            return None
+        return parsed_date.strftime("%Y-%m-%d")
     
-    # In N days
-    days_match = re.match(r'in\s+(\d+)\s+days?', date_str)
-    if days_match:
-        days = int(days_match.group(1))
-        return (today + timedelta(days=days)).strftime("%Y-%m-%d")
-    
-    # Could not parse
+    # Could not parse - log for debugging
+    logger.warning(f"Failed to parse date string: '{date_str}'")
     return None
 
 class StudyMateAgent:
@@ -303,11 +287,13 @@ If the user asks about tasks or productivity, gently let them know you can help 
         """
         logger.info("Task extractor processing request")
         
-        current_date = datetime.now().strftime("%Y-%m-%d")
+        # Get current date in Sri Lanka timezone
+        sri_lanka_tz = pytz.timezone('Asia/Colombo')
+        current_date = datetime.now(sri_lanka_tz).strftime("%Y-%m-%d")
         
         system_prompt = f"""You are an AI task management assistant that helps users organize their work.
 
-Today's date: {current_date}
+Today's date (Sri Lanka time): {current_date}
 
 Your responsibilities:
 1. Extract actionable tasks from user messages
@@ -324,13 +310,12 @@ CRITICAL RULES:
   - Use "Study" for academic/school/learning tasks
   - Use "Work" for professional/job tasks
   - Use "Personal" for everything else
-- **IMPORTANT**: "dueDate" must be in YYYY-MM-DD format. Convert natural language dates:
-  - "today" → {current_date}
-  - "tomorrow" → calculate tomorrow's date
-  - "next Friday", "next Monday" → calculate the actual date
-  - "November 29", "Dec 5" → convert to YYYY-MM-DD format
-  - "this afternoon", "this evening" → use today's date
-  - ALWAYS convert to YYYY-MM-DD format, NEVER leave as natural language
+- **IMPORTANT**: "dueDate" - if user mentions ANY time reference (today, tomorrow, next Friday, in 3 days, etc.), include it in dueDate:
+  - Extract date references like: "today", "tomorrow", "next Friday", "November 29", "in 3 days", etc.
+  - DO NOT ask "When is next Friday?" if user already said "next Friday" - that IS the date information!
+  - Put the date reference in dueDate field (e.g., "next Friday", "tomorrow", "November 29")
+  - The system will automatically convert it to YYYY-MM-DD format
+  - ONLY mark dueDate as missing if user provides NO time reference at all
 - **IMPORTANT**: NO TIME needed. When asking for dates, ask "When?" not "What time?"
 - **PRIORITY INFERENCE**: 
   - Use "high" for urgent tasks (words like: urgent, ASAP, deadline, exam, due soon)
@@ -481,11 +466,53 @@ Response:
     "followUpQuestion": null
 }}
 
+User: "I want to complete my intern report by next Friday"
+Response:
+{{
+    "response": "I've prepared a task to complete your intern report by next Friday. Please confirm to add it to your list.",
+    "tasks": [
+        {{
+            "description": "Complete intern report",
+            "list": "Work",
+            "dueDate": "next Friday",
+            "subTasks": null,
+            "priority": "medium",
+            "importance": false
+        }}
+    ],
+    "pendingTasks": [],
+    "needsFollowUp": false,
+    "followUpQuestion": null
+}}
+
+User: "Prepare for the meeting in 3 days"
+Response:
+{{
+    "response": "I've prepared a task to prepare for the meeting in 3 days. Please confirm to add it to your list.",
+    "tasks": [
+        {{
+            "description": "Prepare for the meeting",
+            "list": "Work",
+            "dueDate": "in 3 days",
+            "subTasks": null,
+            "priority": "medium",
+            "importance": false
+        }}
+    ],
+    "pendingTasks": [],
+    "needsFollowUp": false,
+    "followUpQuestion": null
+}}
+
 Remember:
 - NEVER add incomplete tasks to "tasks" array
 - ALWAYS use "pendingTasks" for missing information
-- ALWAYS convert natural language dates to YYYY-MM-DD format
-- When user says "today", "tomorrow", "next Friday", "November 29", etc., convert to actual date - DO NOT ask "When is tomorrow?" or similar
+- **CRITICAL**: If user mentions ANY date reference (today, tomorrow, next Friday, in 3 days, November 29, etc.), that IS valid date information!
+- **CRITICAL**: Extract the date phrase exactly as user said it and put it in dueDate field (e.g., "next Friday", "tomorrow", "in 3 days")
+- **DO NOT** ask "When is next Friday?" - if user said "next Friday", that's already date information! Just extract it!
+- **DO NOT** ask for clarification on dates like "tomorrow", "next week", "in 5 days" - these are valid date references!
+- Only mark dueDate as missing/null if user provides absolutely NO date or time reference at all
+- The system automatically converts natural language dates to YYYY-MM-DD format
 - Infer "list" based on task context: Study (academic), Work (professional), Personal (other)
 - Infer "priority" based on urgency indicators in the text
 - Reference conversation history for context
