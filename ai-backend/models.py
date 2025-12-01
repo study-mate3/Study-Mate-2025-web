@@ -144,7 +144,7 @@ class ChatResponse(BaseModel):
     needsFollowUp: bool = False
     followUpQuestion: Optional[str] = None
     sessionId: Optional[str] = None
-    intentType: Optional[Literal["small_talk", "tool_use"]] = None
+    intentType: Optional[Literal["small_talk", "tool_use", "data_query"]] = None
 
 class TaskConfirmationRequest(BaseModel):
     """User's confirmation decision"""
@@ -167,7 +167,7 @@ class AgentState(BaseModel):
     conversation_history: List[Dict[str, str]] = []
     
     # Processing
-    intent: Optional[Literal["small_talk", "tool_use"]] = None
+    intent: Optional[Literal["small_talk", "tool_use", "data_query"]] = None
     extracted_tasks: List[TaskData] = []
     pending_tasks: List[PendingTask] = []
     task_confirmations: List[TaskConfirmation] = []

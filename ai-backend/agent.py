@@ -7,7 +7,7 @@ import os
 import json
 import uuid
 from typing import Annotated, Literal, Dict, Any, List
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 import dateparser
 import pytz
@@ -134,6 +134,7 @@ class StudyMateAgent:
         workflow.add_node("router", self.router_node)
         workflow.add_node("conversationalist", self.conversationalist_node)
         workflow.add_node("task_extractor", self.task_extractor_node)
+        workflow.add_node("knowledge_retriever", self.knowledge_retriever_node)
         
         # Set entry point
         workflow.set_entry_point("router")
@@ -144,13 +145,15 @@ class StudyMateAgent:
             self.route_decision,
             {
                 "small_talk": "conversationalist",
-                "tool_use": "task_extractor"
+                "tool_use": "task_extractor",
+                "data_query": "knowledge_retriever"
             }
         )
         
-        # Both nodes end the workflow
+        # All nodes end the workflow
         workflow.add_edge("conversationalist", END)
         workflow.add_edge("task_extractor", END)
+        workflow.add_edge("knowledge_retriever", END)
         
         return workflow.compile()
     
@@ -160,7 +163,7 @@ class StudyMateAgent:
     
     def router_node(self, state: dict) -> dict:
         """
-        Router Node: Classifies user intent into 'small_talk' or 'tool_use'
+        Router Node: Classifies user intent into 'small_talk', 'tool_use', or 'data_query'
         """
         logger.info(f"Router processing message: {state['user_message'][:100]}")
         
@@ -168,7 +171,8 @@ class StudyMateAgent:
 
 Your job is to determine if the user's message is:
 1. **small_talk** - Casual conversation, greetings, questions about the bot, emotional support, or general chitchat
-2. **tool_use** - Task management requests (creating, viewing, updating tasks), productivity queries, or anything requiring action
+2. **tool_use** - Task management requests (creating, adding, updating, deleting tasks), or anything requiring task creation/modification
+3. **data_query** - Requests to KNOW SOMETHING from the database (asking about existing tasks, pomodoro stats, quiz results, or any information retrieval)
 
 Examples:
 
@@ -183,14 +187,23 @@ small_talk:
 tool_use:
 - "I need to study for my exam next week"
 - "Add a task to buy groceries"
-- "Show me my tasks"
 - "I have a meeting tomorrow at 3 PM"
 - "Remind me to call mom"
+- "Create a task to finish my homework"
+
+data_query:
+- "Show me my tasks"
 - "What are my pending tasks?"
+- "What tasks do I have this week?"
+- "How many pomodoros did I complete?"
+- "What are my quiz scores?"
+- "Show me my completed tasks"
+- "What tasks are due tomorrow?"
+- "How much time have I studied?"
 
 Respond with ONLY a JSON object:
 {
-    "intent": "small_talk" or "tool_use",
+    "intent": "small_talk" or "tool_use" or "data_query",
     "confidence": 0.0 to 1.0,
     "reasoning": "brief explanation"
 }"""
@@ -214,7 +227,7 @@ Respond with ONLY a JSON object:
         
         return state
     
-    def route_decision(self, state: dict) -> Literal["small_talk", "tool_use"]:
+    def route_decision(self, state: dict) -> Literal["small_talk", "tool_use", "data_query"]:
         """Routing decision based on intent"""
         return state.get("intent") or "small_talk"
     
@@ -273,6 +286,257 @@ If the user asks about tasks or productivity, gently let them know you can help 
         except Exception as e:
             logger.error(f"Error in conversationalist node: {e}")
             state["response"] = "I'm here to help! How can I assist you today?"
+        
+        return state
+    
+    # =========================================================================
+    # KNOWLEDGE RETRIEVER NODE (DATA QUERY)
+    # =========================================================================
+    
+    def knowledge_retriever_node(self, state: dict) -> dict:
+        """
+        Knowledge Retriever Node: Handles data query requests
+        Retrieves information from the database and generates natural language responses
+        """
+        logger.info("Knowledge retriever processing data query")
+        
+        # Get current date in Sri Lanka timezone
+        sri_lanka_tz = pytz.timezone('Asia/Colombo')
+        current_date = datetime.now(sri_lanka_tz)
+        current_date_str = current_date.strftime("%Y-%m-%d")
+        
+        # Calculate helper dates
+        from datetime import timedelta
+        tomorrow = current_date + timedelta(days=1)
+        tomorrow_str = tomorrow.strftime("%Y-%m-%d")
+        
+        yesterday = current_date - timedelta(days=1)
+        yesterday_str = yesterday.strftime("%Y-%m-%d")
+        
+        # Week calculations
+        week_start = current_date - timedelta(days=current_date.weekday())
+        week_end = week_start + timedelta(days=6)
+        week_start_str = week_start.strftime("%Y-%m-%d")
+        week_end_str = week_end.strftime("%Y-%m-%d")
+        
+        # Phase 1: Analyze user query and extract parameters
+        analysis_prompt = f"""You are a query analyzer for a student task management system.
+Current date (Sri Lanka time): {current_date_str} ({current_date.strftime("%A, %B %d, %Y")})
+Tomorrow: {tomorrow_str}
+Yesterday: {yesterday_str}
+This week: {week_start_str} to {week_end_str}
+
+Your job is to analyze the user's question and extract query parameters.
+
+Query types:
+- "tasks" - Questions about tasks (e.g., "Show my tasks", "What's due this week?", "overdue tasks")
+- "timer_stats" - Questions about pomodoro/study time (e.g., "How many pomodoros?", "Study time?")
+- "quizzes" - Questions about quiz results (e.g., "My quiz scores", "How did I do on quizzes?")
+
+Date range calculations (USE THESE EXACT VALUES):
+- "today" -> start_date: "{current_date_str}", end_date: "{current_date_str}"
+- "tomorrow" -> start_date: "{tomorrow_str}", end_date: "{tomorrow_str}"
+- "yesterday" -> start_date: "{yesterday_str}", end_date: "{yesterday_str}"
+- "this week" -> start_date: "{week_start_str}", end_date: "{week_end_str}"
+- "overdue" or "past due" -> start_date: null, end_date: "{yesterday_str}"
+- No date mentioned -> start_date: null, end_date: null (all tasks)
+
+Task filters:
+- completed: true (for completed tasks), false (for pending/incomplete tasks), null (all tasks)
+- importance: true (important only), false (not important), null (all tasks)
+- list: "Personal"/"Work"/"Study"/null (null = all lists)
+- priority: "low"/"medium"/"high"/null (null = all priorities)
+
+IMPORTANT RULES:
+1. For "overdue tasks" questions: set end_date to yesterday ({yesterday_str}) and completed to false
+2. For "tomorrow" questions: set BOTH start_date AND end_date to {tomorrow_str}
+3. For "pending" or "incomplete" tasks: set completed to false
+4. For "completed" tasks: set completed to true
+5. If no completion status mentioned: set completed to null (shows all tasks)
+
+Respond with ONLY a JSON object:
+{{
+    "query_type": "tasks" or "timer_stats" or "quizzes",
+    "date_range": {{
+        "start_date": "YYYY-MM-DD or null",
+        "end_date": "YYYY-MM-DD or null"
+    }},
+    "filters": {{
+        "completed": true/false/null,
+        "importance": true/false/null,
+        "list": "Personal"/"Work"/"Study"/null,
+        "priority": "low"/"medium"/"high"/null
+    }},
+    "reasoning": "brief explanation of your analysis"
+}}
+
+Examples:
+
+User: "What are the tasks I have to do tomorrow?"
+Response:
+{{
+    "query_type": "tasks",
+    "date_range": {{
+        "start_date": "{tomorrow_str}",
+        "end_date": "{tomorrow_str}"
+    }},
+    "filters": {{
+        "completed": null,
+        "importance": null,
+        "list": null,
+        "priority": null
+    }},
+    "reasoning": "User wants all tasks due tomorrow"
+}}
+
+User: "What are the overdue tasks I had?"
+Response:
+{{
+    "query_type": "tasks",
+    "date_range": {{
+        "start_date": null,
+        "end_date": "{yesterday_str}"
+    }},
+    "filters": {{
+        "completed": false,
+        "importance": null,
+        "list": null,
+        "priority": null
+    }},
+    "reasoning": "User wants incomplete tasks with due dates before today"
+}}
+
+User: "Show me my pending tasks"
+Response:
+{{
+    "query_type": "tasks",
+    "date_range": {{
+        "start_date": null,
+        "end_date": null
+    }},
+    "filters": {{
+        "completed": false,
+        "importance": null,
+        "list": null,
+        "priority": null
+    }},
+    "reasoning": "User wants all incomplete tasks"
+}}
+
+User: "How many pomodoros did I complete?"
+Response:
+{{
+    "query_type": "timer_stats",
+    "date_range": {{
+        "start_date": null,
+        "end_date": null
+    }},
+    "filters": {{}},
+    "reasoning": "User asking for pomodoro statistics"
+}}
+
+User message: {state['user_message']}"""
+        
+        try:
+            # Step 1: Analyze query
+            messages = [HumanMessage(content=analysis_prompt)]
+            analysis_response = self.llm.invoke(messages)
+            
+            # Try to extract JSON from the response
+            response_content = analysis_response.content.strip()
+            
+            # Remove markdown code blocks if present
+            if response_content.startswith("```"):
+                response_content = response_content.split("```")[1]
+                if response_content.startswith("json"):
+                    response_content = response_content[4:]
+                response_content = response_content.strip()
+            
+            query_params = json.loads(response_content)
+            
+            logger.info(f"Query analysis: {json.dumps(query_params, indent=2)}")
+            
+            # Step 2: Execute database query based on query_type
+            retrieved_data = None
+            query_type = query_params.get("query_type")
+            
+            if query_type == "tasks":
+                # Extract filter parameters
+                date_range = query_params.get("date_range", {})
+                filters = query_params.get("filters", {})
+                
+                start_date = date_range.get("start_date")
+                end_date = date_range.get("end_date")
+                completed = filters.get("completed")
+                importance = filters.get("importance")
+                task_list = filters.get("list")
+                priority = filters.get("priority")
+                
+                # Log the query parameters
+                logger.info(f"Querying tasks with params - start_date: {start_date}, end_date: {end_date}, "
+                           f"completed: {completed}, importance: {importance}, list: {task_list}, priority: {priority}")
+                
+                retrieved_data = firestore_service.query_tasks(
+                    uid=state["user_id"],
+                    start_date=start_date,
+                    end_date=end_date,
+                    completed=completed,
+                    importance=importance,
+                    task_list=task_list,
+                    priority=priority
+                )
+                
+                logger.info(f"Retrieved {len(retrieved_data)} tasks from Firestore")
+                
+                # Log sample task if available for debugging
+                if retrieved_data and len(retrieved_data) > 0:
+                    logger.info(f"Sample task: {json.dumps(retrieved_data[0], indent=2, default=str)}")
+                
+            elif query_type == "timer_stats":
+                retrieved_data = firestore_service.get_pomodoro_stats(state["user_id"])
+                logger.info(f"Retrieved pomodoro stats: {retrieved_data}")
+                
+            elif query_type == "quizzes":
+                retrieved_data = firestore_service.get_quiz_results(state["user_id"])
+                logger.info(f"Retrieved {len(retrieved_data)} quiz results")
+            
+            # Step 3: Generate natural language response
+            answer_prompt = f"""You are a helpful AI assistant for a student task management system.
+Current date: {current_date_str}
+
+The user asked: "{state['user_message']}"
+
+Retrieved data from database:
+{json.dumps(retrieved_data, indent=2, default=str)}
+
+Generate a friendly, conversational response that answers the user's question based on the retrieved data.
+
+Guidelines:
+- Be natural and conversational
+- If data is found, present it clearly with bullet points or numbering
+- Show task descriptions, due dates, priority, and completion status
+- If NO data found (empty list or no results), acknowledge it briefly but positively
+- For pomodoro stats, convert presentTime (seconds) to hours/minutes if needed
+- Keep response concise but informative (3-8 sentences)
+- DO NOT make up information - only use the retrieved data
+
+Response:"""
+            
+            messages = [HumanMessage(content=answer_prompt)]
+            answer_response = self.llm.invoke(messages)
+            
+            state["response"] = answer_response.content
+            logger.info("Knowledge retriever response generated")
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse LLM response: {e}")
+            logger.error(f"Raw LLM response: {analysis_response.content if 'analysis_response' in locals() else 'N/A'}")
+            state["response"] = "I'd be happy to help you find that information. Could you rephrase your question?"
+            
+        except Exception as e:
+            logger.error(f"Error in knowledge retriever node: {e}", exc_info=True)
+            state["response"] = "I'm having trouble retrieving that information right now. Please try again."
+            state["error"] = str(e)
         
         return state
     
