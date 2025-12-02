@@ -294,7 +294,7 @@ class FirestoreService:
             logger.error(f"Error getting pomodoro stats for user {uid}: {e}")
             return {"completedPomodoros": 0, "presentTime": 0}
     
-    def get_quiz_results(self, uid: str, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_quiz_results(self, uid: str, limit: int = 50) -> List[Dict[str, Any]]:
         """
         Get user's quiz results from paper_attempts sub-collection
         
@@ -303,26 +303,60 @@ class FirestoreService:
             limit: Maximum number of results to retrieve
             
         Returns:
-            List of paper attempt dictionaries
+            List of paper attempt dictionaries sorted by createdAt (if available)
         """
         try:
             if not self.db:
                 raise Exception("Firestore not initialized")
             
             attempts_ref = self.db.collection('users').document(uid).collection('paper_attempts')
-            query = attempts_ref.order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit)
             
-            results = []
-            for doc in query.stream():
-                attempt_data = doc.to_dict()
-                attempt_data['id'] = doc.id
-                results.append(attempt_data)
+            # Try to order by createdAt (the actual field name in the database)
+            # Fall back to timestamp, and finally to unordered fetch
+            try:
+                # First try: order by createdAt (actual field in database)
+                query = attempts_ref.order_by('createdAt', direction=firestore.Query.DESCENDING).limit(limit)
+                results = []
+                for doc in query.stream():
+                    attempt_data = doc.to_dict()
+                    attempt_data['id'] = doc.id
+                    results.append(attempt_data)
+                logger.info(f"Retrieved {len(results)} quiz results (ordered by createdAt) for user {uid}")
+            except Exception as order_error:
+                logger.warning(f"Could not order by createdAt, trying timestamp: {order_error}")
+                try:
+                    # Second try: order by timestamp (for future compatibility)
+                    query = attempts_ref.order_by('timestamp', direction=firestore.Query.DESCENDING).limit(limit)
+                    results = []
+                    for doc in query.stream():
+                        attempt_data = doc.to_dict()
+                        attempt_data['id'] = doc.id
+                        results.append(attempt_data)
+                    logger.info(f"Retrieved {len(results)} quiz results (ordered by timestamp) for user {uid}")
+                except Exception as timestamp_error:
+                    # Final fallback: fetch without ordering
+                    logger.warning(f"Could not order by timestamp either, fetching unordered: {timestamp_error}")
+                    query = attempts_ref.limit(limit)
+                    results = []
+                    for doc in query.stream():
+                        attempt_data = doc.to_dict()
+                        attempt_data['id'] = doc.id
+                        results.append(attempt_data)
+                    
+                    # Sort in Python by createdAt or timestamp if available
+                    results.sort(key=lambda x: x.get('createdAt') or x.get('timestamp') or '', reverse=True)
+                    logger.info(f"Retrieved {len(results)} quiz results (unordered fetch, sorted in Python) for user {uid}")
             
-            logger.info(f"Retrieved {len(results)} quiz results for user {uid}")
+            # Log sample data for debugging if results exist
+            if results:
+                logger.info(f"Sample quiz result: {json.dumps(results[0], indent=2, default=str)}")
+            else:
+                logger.info(f"No quiz results found for user {uid}")
+            
             return results
             
         except Exception as e:
-            logger.error(f"Error getting quiz results for user {uid}: {e}")
+            logger.error(f"Error getting quiz results for user {uid}: {e}", exc_info=True)
             return []
     
     def update_task(self, uid: str, task_id: str, updates: Dict[str, Any]) -> bool:

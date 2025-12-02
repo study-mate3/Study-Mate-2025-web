@@ -36,6 +36,8 @@ class PaperAttempt(BaseModel):
     year: int
     totalQuestions: int
     selectedAnswers: Dict[str, Any]
+    createdAt: Optional[str] = None  # ISO format timestamp - when the quiz was completed (actual field in DB)
+    timestamp: Optional[str] = None  # ISO format timestamp - for future compatibility
 
 class SubTask(BaseModel):
     """Sub-task model for nested task structure"""
