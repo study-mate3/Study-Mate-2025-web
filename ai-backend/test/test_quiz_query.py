@@ -18,6 +18,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Add parent directory to path to allow imports from 'ai-backend'
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 # Import services
 from firestore_service import firestore_service
 from agent import StudyMateAgent

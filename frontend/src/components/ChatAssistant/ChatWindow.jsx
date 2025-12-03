@@ -16,21 +16,47 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
   const { currentUser } = useAuth();
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      message: "Hi! I'm your AI assistant. Tell me about your tasks, plans, or work you need to do, and I'll help you organize them into your task list!",
-      isUser: false,
-      timestamp: new Date(),
+  
+  // Initialize messages from localStorage or use default
+  const getInitialMessages = () => {
+    try {
+      const savedMessages = localStorage.getItem(`chat_messages_${currentUser?.uid}`);
+      if (savedMessages) {
+        const parsed = JSON.parse(savedMessages);
+        // Convert timestamp strings back to Date objects
+        return parsed.map(msg => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading chat history:', error);
     }
-  ]);
+    return [
+      {
+        id: 1,
+        message: "Hi! I'm your AI assistant. Tell me about your tasks, plans, or work you need to do, and I'll help you organize them into your task list!",
+        isUser: false,
+        timestamp: new Date(),
+      }
+    ];
+  };
+  
+  const [messages, setMessages] = useState(getInitialMessages());
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId, setSessionId] = useState(null);
+  const [sessionId, setSessionId] = useState(() => {
+    try {
+      return localStorage.getItem(`chat_session_${currentUser?.uid}`) || null;
+    } catch {
+      return null;
+    }
+  });
   const [pendingConfirmations, setPendingConfirmations] = useState([]);
   const [pendingTasks, setPendingTasks] = useState([]); // Store pending tasks from bot
   const [showClearModal, setShowClearModal] = useState(false);
+  const [showNewChatModal, setShowNewChatModal] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -43,6 +69,28 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+  
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (currentUser?.uid && messages.length > 0) {
+      try {
+        localStorage.setItem(`chat_messages_${currentUser.uid}`, JSON.stringify(messages));
+      } catch (error) {
+        console.error('Error saving chat history:', error);
+      }
+    }
+  }, [messages, currentUser]);
+  
+  // Save session ID to localStorage whenever it changes
+  useEffect(() => {
+    if (currentUser?.uid && sessionId) {
+      try {
+        localStorage.setItem(`chat_session_${currentUser.uid}`, sessionId);
+      } catch (error) {
+        console.error('Error saving session ID:', error);
+      }
+    }
+  }, [sessionId, currentUser]);
 
   // Focus input when chat opens
   useEffect(() => {
@@ -294,18 +342,58 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
   };
 
   const handleClearChat = () => {
-    setMessages([
-      {
-        id: 1,
-        message: "Hi! I'm your AI assistant. Tell me about your tasks, plans, or work you need to do, and I'll help you organize them into your task list!",
-        isUser: false,
-        timestamp: new Date(),
-      }
-    ]);
-    setSessionId(null); // Clear session to start fresh
-    setPendingConfirmations([]); // Clear any pending confirmations
-    setPendingTasks([]); // Clear pending tasks
+    // Permanently delete all chat history
+    const defaultMessage = {
+      id: 1,
+      message: "Hi! I'm your AI assistant. Tell me about your tasks, plans, or work you need to do, and I'll help you organize them into your task list!",
+      isUser: false,
+      timestamp: new Date(),
+    };
+    
+    setMessages([defaultMessage]);
+    setSessionId(null);
+    setPendingConfirmations([]);
+    setPendingTasks([]);
+    
+    // Clear from localStorage
+    try {
+      localStorage.removeItem(`chat_messages_${currentUser?.uid}`);
+      localStorage.removeItem(`chat_session_${currentUser?.uid}`);
+    } catch (error) {
+      console.error('Error clearing chat history:', error);
+    }
+    
     setShowClearModal(false);
+  };
+  
+  const handleNewChat = () => {
+    // Start a new conversation while keeping old messages in storage (archived)
+    const defaultMessage = {
+      id: Date.now(),
+      message: "Hi! I'm your AI assistant. Tell me about your tasks, plans, or work you need to do, and I'll help you organize them into your task list!",
+      isUser: false,
+      timestamp: new Date(),
+    };
+    
+    setMessages([defaultMessage]);
+    setSessionId(null); // Start fresh session
+    setPendingConfirmations([]);
+    setPendingTasks([]);
+    
+    // Archive old conversation
+    try {
+      const oldMessages = localStorage.getItem(`chat_messages_${currentUser?.uid}`);
+      if (oldMessages) {
+        const archiveKey = `chat_archive_${currentUser?.uid}_${Date.now()}`;
+        localStorage.setItem(archiveKey, oldMessages);
+      }
+      // Clear current session
+      localStorage.removeItem(`chat_session_${currentUser?.uid}`);
+    } catch (error) {
+      console.error('Error archiving chat:', error);
+    }
+    
+    setShowNewChatModal(false);
   };
 
   const handleRefresh = () => {
@@ -397,13 +485,15 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
           </div>
           
           <div className="flex items-center space-x-1">
-            {/* Chat History Button */}
+            {/* New Chat Button */}
             <button
-              onClick={() => {/* TODO: Implement chat history */}}
+              onClick={() => setShowNewChatModal(true)}
               className="glass-effect p-2 hover:bg-white hover:bg-opacity-30 rounded-[12px] transition-all duration-200"
-              title="Chat History"
+              title="Start New Chat (keeps current history)"
             >
-              <ClockIcon className="w-5 h-5" />
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
             </button>
             
             {/* Refresh Button */}
@@ -419,7 +509,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
             <button
               onClick={() => setShowClearModal(true)}
               className="glass-effect p-2 hover:bg-white hover:bg-opacity-30 rounded-[12px] transition-all duration-200"
-              title="Clear Chat"
+              title="Clear All Chat History (permanent)"
             >
               <TrashIcon className="w-5 h-5" />
             </button>
@@ -581,13 +671,51 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
         </div>
       </div>
 
+      {/* New Chat Confirmation Modal */}
+      {showNewChatModal && (
+        <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="modal-content bg-white rounded-[24px] p-6 max-w-[360px] mx-4 shadow-2xl">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">Start New Chat?</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Your current conversation will be archived and you'll start fresh. You can continue with a clean slate while keeping your history safe.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowNewChatModal(false)}
+                className="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-[16px] font-medium transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleNewChat}
+                className="flex-1 px-4 py-3 gradient-blue text-white rounded-[16px] font-medium hover:shadow-lg transition-all duration-200"
+              >
+                New Chat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Clear Confirmation Modal */}
       {showClearModal && (
         <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="modal-content bg-white rounded-[24px] p-6 max-w-[320px] mx-4 shadow-2xl">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Clear Chat History?</h3>
+          <div className="modal-content bg-white rounded-[24px] p-6 max-w-[360px] mx-4 shadow-2xl">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">Clear All History?</h3>
+            </div>
             <p className="text-gray-600 mb-6">
-              This will permanently delete all messages in this conversation. This action cannot be undone.
+              This will <span className="font-semibold text-red-600">permanently delete</span> all messages and chat history. This action cannot be undone.
             </p>
             <div className="flex space-x-3">
               <button
@@ -598,9 +726,9 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
               </button>
               <button
                 onClick={handleClearChat}
-                className="flex-1 px-4 py-3 gradient-blue text-white rounded-[16px] font-medium hover:shadow-lg transition-all duration-200"
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-[16px] font-medium hover:shadow-lg transition-all duration-200"
               >
-                Clear
+                Delete All
               </button>
             </div>
           </div>

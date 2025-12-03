@@ -3,7 +3,12 @@ Test script for data_query intent handling
 """
 
 import os
+import sys
 from dotenv import load_dotenv
+
+# Add parent directory to path to allow imports from 'ai-backend'
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from agent import StudyMateAgent
 from firestore_service import firestore_service
 
