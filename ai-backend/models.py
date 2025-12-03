@@ -36,6 +36,8 @@ class PaperAttempt(BaseModel):
     year: int
     totalQuestions: int
     selectedAnswers: Dict[str, Any]
+    createdAt: Optional[str] = None  # ISO format timestamp - when the quiz was completed (actual field in DB)
+    timestamp: Optional[str] = None  # ISO format timestamp - for future compatibility
 
 class SubTask(BaseModel):
     """Sub-task model for nested task structure"""
@@ -144,7 +146,7 @@ class ChatResponse(BaseModel):
     needsFollowUp: bool = False
     followUpQuestion: Optional[str] = None
     sessionId: Optional[str] = None
-    intentType: Optional[Literal["small_talk", "tool_use"]] = None
+    intentType: Optional[Literal["small_talk", "tool_use", "data_query"]] = None
 
 class TaskConfirmationRequest(BaseModel):
     """User's confirmation decision"""
@@ -167,7 +169,7 @@ class AgentState(BaseModel):
     conversation_history: List[Dict[str, str]] = []
     
     # Processing
-    intent: Optional[Literal["small_talk", "tool_use"]] = None
+    intent: Optional[Literal["small_talk", "tool_use", "data_query"]] = None
     extracted_tasks: List[TaskData] = []
     pending_tasks: List[PendingTask] = []
     task_confirmations: List[TaskConfirmation] = []
