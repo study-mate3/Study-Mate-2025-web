@@ -21,9 +21,9 @@ const Footer = () => {
       </div>
 
       <div className="flex justify-center items-center space-x-[100px] my-4">
-        <div className="h-10 w-10"><img src={linkedInImg} alt="" /></div> {/* LinkedIn icon */}
-        <div className="h-10 w-10"><img src={facebookImg} alt="" /></div> {/* Facebook icon */}
-        <div className="h-10 w-10"><img src={youtubeImg} alt="" /></div> {/* YouTube icon */}
+          <a href="https://www.linkedin.com/company/studymateapp/" target="_blank" rel="noopener noreferrer"><div className="h-10 w-10"><img src={linkedInImg} alt="" /></div> {/* LinkedIn icon */} </a>
+          <a href="https://www.facebook.com/share/1Bo6z4jTjw/" target="_blank" rel="noopener noreferrer"><div className="h-10 w-10"><img src={facebookImg} alt="" /></div> {/* Facebook icon */} </a>
+          <a href="https://www.youtube.com/@StudyMateApp" target="_blank" rel="noopener noreferrer"><div className="h-10 w-10"><img src={youtubeImg} alt="" /></div> {/* YouTube icon */} </a>
       </div>
 
       <div className="text-center text-sm font-semibold">
@@ -31,14 +31,14 @@ const Footer = () => {
         University of Ruhuna.
       </div>
 
-      <div className="flex justify-center items-center space-x-4 mt-4">
+      {/* <div className="flex justify-center items-center space-x-4 mt-4">
         <div className="bg-black h-12 w-40 text-white flex items-center justify-center rounded-[8px]">
           <img src={googlePlayIcon} alt="" className='h-11'/>
-        </div> {/* Google Play button */}
+        </div>
         <div className="bg-black h-12 w-40 text-white flex items-center justify-center rounded-[8px]">
           <img src={appleStoreIcon} alt="" className='h-11'/>
-        </div> {/* App Store button */}
-      </div>
+        </div>
+      </div> */}
     </div>
     </footer>
   );
