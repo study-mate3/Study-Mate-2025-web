@@ -35,7 +35,7 @@ const DownloadSection = () => {
             Take control of your study plans or keep track of your child's progress
             effortlessly with StudyMate. <br />
             <span className="font-bold">Best of all, it's free!</span> <br />
-            Get started today by downloading from the Play Store or App Store.
+            StudyMate mobile app is coming soon — stay tuned!
           </p>
           <div className="flex space-x-4 mt-4">
           <img src={googlePlayIcon} alt="" className='h-11 rounded-xl h-10'/>

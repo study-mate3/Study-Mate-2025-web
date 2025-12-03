@@ -35,10 +35,13 @@ import ALQuiz from '../pages/Alquiz';
 import QuizInstructions from '../pages/Quiz/QuizInstructions';
 import Pomodoro from '../pages/Pomodoro';
 import ManageTime from '../pages/Pomodoro2';
+import ScrollToTop from '../components/ScrollToTop';
+import AboutUs from '../pages/AboutUs';
 
 const Routers = () => {
   return (
     <Router>
+      <ScrollToTop/>
       <Suspense fallback={<Loading />}></Suspense>
       <Layout>
         <Routes>
@@ -74,6 +77,7 @@ const Routers = () => {
           <Route path="/alquiz" element={<PrivateRoute roleRequired="student"><ALQuiz/></PrivateRoute>}   />
           <Route path='/pomodoro' element={<Pomodoro/>}/>
           <Route path='/time-management' element={<ManageTime/>}/>
+          <Route path='/about-us' element={<AboutUs/>}/>
 
 
 
