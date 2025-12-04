@@ -57,6 +57,35 @@ const QuizAttempt = () => {
   return () => clearInterval(timer);
 }, [timeLeft, submitted]);
 
+const logDistraction = async () => {
+  if (!user) return;
+
+  await addDoc(collection(db, "users", user.uid, "distractions"), {
+    category,
+    paperId,
+    time: new Date(),
+    event: "TAB_SWITCH",
+  });
+
+  console.log("Distraction logged!");
+};
+
+// TAB SWITCH DETECTOR
+useEffect(() => {
+  const handleVisibility = () => {
+    if (document.hidden) {
+      logDistraction();
+    }
+  };
+
+  document.addEventListener("visibilitychange", handleVisibility);
+
+  return () => {
+    document.removeEventListener("visibilitychange", handleVisibility);
+  };
+}, [user]);
+
+
 const formatTime = (seconds) => {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -91,7 +120,9 @@ const handleSelect = (qIndex, idx) => {
 
 
 
- const handleSubmit = async () => {
+
+
+const handleSubmit = async () => {
   let correct = 0;
   paperData.questions.forEach((q, i) => {
     if (answers[i]?.choice === q.correctAnswers?.[0]) {
@@ -128,6 +159,8 @@ const handleSelect = (qIndex, idx) => {
     startIndex,
     startIndex + QUESTIONS_PER_PAGE
   );
+
+  
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">

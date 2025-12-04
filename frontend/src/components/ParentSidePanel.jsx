@@ -3,6 +3,7 @@ import { UserIcon, HomeIcon, ClockIcon, PencilIcon, BellIcon, ArrowLeftOnRectang
 QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAuth, signOut } from 'firebase/auth';
+import WhatsappSubscribeButton from './WhatsappSubscribeButton';
 
 const ParentSidePanel = ({setName}) => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const ParentSidePanel = ({setName}) => {
       // Handle error (optional, show an error message to the user)
     }
   };
+
+  
  /*  const handleClick = (studentId) => {
     navigate(`/student-dashboard/${studentId}`);
   }; */
