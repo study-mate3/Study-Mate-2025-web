@@ -41,10 +41,12 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:5174",
-        "https://study-mate-web-ten.vercel.app/"
+        "https://study-mate-web-ten.vercel.app",
+        "https://study-mate-web-ten.vercel.app/",  # Add trailing slash version
+        "https://*.vercel.app",  # Allow all Vercel preview deployments
     ],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
