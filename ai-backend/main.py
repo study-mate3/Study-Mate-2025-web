@@ -40,7 +40,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:5173",
-        "http://localhost:5174"
+        "http://localhost:5174",
+        "https://study-mate-web-ten.vercel.app/"
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],

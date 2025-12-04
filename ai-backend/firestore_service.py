@@ -18,35 +18,24 @@ class FirestoreService:
     """Service class for Firestore operations"""
     
     def __init__(self):
-        """Initialize Firebase Admin SDK"""
-        try:
-            # Check if already initialized
-            if not firebase_admin._apps:
-                # Load credentials from environment or service account file
-                cred_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_PATH")
+        # Check if already initialized
+        if not firebase_admin._apps:
+            try:
+                # Try to get credentials from Environment Variable (Best for Render/Production)
+                firebase_creds_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
                 
-                # If not in env, try default path in ai-backend directory
-                if not cred_path:
-                    default_path = os.path.join(os.path.dirname(__file__), "serviceAccountKey.json")
-                    if os.path.exists(default_path):
-                        cred_path = default_path
-                        logger.info(f"Using default service account path: {cred_path}")
-                
-                if cred_path and os.path.exists(cred_path):
-                    cred = credentials.Certificate(cred_path)
-                    firebase_admin.initialize_app(cred)
-                    logger.info(f"Firebase initialized with service account file: {cred_path}")
+                if firebase_creds_json:
+                    cred_dict = json.loads(firebase_creds_json)
+                    cred = credentials.Certificate(cred_dict)
                 else:
-                    # Try to initialize with default credentials
-                    firebase_admin.initialize_app()
-                    logger.info("Firebase initialized with default credentials")
-            
-            self.db = firestore.client()
-            logger.info("Firestore client initialized successfully")
-            
-        except Exception as e:
-            logger.error(f"Failed to initialize Firestore: {e}")
-            self.db = None
+                    # Fallback to local file (Best for Local Development)
+                    cred = credentials.Certificate("serviceAccountKey.json")
+                
+                firebase_admin.initialize_app(cred)
+            except Exception as e:
+                print(f"Failed to initialize Firebase: {e}")
+                
+        self.db = firestore.client()
     
     def get_user(self, uid: str) -> Optional[Dict[str, Any]]:
         """Get user document by UID"""
