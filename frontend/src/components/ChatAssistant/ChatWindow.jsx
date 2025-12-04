@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import ChatMessage from './ChatMessage';
 import { useAuth } from '../../contexts/AuthContext';
+import { API_BASE_URL } from '../../config';
 
 const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
   const { currentUser } = useAuth();
@@ -116,7 +117,7 @@ const ChatWindow = ({ isOpen, onClose, onTaskCreate }) => {
 
     try {
       // Call AI backend API with session ID and pending tasks
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
