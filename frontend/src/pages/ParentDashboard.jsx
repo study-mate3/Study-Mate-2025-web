@@ -10,6 +10,7 @@ import AbsentTimesCard from '../components/AbsentTimesCard';
 import EngagementChart from '../components/EngagementChart';
 import StudentDetailsPage from '../components/StudentDetails';
 import ParentSidePanel from '../components/ParentSidePanel';
+import WhatsappSubscribeButton from '../components/WhatsappSubscribeButton';
 
 
 const DashboardCard = ({ userId, title, children, className = '' }) => (
@@ -86,6 +87,8 @@ const ParentDashboard = () => {
     <div className="min-h-screen bg-white">
        <div style={sidePanelStyle}>
         <ParentSidePanel/>
+         <div className='mt-5 ml-7'><WhatsappSubscribeButton/></div>     
+
       </div> 
       <StDashHeader userDetails={userDetails}/>
       <div className="px-4 sm:px-6 lg:px-12 xl:px-24 pt-24 lg:pt-10">

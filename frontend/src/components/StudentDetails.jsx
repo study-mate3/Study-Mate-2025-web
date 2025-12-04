@@ -17,6 +17,9 @@ const StudentDetailsPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [currentUserName, setCurrentUserName] = useState('');
   const [studentNames, setStudentNames] = useState({}); 
+  const [showAttempts, setShowAttempts] = useState(true);
+  const [showDistractions, setShowDistractions] = useState(true);
+
 
   
   const formatTime = (seconds) => {
@@ -82,7 +85,9 @@ const StudentDetailsPage = () => {
       }, [currentUser]);
     
     
-      
+
+     
+
 
       const fetchStudentDetails = async (studentId) => {
         setLoading(true);
@@ -118,6 +123,31 @@ const StudentDetailsPage = () => {
 
               const nightowlRef = doc(db, 'users', studentDoc.id, 'rewards', 'nightowl');
               const nightowlSnap = await getDoc(nightowlRef);
+
+              // --- FETCH PAPER ATTEMPTS ---
+              const paperAttemptsRef = collection(db, "users", studentDoc.id, "paper_attempts");
+              const paperAttemptsSnap = await getDocs(paperAttemptsRef);
+
+              const paperAttempts = paperAttemptsSnap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                createdAt: doc.data().createdAt?.toDate
+                  ? doc.data().createdAt.toDate().toLocaleString()
+                  : "N/A"
+              }));
+
+              // --- FETCH DISTRACTIONS ---
+              const distractionsRef = collection(db, "users", studentDoc.id, "distractions");
+              const distractionsSnap = await getDocs(distractionsRef);
+
+              const distractions = distractionsSnap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                time: doc.data().time?.toDate
+                  ? doc.data().time.toDate().toLocaleString()
+                  : "N/A"
+              }));
+
             
               // Log sessionSummary to check if it's being fetched correctly
               console.log('Session Summary:', sessionSummarySnap.exists() ? sessionSummarySnap.data().sessionSummary : 'No session summary data');
@@ -132,6 +162,8 @@ const StudentDetailsPage = () => {
                   points: pointsSnap.exists() ? pointsSnap.data().points : 0,
                   earlybird: earlybirdSnap.exists() ? earlybirdSnap.data().count : 0,
                   nightowl: nightowlSnap.exists()? nightowlSnap.data().count : 0,
+                  paperAttempts,
+                  distractions
                  });
   
     
@@ -211,6 +243,30 @@ const StudentDetailsPage = () => {
                 const nightowlRef = doc(db, 'users', studentDoc.id, 'rewards', 'nightowl');
                 const nightowlSnap = await getDoc(nightowlRef);
               
+                // --- FETCH PAPER ATTEMPTS ---
+                const paperAttemptsRef = collection(db, "users", studentDoc.id, "paper_attempts");
+                const paperAttemptsSnap = await getDocs(paperAttemptsRef);
+
+                const paperAttempts = paperAttemptsSnap.docs.map(doc => ({
+                  id: doc.id,
+                  ...doc.data(),
+                  createdAt: doc.data().createdAt?.toDate
+                    ? doc.data().createdAt.toDate().toLocaleString()
+                    : "N/A"
+                }));
+
+                // --- FETCH DISTRACTIONS ---
+                const distractionsRef = collection(db, "users", studentDoc.id, "distractions");
+                const distractionsSnap = await getDocs(distractionsRef);
+
+                const distractions = distractionsSnap.docs.map(doc => ({
+                  id: doc.id,
+                  ...doc.data(),
+                  time: doc.data().time?.toDate
+                    ? doc.data().time.toDate().toLocaleString()
+                    : "N/A"
+                }));
+
                 // Log sessionSummary to check if it's being fetched correctly
                 console.log('Session Summary:', sessionSummarySnap.exists() ? sessionSummarySnap.data().sessionSummary : 'No session summary data');
     
@@ -224,6 +280,8 @@ const StudentDetailsPage = () => {
                     points: pointsSnap.exists() ? pointsSnap.data().points : 0,
                     earlybird: earlybirdSnap.exists() ? earlybirdSnap.data().count : 0,
                     nightowl: nightowlSnap.exists()? nightowlSnap.data().count : 0,
+                    paperAttempts,
+                    distractions
                    });
     
                    
@@ -244,6 +302,7 @@ const StudentDetailsPage = () => {
             setLoading(false);
         }
     };
+  
 
 
     
@@ -257,9 +316,12 @@ return (
 
     {/* Title + Add form */}
     <div className="mb-4 sm:mb-6">
+      
       <h1 className="text-xl sm:text-2xl font-bold">
         View Your Student&apos;s Details
       </h1>
+                    <h1 className="italic mt-2 text-black font-medium">Focus on your child’s progress, not perfection. Your appreciation will help build their confidence and resilience.</h1>
+
     </div>
 
     {/* Input + button — stack on mobile */}
@@ -322,7 +384,7 @@ return (
 
     {/* Details */}
     {studentDetails && (
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 sm:p-6">
+      <div className="bg-gray-50 border border-blue-400 rounded-xl p-4 sm:p-6">
         <h2 className="text-lg sm:text-2xl font-semibold mb-4">
           Progress Overview of {studentDetails?.name}
         </h2>
@@ -397,6 +459,109 @@ return (
             </p>
           )}
         </div>
+
+{/* EXAM PRACTICE PERFORMANCE */}
+<div className="mt-8">
+  <div className="flex justify-between items-center">
+    <h3 className="mt-10 text-xl font-semibold text-blue-700">
+      Exam Practice Performance
+    </h3>
+
+    <button
+      onClick={() => setShowAttempts(!showAttempts)}
+      className="text-sm text-blue-500 hover:underline"
+    >
+      {showAttempts ? "Hide" : "Show"}
+    </button>
+  </div>
+
+   {showAttempts && (
+    <>
+      {/* Best subject summary message */}
+      {studentDetails.paperAttempts.length > 0 && (() => {
+        const bestAttempt = studentDetails.paperAttempts.reduce((max, attempt) => {
+          return attempt.percentage > max.percentage ? attempt : max;
+        }, { percentage: -1 });
+
+        if (bestAttempt.percentage > 0) {
+          return (
+            <p className="mt-6 mb-10 text-lg font-medium text-green-800">
+              ✨ Your child is doing <strong>excellent</strong> in <strong>{bestAttempt.subject}</strong>! Keep supporting them to shine there 🌟, while encouraging growth in other subjects 📚💪.
+            </p>
+          );
+        } else {
+          return (
+            <p className="mt-3 mb-4 text-lg font-medium text-gray-700">
+              Keep encouraging your child's learning journey! 📚✨
+            </p>
+          );
+        }
+      })()}
+
+      {studentDetails.paperAttempts.length > 0 ? (
+        <div className="space-y-3 mt-3">
+          {studentDetails.paperAttempts.map(attempt => (
+            <div
+              key={attempt.id}
+              className="bg-white p-4 rounded-lg shadow border border-blue-300"
+            >
+              <p><strong>Subject:</strong> {attempt.subject}</p>
+              <p><strong>Paper:</strong> {attempt.year}</p>
+              <p><strong>Marks Scored:</strong> {attempt.percentage}%</p>
+              <p><strong>Date Completed:</strong> {attempt.createdAt}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-600 mt-2">
+          No exam practice attempts found.
+        </p>
+      )}
+    </>
+  )}
+</div>
+
+
+{/* MOMENTS OF DISTRACTION */}
+<div className="mt-8">
+  <div className="flex justify-between items-center">
+    <h3 className="text-xl font-semibold text-red-700">
+      Moments of Distraction
+    </h3>
+
+    <button
+      onClick={() => setShowDistractions(!showDistractions)}
+      className="text-sm text-red-500 hover:underline"
+    >
+      {showDistractions ? "Hide" : "Show"}
+    </button>
+  </div>
+
+  {showDistractions && (
+    <>
+      {studentDetails.distractions.length > 0 ? (
+        <div className="space-y-3 mt-3">
+          {studentDetails.distractions.map(dis => (
+            <div
+              key={dis.id}
+              className="bg-white p-4 rounded-lg shadow border border-red-300"
+            >
+              <p><strong>During:</strong> {dis.category} → {dis.paperId}</p>
+              <p><strong>Time:</strong> {dis.time}</p>
+              <p><strong>Event:</strong> Tab Switch</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-gray-600 mt-2">
+          No distractions recorded.
+        </p>
+      )}
+    </>
+  )}
+</div>
+
+
       </div>
     )}
   </div>
