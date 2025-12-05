@@ -91,6 +91,60 @@ const AdminAddQuestion = () => {
     });
   };
 
+const handleWordUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const { default: mammoth } = await import("mammoth");
+
+  const reader = new FileReader();
+
+  reader.onload = async (ev) => {
+    const arrayBuffer = ev.target.result;
+
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    const text = result.value;
+
+    parseWordQuestions(text);
+  };
+
+  reader.readAsArrayBuffer(file);
+};
+
+
+const parseWordQuestions = (text) => {
+  const lines = text.split("\n").map(l => l.trim()).filter(l => l);
+
+  const parsedQuestions = [];
+  let currentQ = null;
+
+  lines.forEach((line) => {
+    // Match question numbers e.g. "1.", "2."
+    if (/^\d+\./.test(line)) {
+      if (currentQ) parsedQuestions.push(currentQ);
+
+      currentQ = {
+        question: line.replace(/^\d+\.\s*/, ""),
+        options: [],
+        correctAnswers: []
+      };
+    }
+    // Match options A) B) C) D)
+    else if (/^[A-D]\)/.test(line)) {
+      const optionText = line.replace(/^[A-D]\)\s*/, "");
+      if (currentQ) currentQ.options.push(optionText);
+    }
+  });
+
+  if (currentQ) parsedQuestions.push(currentQ);
+
+  // Add to existing questions
+  setQuestions(prev => [...prev, ...parsedQuestions]);
+
+  alert(`${parsedQuestions.length} questions imported from Word!`);
+};
+
+
     const handleQuizNavigate = () => {navigate("/updateQuiz"); };
 
 
@@ -163,6 +217,28 @@ const AdminAddQuestion = () => {
           }
         />
       </div>
+      <div className="mb-6">
+  <h2 className="text-lg font-semibold mb-2 text-gray-700">
+    Import Questions from Word (.docx)
+  </h2>
+
+  <input
+    type="file"
+    accept=".docx"
+    onChange={handleWordUpload}
+    className="border p-2 rounded w-full"
+  />
+
+  <p className="text-sm text-gray-600 mt-1">
+    Make sure your Word file follows this format:<br />
+    <b>1. Question text</b><br />
+    A) Option 1<br />
+    B) Option 2<br />
+    C) Option 3<br />
+    D) Option 4<br />
+    *(Correct answers must be selected manually after import.)*
+  </p>
+</div>
 
       {/* Question Input */}
       <div className="p-4 border rounded mb-6">

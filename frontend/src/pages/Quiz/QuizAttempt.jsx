@@ -177,6 +177,15 @@ const handleSubmit = async () => {
           const questionIndex = startIndex + i;
           return (
             <div key={questionIndex} className="mb-5 border-b pb-3">
+
+               {/* Display image if exists */}
+      {q.image && (
+        <img
+          src={q.image}
+          alt="Question illustration"
+          className="w-full max-w-sm mb-3 rounded shadow"
+        />
+      )} 
               <p className="font-semibold mb-2 text-gray-800">
                 {questionIndex + 1}. {q.question}
               </p>

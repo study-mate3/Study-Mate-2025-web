@@ -78,7 +78,7 @@ const UpdatePapers = () => {
   };
 
   const handleAddQuestion = () => {
-    const newQ = { question: "", options: ["", "", "", ""], correctAnswers: [] };
+    const newQ = { question: "", image: "", options: ["", "", "", ""], correctAnswers: [] };
     setPaperDetails({ ...paperDetails, questions: [...paperDetails.questions, newQ] });
   };
 
@@ -152,6 +152,15 @@ const UpdatePapers = () => {
                   onChange={(e) => handleQuestionChange(qIndex, "question", e.target.value)}
                   placeholder="Edit question text"
                 />
+
+                <input
+                  type="text"
+                  className="w-full border p-2 rounded mb-3"
+                  value={q.image || ""}
+                  onChange={(e) => handleQuestionChange(qIndex, "image", e.target.value)}
+                  placeholder="Optional: Enter image URL"
+                />
+
 
                 {q.options.map((opt, oIndex) => (
                   <div key={oIndex} className="flex items-center gap-2 mb-2">
