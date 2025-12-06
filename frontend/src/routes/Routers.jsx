@@ -37,6 +37,8 @@ import Pomodoro from '../pages/Pomodoro';
 import ManageTime from '../pages/Pomodoro2';
 import ScrollToTop from '../components/ScrollToTop';
 import AboutUs from '../pages/AboutUs';
+import PdfListPage from '../pages/Adminquiz/PdfListPage';
+import PdfViewerPage from '../pages/Adminquiz/PdfViewerPage';
 
 const Routers = () => {
   return (
@@ -78,6 +80,8 @@ const Routers = () => {
           <Route path='/pomodoro' element={<Pomodoro/>}/>
           <Route path='/time-management' element={<ManageTime/>}/>
           <Route path='/about-us' element={<AboutUs/>}/>
+          <Route path="/pdf-list" element={<PdfListPage />} />
+          <Route path="/pdf-viewer" element={<PdfViewerPage/>} />
 
 
 

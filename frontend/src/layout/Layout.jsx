@@ -16,6 +16,10 @@ const Layout = ({ children }) => {
     location.pathname.startsWith(path)
   );
 
+  // ✅ Hide ChatAssistant on PDF Viewer and Quiz pages
+  const hideChatAssistant = location.pathname.startsWith('/pdf-viewer') || 
+                           location.pathname.startsWith('/quiz');
+
   return (
     <div className="min-h-screen flex flex-col">
       {showHeader && <Header />}
@@ -25,7 +29,8 @@ const Layout = ({ children }) => {
       <Footer />
       
       {/* Chat Assistant - available everywhere for logged-in users */}
-      <ChatAssistant />
+      {/* Chat Assistant - HIDDEN on /pdf-viewer and /quiz paths */}
+      {!hideChatAssistant && <ChatAssistant />}
     </div>
   );
 };
