@@ -60,7 +60,7 @@ export default function QuizGenerator() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/generate-quiz", {
+      const res = await fetch("https://quizstudy-mate.vercel.app/api/generate-quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -109,7 +109,7 @@ export default function QuizGenerator() {
     } else if (ans) {
       // Essay grading via backend
       try {
-        const res = await fetch("http://localhost:5000/api/grade-essay", {
+        const res = await fetch("https://quizstudy-mate.vercel.app/api/grade-essay", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
