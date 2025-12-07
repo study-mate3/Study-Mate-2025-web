@@ -39,6 +39,8 @@ import ScrollToTop from '../components/ScrollToTop';
 import AboutUs from '../pages/AboutUs';
 import PdfListPage from '../pages/Adminquiz/PdfListPage';
 import PdfViewerPage from '../pages/Adminquiz/PdfViewerPage';
+import MarkingSchemes from '../pages/MarkingSchemes';
+import MarkingPdfViewer from '../pages/Adminquiz/MarkingPdfViewer';
 
 const Routers = () => {
   return (
@@ -82,6 +84,8 @@ const Routers = () => {
           <Route path='/about-us' element={<AboutUs/>}/>
           <Route path="/pdf-list" element={<PdfListPage />} />
           <Route path="/pdf-viewer" element={<PdfViewerPage/>} />
+          <Route path="/marking-schemes" element={<MarkingSchemes />} />
+          <Route path="/marking-pdf-viewer" element={<MarkingPdfViewer />} /> 
 
 
 

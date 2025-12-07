@@ -98,6 +98,12 @@ const Quiz = () => {
           <span className="font-medium">Upload & Generate Quiz</span>
         </button>
       </div>
+            <div className="flex flex-wrap gap-4 justify-center mt-2">
+          <button style={{ background: 'rgba(108.38, 245.22, 255, 0.6)', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10}} className="flex items-center gap-2 hover:bg-blue-100 px-5 py-3 transform transition duration-200 hover:-translate-y-1 hover:shadow-lg"  onClick={() => navigate('/marking-schemes')}>
+          <img src="/marking.png" alt="Marking Schemes" className="w-8 h-8" />
+          <span className="font-medium text-gray-700">Marking Schemes</span>
+        </button>
+            </div>
     </div>
     </div>
   );
