@@ -4,9 +4,11 @@ import { useLocation } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import ChatAssistant from '../components/ChatAssistant/ChatAssistant';
+import { useAuth } from '../contexts/AuthContext';
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const { role } = useAuth();
 
   // ✅ Pages that SHOULD have the Header
   const headerIncludedRoutes = ["/home"]; // Add more if needed
@@ -16,9 +18,10 @@ const Layout = ({ children }) => {
     location.pathname.startsWith(path)
   );
 
-  // ✅ Hide ChatAssistant on PDF Viewer and Quiz pages
+  // ✅ Hide ChatAssistant on PDF Viewer and Quiz pages, OR if user is not a student
   const hideChatAssistant = location.pathname.startsWith('/pdf-viewer') || 
-                           location.pathname.startsWith('/quiz');
+                           location.pathname.startsWith('/quiz') ||
+                           role !== 'student';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -28,8 +31,8 @@ const Layout = ({ children }) => {
 
       <Footer />
       
-      {/* Chat Assistant - available everywhere for logged-in users */}
-      {/* Chat Assistant - HIDDEN on /pdf-viewer and /quiz paths */}
+      {/* Chat Assistant - available only for students */}
+      {/* Chat Assistant - HIDDEN on /pdf-viewer and /quiz paths, and for parent/admin roles */}
       {!hideChatAssistant && <ChatAssistant />}
     </div>
   );
