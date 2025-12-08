@@ -9,7 +9,7 @@ const supervisor = {
   role: 'Project Supervisor',
   photo: '/team/supervisor.png',
   email: 'charukavinda@outlook.com',
-  linkedin: 'linkedin.com/in/charuka-moremada-01b829121',
+  linkedin: 'https://www.linkedin.com/in/charuka-moremada-01b829121',
 };
 
 
