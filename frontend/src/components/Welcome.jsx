@@ -22,7 +22,7 @@ export default function Welcome() {
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center md:justify-start pt-2">
             <Link to="https://studymate-memory.vercel.app/">
-              <button className="text-white font-bold py-2 px-6 shadow-md rounded-full "  style={{width: 223, height: 38,  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100, border: '1px #87CEEB solid'}}>
+              <button className="text-white font-bold py-2 px-6 shadow-md rounded-full "  style={{width: 223, height: 38, background: '#006bbe', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 100, border: '1px #87CEEB solid'}}>
                 🧠 Check Your Focus
               </button>
             </Link>
